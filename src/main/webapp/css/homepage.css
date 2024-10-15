@@ -1,0 +1,71 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 15, 2024, 1:38:06 PM
+    Author     : phanp
+*/
+/* Thu nhỏ thanh tìm kiếm */
+form.d-flex.align-items-center {
+    max-width: 400px; /* Thu nhỏ chiều rộng của thanh tìm kiếm */
+    margin: 0 auto;   /* Căn giữa thanh tìm kiếm */
+}
+
+/* Thu nhỏ thanh bộ lọc */
+.filter-section {
+    width: 180px; /* Thu nhỏ chiều rộng của thanh filter */
+    margin-right: 20px; /* Khoảng cách giữa filter và phần sản phẩm */
+}
+
+/* Điều chỉnh phần sản phẩm */
+.flex-grow-1 {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các sản phẩm xuống hàng khi không đủ chỗ */
+    gap: 1rem; /* Khoảng cách giữa các sản phẩm */
+    justify-content: flex-start; /* Sắp xếp sản phẩm về phía trái */
+    flex-grow: 1; /* Phần sản phẩm chiếm hết không gian còn lại */
+}
+
+/* Cập nhật kích thước thẻ sản phẩm */
+.product-card {
+    width: calc(33.33% - 1rem); /* Mỗi sản phẩm chiếm 1/3 chiều ngang (3 sản phẩm mỗi hàng) */
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ cho sản phẩm */
+    border-radius: 8px; /* Bo góc sản phẩm */
+    background-color: #fff; /* Đảm bảo thẻ sản phẩm có nền trắng */
+    overflow: hidden;
+}
+
+.product-card img {
+    width: 100%; /* Hình ảnh sản phẩm chiếm toàn bộ chiều rộng thẻ */
+    height: auto;
+}
+
+.product-card h3 {
+    font-size: 1.25rem; /* Kích thước tiêu đề sản phẩm */
+    margin-bottom: 0.5rem;
+}
+
+.product-card p {
+    font-size: 1rem; /* Kích thước giá sản phẩm */
+    color: #888;
+}
+
+.product-card button {
+    display: block;
+    width: 100%;
+}
+
+/* Đảm bảo responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .product-card {
+        width: calc(50% - 1rem); /* 2 sản phẩm mỗi hàng khi ở màn hình nhỏ */
+    }
+}
+
+@media (max-width: 576px) {
+    .product-card {
+        width: 100%; /* 1 sản phẩm mỗi hàng khi màn hình rất nhỏ */
+    }
+}
+
