@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -123,16 +124,17 @@
                         </div>
                     </div>
                 </aside>
-
                 <div class="d-flex flex-wrap gap-4 flex-grow-1">
-                    <div class="product-card">
-                        <img src="../img/avt1.jpg" alt="Product Image">
-                        <div class="p-3">
-                            <a href="#"><h3 class="h5">Product 1</h3></a>
-                            <p class="text-muted">$99.99</p>
-                            <button class="btn btn-primary mt-2">Add to Cart</button>
+                    <c:forEach items="${productList}" var="product">
+                        <div class="product-card">
+                            <img src="${product.imageURL}" alt="${product.productName} Image">
+                            <div class="p-3">
+                                <a href="#"><h3 class="h5">${product.productName}</h3></a>
+                                <p class="text-muted">$${product.price}</p>
+                                <button class="btn btn-primary mt-2">Add to Cart</button>
+                            </div>
                         </div>
-                    </div>
+                    </c:forEach>
                 </div>
             </main>
         </div>
