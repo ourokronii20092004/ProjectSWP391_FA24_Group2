@@ -18,21 +18,21 @@ import java.util.logging.Logger;
  */
 public class AccountDAO {
 
-    public String findUserID(String username) {
+    public int findUserID(String username) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Users where Username like '" + username + "'");
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM User where Username like '" + username + "'");
                 rs.next();
-                String id = rs.getString("UserID");
+                int id = rs.getInt("UserID");
                 DBConnection.Disconnect();
                 return id;
             } catch (SQLException e) {
                 Logger.getLogger(LoginDAO.class.getName()).log(Level.SEVERE, null, e);
-                return null;
+                return -1;
             }
         }
-        return null;
+        return -1;
     }
    
 }

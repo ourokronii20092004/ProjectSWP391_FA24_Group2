@@ -11,7 +11,7 @@ import java.sql.Date;
  * @author phanp
  */
 public class User {
-        private final int id;
+    private final int id;
     private String userName;
     private String salt;
     private String password;
@@ -23,6 +23,12 @@ public class User {
     private boolean isActive;
     private final Date createdAt;
     private final Date updatedAt;
+
+    public User() {
+        this.id = 0;
+        this.createdAt = null;
+        this.updatedAt = null;
+    }
 
     public User(int id, String userName, String salt, String password, String Email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;

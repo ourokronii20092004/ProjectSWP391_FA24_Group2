@@ -4,14 +4,25 @@
  */
 package Models;
 
+import java.sql.Date;
+
 /**
  *
  * @author Nguyen Nhat Dang - CE180010
  */
 public class Rating {
-    String ratingID,userID,productID,ratingValue,comment,createdAt;
+     private int ratingID;
+     private int userID;
+     private int productID,ratingValue;
+     String comment;
+     private Date createdAt;
 
-    public Rating(String ratingID, String userID, String productID, String ratingValue, String comment, String createdAt) {
+    public Rating() {
+        this.userID = 0;
+        this.createdAt = null;
+    }
+
+    public Rating(int ratingID, int userID, int productID, int ratingValue, String comment, Date createdAt) {
         this.ratingID = ratingID;
         this.userID = userID;
         this.productID = productID;
@@ -20,35 +31,27 @@ public class Rating {
         this.createdAt = createdAt;
     }
 
-    public String getRatingID() {
+    public int getRatingID() {
         return ratingID;
     }
 
-    public void setRatingID(String ratingID) {
+    public void setRatingID(int ratingID) {
         this.ratingID = ratingID;
     }
 
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public String getProductID() {
+    public int getProductID() {
         return productID;
     }
 
-    public void setProductID(String productID) {
+    public void setProductID(int productID) {
         this.productID = productID;
     }
 
-    public String getRatingValue() {
+    public int getRatingValue() {
         return ratingValue;
     }
 
-    public void setRatingValue(String ratingValue) {
+    public void setRatingValue(int ratingValue) {
         this.ratingValue = ratingValue;
     }
 
@@ -58,17 +61,22 @@ public class Rating {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }    
+
+    public int getUserID() {
+        return userID;
     }
 
-    public String getCreatedAt() {
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
-
-    
-    
     
 }
