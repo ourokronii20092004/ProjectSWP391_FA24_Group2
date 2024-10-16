@@ -85,6 +85,7 @@ public class CartController extends HttpServlet {
     throws ServletException, IOException {
         try {
             processRequest(request, response);
+            
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
         }

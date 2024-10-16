@@ -75,7 +75,63 @@ public class RatingDAO {
             }
         }
     }
-       public ArrayList<Rating> viewAllRating(int productID) throws SQLException {
+
+    public void removeComment(int ratingID) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try {
+                //Delete cartitem from cart
+                String stm = "UPDATE Rating SET Comment = NULL"
+                        + "WHERE RatingID LIKE ?";
+                PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
+                pstm.setInt(1, ratingID);
+                pstm.executeUpdate();
+                pstm.close();
+                DBConnection.Disconnect();
+            } catch (Exception e) {
+                Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+            DBConnection.Disconnect();
+        }
+    }
+
+    public void removeRatingValue(int ratingID) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try {
+                //Delete cartitem from cart
+                String stm = "UPDATE Rating SET RatingValue = NULL"
+                        + "WHERE RatingID LIKE ?";
+                PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
+                pstm.setInt(1, ratingID);
+                pstm.executeUpdate();
+                pstm.close();
+                DBConnection.Disconnect();
+            } catch (Exception e) {
+                Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+            DBConnection.Disconnect();
+        }
+    }
+    
+    public void DeleteAllRating(int ratingID){
+                if (DBConnection.isConnected()) {
+            try {
+                //Delete cartitem from cart
+                String stm = "DELETE FROM Rating "
+                        + "WHERE RatingID LIKE ?";
+                PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
+                pstm.setInt(1, ratingID);
+                pstm.executeUpdate();
+                pstm.close();
+                DBConnection.Disconnect();
+            } catch (Exception e) {
+                Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+            DBConnection.Disconnect();
+        }       
+    }
+    public ArrayList<Rating> viewAllRating(int productID) throws SQLException {
         ArrayList<Rating> ratingList = new ArrayList<>();
         ratingList.clear();
         DBConnection.Connect();
