@@ -34,5 +34,21 @@ public class AccountDAO {
         }
         return null;
     }
-   
+    
+//    public void updateProfile(int id, User newinfo) {
+//        DBConnection.Connect();
+//        if (DBConnection.isConnected()) {
+//            try {
+//                PreparedStatement pre = DBConnection.getPreparedStatement("UPDATE User"
+//                        + "SET Email = ?,"
+//                        + "    firstName = ?,"
+//                        + "    lastName=?,"
+//                        + "    address=?"
+//                        + "WHERE id = ?");
+//                pre.setString();
+//            } catch(Exception e){
+//                
+//            }
+//        }
+//    }
 }
