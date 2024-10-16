@@ -6,7 +6,9 @@
 package Controllers;
 
 import DAOs.AccountDAO;
+import DAOs.UserDAO;
 import Models.Account;
+import Models.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -40,14 +42,20 @@ public class LoginController extends HttpServlet {
             Account acc = null;
             acc = DAOs.LoginDAO.Validate(name, password);
             if (acc != null) {
-                int userID;
-//                AccountD a = new AccountDAO();
-                //ProfileDAO p = new ProfileDAO();
-                //ProfileData profile = p.getProfileData(a.findUserID(acc.getUser()));
+                AccountDAO accountDAO  = new AccountDAO();
+                UserDAO userDAO = new UserDAO();               
+                // Find user by username and load full user data
+                int userID = accountDAO.findUserID(acc.getUserName());
                 
+                User user = userDAO.getUserData(userID);                 
                 HttpSession session = request.getSession();
-               // session.setAttribute("user", profile);
-                response.sendRedirect("index.jsp");
+                session.setAttribute("user", user);
+                if (user.getRoleID() == 1) {
+                    response.sendRedirect("????????.jsp");
+                }else if (user.getRoleID() == 2) {
+                    response.sendRedirect("blabla.jsp");
+                }
+                    response.sendRedirect("blabla.jsp");
             } else {
                 response.sendRedirect("login.jsp?check=false");
             }

@@ -4,7 +4,8 @@
  */
 package Controllers;
 
-import Models.Account;
+import DAOs.RatingDAO;
+import Models.Rating;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,22 +35,22 @@ public class RatingController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
-            Account account = new Account();
-            int roleID = account.getRoleID();
-
-            if (roleID == 2) {
+            Models.User user = (Models.User) request.getSession().getAttribute("user");
+            RatingDAO ratingDAO = new RatingDAO();
+            
+            //ArrayList<Rating> listRating = ratingDAO.viewAllRating();
+            
                 String ratingID = request.getParameter("ratingID");
                 String userID = request.getParameter("userID");
                 String productID = request.getParameter("productID");
                 String ratingValue = request.getParameter("ratingValue");
                 String comment = request.getParameter("comment");
                 String createdAt = request.getParameter("createdAt");
-
-                Models.Rating rating = new Models.Rating(ratingID, userID, productID, ratingValue, comment, createdAt);
-            }
+                
+           
         }
     }
 
@@ -61,7 +66,11 @@ public class RatingController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(RatingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -75,7 +84,11 @@ public class RatingController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(RatingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

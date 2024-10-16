@@ -14,7 +14,6 @@ public class Account {
 
     public Account() {
     }
-
     
     public Account(String userName, String password, String salt, int roleID) {
         this.userName = userName;
@@ -54,6 +53,4 @@ public class Account {
     public void setRoleID(int roleID) {
         this.roleID = roleID;
     }
-
- 
 }

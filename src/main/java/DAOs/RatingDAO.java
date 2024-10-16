@@ -6,9 +6,11 @@ package DAOs;
 
 import Models.Rating;
 import DB.DBConnection;
+import Models.CartItem;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +26,7 @@ public class RatingDAO {
             try {
                 ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Rating Where UserID like '" + userID + "'");
                 rs.next();
-                Rating rating = new Rating(rs.getString("RatingID"), rs.getString("UserID"), rs.getString("ProductID"), rs.getString("RatingValue"), rs.getString("Comment"), rs.getString("CreatedAt"));
+                Rating rating = new Rating(rs.getInt("RatingID"), rs.getInt("UserID"), rs.getInt("ProductID"), rs.getInt("RatingValue"), rs.getString("Comment"), rs.getDate("CreatedAt"));
                 return rating;
             } catch (SQLException e) {
                 Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -41,12 +43,12 @@ public class RatingDAO {
                 String stm = "INSERT INTO Rating (RatingID,UserID,ProductID,RatingValue,Comment,CreatedAt)"
                         + "VALUES(?,?,?,?,?,?)";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setString(1, rating.getRatingID());
-                pstm.setString(2, rating.getUserID());
-                pstm.setString(3, rating.getProductID());
-                pstm.setString(4, rating.getRatingValue());
+                pstm.setInt(1, rating.getRatingID());
+                pstm.setInt(2, rating.getUserID());
+                pstm.setInt(3, rating.getProductID());
+                pstm.setInt(4, rating.getRatingValue());
                 pstm.setString(5, rating.getComment());
-                pstm.setString(6, rating.getCreatedAt());
+                pstm.setDate(6, rating.getCreatedAt());
                 pstm.executeUpdate();
                 pstm.close();
                 DBConnection.Disconnect();
@@ -62,9 +64,9 @@ public class RatingDAO {
             try {
                 String query = "UPDATE Rating SET RatingValue=?, Comment=? WHERE UserID=?";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(query);
-                pstm.setString(1, rating.getRatingValue());
+                pstm.setInt(1, rating.getRatingValue());
                 pstm.setString(2, rating.getComment());
-                pstm.setString(3, rating.getUserID());
+                pstm.setInt(3, rating.getUserID());
                 pstm.executeUpdate();
                 pstm.close();
                 DBConnection.Disconnect();
@@ -73,5 +75,16 @@ public class RatingDAO {
             }
         }
     }
-   
+       public ArrayList<Rating> viewAllRating(int productID) throws SQLException {
+        ArrayList<Rating> ratingList = new ArrayList<>();
+        ratingList.clear();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Rating Where ProductID like '" + productID + "'");
+            while (rs.next()) {
+                ratingList.add(new Rating(rs.getInt("RatingID"), rs.getInt("UserID"), rs.getInt("ProductID"), rs.getInt("RatingValue"), rs.getString("Comment"), rs.getDate("CreatedAt")));
+            }
+        }
+        return ratingList;
+    }
 }
