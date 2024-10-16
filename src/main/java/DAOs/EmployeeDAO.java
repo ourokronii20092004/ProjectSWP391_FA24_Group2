@@ -2,19 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package DAO;
+package DAOs;
 
-import Model.User;
 import DB.DBConnection;
-import java.sql.*;
-import java.util.*;
+import Models.User;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
- * @author CE181515 - Phan Viet Phat
+ * @author phanp
  */
 public class EmployeeDAO {
-
+    
     ArrayList<User> empList = new ArrayList<>();
     private int upCount;
 
