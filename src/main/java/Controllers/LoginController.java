@@ -51,7 +51,7 @@ public class LoginController extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
                 if (user.getRoleID() == 1) {
-                    response.sendRedirect("????????.jsp");
+                    response.sendRedirect("dashboard.jsp");
                 }else if (user.getRoleID() == 2) {
                     response.sendRedirect("blabla.jsp");
                 }

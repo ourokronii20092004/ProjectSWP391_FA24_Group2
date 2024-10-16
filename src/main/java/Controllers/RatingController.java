@@ -40,8 +40,8 @@ public class RatingController extends HttpServlet {
         try ( PrintWriter out = response.getWriter()) {
             Models.User user = (Models.User) request.getSession().getAttribute("user");
             RatingDAO ratingDAO = new RatingDAO();
-            
-            //ArrayList<Rating> listRating = ratingDAO.viewAllRating();
+            Rating rating = new Rating();
+            ArrayList<Rating> listRating = ratingDAO.viewAllRating(rating.getProductID());
             
                 String ratingID = request.getParameter("ratingID");
                 String userID = request.getParameter("userID");
