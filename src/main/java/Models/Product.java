@@ -8,12 +8,12 @@ import java.sql.Date;
 
 /**
  *
- * @author phanp
+ * @author Le Trung Hau - CE180481
  */
 public class Product {
     private int productID;
     private String productName;
-    private String discription;
+    private String description;
     private float price;
     private String imageURL;
     private int categoryID;
@@ -21,10 +21,10 @@ public class Product {
     private Date createdAt;
     private Date updatedAt;
 
-    public Product(int productID, String productName, String discription, float price, String imageURL, int categoryID, int stockQuantity, Date createdAt, Date updatedAt) {
+    public Product(int productID, String productName, String description, float price, String imageURL, int categoryID, int stockQuantity, Date createdAt, Date updatedAt) {
         this.productID = productID;
         this.productName = productName;
-        this.discription = discription;
+        this.description = description;
         this.price = price;
         this.imageURL = imageURL;
         this.categoryID = categoryID;
@@ -33,10 +33,10 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
-    public Product(int productID, String productName, String discription, float price, String imageURL, int categoryID) {
+    public Product(int productID, String productName, String description, float price, String imageURL, int categoryID) {
         this.productID = productID;
         this.productName = productName;
-        this.discription = discription;
+        this.description = description;
         this.price = price;
         this.imageURL = imageURL;
         this.categoryID = categoryID;
@@ -59,12 +59,12 @@ public class Product {
         this.productName = productName;
     }
 
-    public String getDiscription() {
-        return discription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDiscription(String discription) {
-        this.discription = discription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public float getPrice() {
@@ -114,6 +114,4 @@ public class Product {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
-    
 }

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  *
  * @author Nguyen Nhat Dang - CE180010 
  */
-@WebServlet(name="CartController", urlPatterns={"/"})
+@WebServlet(name="CartController", urlPatterns={"/kj"})
 public class CartController extends HttpServlet {
    
     /** 

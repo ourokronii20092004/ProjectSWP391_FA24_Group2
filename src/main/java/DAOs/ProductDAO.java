@@ -178,7 +178,7 @@ public class ProductDAO {
 
     /*
     NAY SEARCH = ID, KHONG PHAI SEARCH TEN CATEGORY=))
-    LAM BEN CAI JSP ROI NAP ID QUA CONTROL! OK
+    LAM BEN CAI JSP ROI NAP ID QUA CONTROL
      */
     public ArrayList<Product> searchProductsByCategory(int categoryId) throws SQLException {
         ArrayList<Product> results = new ArrayList<>();

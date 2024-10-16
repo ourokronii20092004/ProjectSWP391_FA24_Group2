@@ -44,6 +44,31 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+    
+    
+    public User(int id, String userName, String password, String Email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
+        this.Email = Email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.roleID = roleID;
+        this.isActive = isActive;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+    
+     public User(int id, String Email, String firstName, String lastName, String address, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.Email = Email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public int getId() {
         return id;
