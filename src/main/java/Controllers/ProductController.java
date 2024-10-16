@@ -10,6 +10,7 @@ import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import java.util.List;
  *
  * @author phanp
  */
+@WebServlet(name = "ProductController", urlPatterns = {"/"})
 public class ProductController extends HttpServlet {
 
     /**
@@ -38,7 +40,7 @@ public class ProductController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProductController</title>");
+            out.println("<title>Servlet ProductController</title>");            
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
@@ -59,15 +61,15 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO productDAO = new ProductDAO(); // Assuming you have a DAO class for Product
+       ProductDAO productDAO = new ProductDAO(); // Assuming you have a DAO class for Product
         List<Product> listproduct = productDAO.getAllProduct();
 
         // Set product list as a request attribute
-        request.setAttribute("productList", listproduct);
+        request.setAttribute("productList", listproduct);   
 
         // Forward the request to the JSP page
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+        System.out.println(request.getAttribute("productList"));
     }
 
     /**
@@ -81,7 +83,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        processRequest(request, response);
     }
 
     /**

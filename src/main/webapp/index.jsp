@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,7 +41,7 @@
                 <div class="d-flex align-items-center gap-3">
                     <a href="login.html" class="btn btn-outline-primary">Login</a>
                     <a href="register.html" class="btn btn-primary">Sign Up</a>
-                    <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+<!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
                         <path
                             d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-5.5 0-9 2-9 6v2h18v-2c0-4-3.5-6-9-6z" />
@@ -125,12 +125,12 @@
                     </div>
                 </aside>
                 <div class="d-flex flex-wrap gap-4 flex-grow-1">
-                    <c:forEach items="${productList}" var="product">
+                    <c:forEach items="${productList}" var="p">
                         <div class="product-card">
-                            <img src="${product.imageURL}" alt="${product.productName} Image">
+                            <img src="${p.imageURL}" alt="${p.productName} Image">
                             <div class="p-3">
-                                <a href="#"><h3 class="h5">${product.productName}</h3></a>
-                                <p class="text-muted">$${product.price}</p>
+                                <a href="#"><h3 class="h5">${p.productName}</h3></a>
+                                <p class="text-muted">$${p.price}</p>
                                 <button class="btn btn-primary mt-2">Add to Cart</button>
                             </div>
                         </div>
