@@ -4,22 +4,21 @@
  */
 package Controllers;
 
-import DAOs.ProductDAO;
-import Models.Product;
-import jakarta.servlet.RequestDispatcher;
+import Models.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  *
- * @author phanp
+ * @author Nguyen Nhat Dang - CE180010
  */
-public class ProductController extends HttpServlet {
+@WebServlet(name = "RatingController", urlPatterns = {"/"})
+public class RatingController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,16 +33,19 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProductController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            Account account = new Account();
+            int roleID = account.getRoleID();
+
+            if (roleID == 2) {
+                String ratingID = request.getParameter("ratingID");
+                String userID = request.getParameter("userID");
+                String productID = request.getParameter("productID");
+                String ratingValue = request.getParameter("ratingValue");
+                String comment = request.getParameter("comment");
+                String createdAt = request.getParameter("createdAt");
+
+                Models.Rating rating = new Models.Rating(ratingID, userID, productID, ratingValue, comment, createdAt);
+            }
         }
     }
 
@@ -59,15 +61,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO productDAO = new ProductDAO(); // Assuming you have a DAO class for Product
-        List<Product> listproduct = productDAO.getAllProduct();
-
-        // Set product list as a request attribute
-        request.setAttribute("productList", listproduct);
-
-        // Forward the request to the JSP page
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -81,7 +75,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        processRequest(request, response);
     }
 
     /**
