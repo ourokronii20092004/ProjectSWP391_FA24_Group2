@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class EmployeeDAO {
     
-    ArrayList<User> empList = new ArrayList<>();
+    public ArrayList<User> empList = new ArrayList<>();
     private int upCount;
 
     public EmployeeDAO() throws SQLException {
@@ -89,8 +89,8 @@ public class EmployeeDAO {
                     + "[FirstName] = ?"
                     + ",[LastName] = ?"
                     + ",[ShippingAddress] = ?"
-                    + ",[IsActive] = ?"
-                    + " WHERE UserID = ?");
+                    + ",[IsActive] = ? "
+                    + "WHERE UserID = ?");
             pre.setString(1, emp.getFirstName());
             pre.setString(2, emp.getLastName());
             pre.setString(3, emp.getAddress());
