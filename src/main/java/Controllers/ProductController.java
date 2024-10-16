@@ -14,11 +14,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * @author phanp
+ * @author Le Trung Hau - CE180481
  */
 @WebServlet(name = "ProductController", urlPatterns = {"/"})
 public class ProductController extends HttpServlet {
@@ -40,7 +43,7 @@ public class ProductController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProductController</title>");            
+            out.println("<title>Servlet ProductController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
@@ -61,15 +64,67 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       ProductDAO productDAO = new ProductDAO(); // Assuming you have a DAO class for Product
-        List<Product> listproduct = productDAO.getAllProduct();
+        try {
+            /*
+            list: gom het tru may cai da xoa
+            null: gom het tru may cai da xoa
+            default: gom het tru may cai da xoa
+            searchByName: search gan giong ten
+            searchByCategory: search id category
+            deleted: gom het may cai da xoa
+            */
+            String action = request.getParameter("action");
+            if (action == null) {
+                action = "list";
+            }
 
-        // Set product list as a request attribute
-        request.setAttribute("productList", listproduct);   
+            ProductDAO productDAO = new ProductDAO();
+            ArrayList<Product> productList = null;
 
-        // Forward the request to the JSP page
-        request.getRequestDispatcher("index.jsp").forward(request, response);
-        System.out.println(request.getAttribute("productList"));
+            switch (action) {
+                case "list":
+                    productList = productDAO.viewProductList();
+                    break;
+                case "searchByName":
+                    String searchName = request.getParameter("searchName");
+                    if (searchName != null) {
+                        productList = productDAO.searchProductsByName(searchName);
+                    }
+                    break;
+                case "searchByCategory":
+                    // NAY SEARCH = ID, KHONG PHAI SEARCH TEN CATEGORY=))
+                    String categoryIdStr = request.getParameter("categoryId");
+                    if (categoryIdStr != null) {
+                        try {
+                            int categoryId = Integer.parseInt(categoryIdStr);
+                            productList = productDAO.searchProductsByCategory(categoryId);
+                        } catch (NumberFormatException e) {
+                            // EXCEPTION
+                            request.setAttribute("errorMessage", "Invalid category ID.");
+                            //productList = productDAO.viewProductList();
+                        }
+                    }
+                    break;
+                case "deleted":
+                    productList = productDAO.viewDeletedProductList();
+                    break;
+                // SAU NAY THEM CASES THI THEM O DAY
+                default:
+                    productList = productDAO.viewProductList();
+                    break;
+            }
+
+            request.setAttribute("productList", productList);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
+            // EXCEPTION
+            request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
+            RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp"); //LAM THEM TRANG ERROR, CHUA CO 404 THI PHAI
+            dispatcher.forward(request, response);
+        }
     }
 
     /**
@@ -84,6 +139,7 @@ public class ProductController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+        
     }
 
     /**
