@@ -42,6 +42,16 @@ public class Product {
         this.categoryID = categoryID;
     }
 
+    public Product(int productID, String productName, String description, float price, String imageURL, int categoryID, int stockQuantity) {
+        this.productID = productID;
+        this.productName = productName;
+        this.description = description;
+        this.price = price;
+        this.imageURL = imageURL;
+        this.categoryID = categoryID;
+        this.stockQuantity = stockQuantity;
+    }
+
     
     public int getProductID() {
         return productID;

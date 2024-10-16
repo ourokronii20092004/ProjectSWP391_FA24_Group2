@@ -24,11 +24,7 @@ public class SearchController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        try {
-            productDAO = new ProductDAO();
-        } catch (SQLException e) {
-            throw new ServletException("Lỗi khởi tạo ProductDAO", e);
-        }
+        productDAO = new ProductDAO();
     }
 
     @Override

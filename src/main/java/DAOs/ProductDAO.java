@@ -134,8 +134,7 @@ public class ProductDAO {
         }
         return false;
     }
-    
-    
+
     public boolean removeProductFinal(int id) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
@@ -206,4 +205,27 @@ public class ProductDAO {
         return results;
     }
 
+    public ArrayList<Product> searchProduct(String keyword) throws SQLException {
+        ArrayList<Product> searchResult = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            String sql = "SELECT * FROM Product WHERE ProductName LIKE ?";
+            try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                pre.setString(1, "%" + keyword + "%");
+                try ( ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        searchResult.add(new Product(rs.getInt("ProductID"),
+                                rs.getNString("ProductName"),
+                                rs.getString("Description"),
+                                rs.getFloat("Price"),
+                                rs.getString("ImageURL"),
+                                rs.getInt("CategoryID"),
+                                rs.getInt("StockQuantity")));
+                    }
+                }
+            }
+            DBConnection.Disconnect();
+        }
+        return searchResult;
+    }
 }

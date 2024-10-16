@@ -10,12 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
- * @author Nguyen Nhat Dang - CE180010
+ * @author phanp
  */
 public class CustomerDAO {
     ArrayList<User> cusList = new ArrayList<>();
