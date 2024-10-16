@@ -38,5 +38,4 @@ public class ProductDAO {
         return listproduct;
     }
     
-    public 
 }

@@ -2,16 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Model;
+package Models;
 
 import java.sql.Date;
 
 /**
  *
- * @author CE181515 - Phan Viet Phat
+ * @author phanp
  */
 public class User {
-    private final int id;
+        private final int id;
     private String userName;
     private String salt;
     private String password;
