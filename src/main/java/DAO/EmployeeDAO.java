@@ -16,6 +16,7 @@ import java.util.*;
 public class EmployeeDAO {
 
     ArrayList<User> empList = new ArrayList<>();
+    private int upCount;
 
     public EmployeeDAO() throws SQLException {
         viewEmployeeList();
@@ -68,10 +69,14 @@ public class EmployeeDAO {
             pre.setString(7, emp.getAddress());
             pre.setInt(8, emp.getRoleID());
             pre.setInt(9, emp.isIsActive() ? 1 : 0);
-            pre.execute();
+            upCount = pre.executeUpdate();
             pre.close();
             DBConnection.Disconnect();
-            viewEmployeeList();
+            if (upCount > 0) {
+                viewEmployeeList();
+                upCount = 0;
+            }
+
         }
     }
 
@@ -89,23 +94,30 @@ public class EmployeeDAO {
             pre.setString(3, emp.getAddress());
             pre.setInt(4, (emp.isIsActive() ? 1 : 0));
             pre.setInt(5, emp.getId());
-            pre.execute();
+            upCount = pre.executeUpdate();
             pre.close();
             DBConnection.Disconnect();
-            empList.set(empList.indexOf(readEmployee(emp.getId())), emp);
+            if (upCount > 0) {
+                empList.set(empList.indexOf(readEmployee(emp.getId())), emp);
+                upCount = 0;
+            }
         }
     }
 
     public boolean removeEmployee(int id) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            int result = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
+            upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
                     + "SET isActive = 0"
                     + "WHERE UserID = " + id
             );
             DBConnection.Disconnect();
             readEmployee(id).setIsActive(false);
-            return result > 0;
+            if (upCount > 0) {
+                upCount = 0;
+                return true;
+            }
+
         }
         return false;
     }
