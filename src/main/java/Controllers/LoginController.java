@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Nguyen Nhat Dang - CE180010 
  */
-@WebServlet(name="LoginController", urlPatterns={"/"})
+@WebServlet(name="LoginController", urlPatterns={"/ikj"})
 public class LoginController extends HttpServlet {
    
     /** 
