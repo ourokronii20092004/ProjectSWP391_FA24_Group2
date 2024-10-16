@@ -134,6 +134,21 @@ public class ProductDAO {
         }
         return false;
     }
+    
+    
+    public boolean removeProductFinal(int id) throws SQLException {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            // HARD DELETE
+            upCount = DBConnection.ExecuteUpdate("DELETE FROM Product WHERE ProductID = " + id);
+            DBConnection.Disconnect();
+            if (upCount > 0) {
+                upCount = 0;
+                return true;
+            }
+        }
+        return false;
+    }
 
     public ArrayList<Product> searchProductsByName(String productName) throws SQLException {
         ArrayList<Product> results = new ArrayList<>();
