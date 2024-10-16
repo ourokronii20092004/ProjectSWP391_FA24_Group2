@@ -14,10 +14,10 @@ import java.sql.*;
  */
 public class DBConnection {
 
-    private static String cnnString = "jdbc:sqlserver://localhost:1433;"
+    private static String cnnString = "jdbc:sqlserver://PHUC_BINH;"
             + "databaseName=FlowerShop;"
-            + "user=sa;"
-            + "password=sa;"
+            + "user=binh;"
+            + "password=123;"
             + "encrypt=true;trustServerCertificate=true;";
     private static Connection conn = null;
 
@@ -84,5 +84,9 @@ public class DBConnection {
     
     public static PreparedStatement getPreparedStatement(String query) throws SQLException{
         return conn.prepareStatement(query);
+    }
+
+    public static Connection getConnection() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
