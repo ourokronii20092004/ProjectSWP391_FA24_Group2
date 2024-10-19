@@ -58,64 +58,70 @@ public class RatingDAO {
         }
     }
 
-    public void updateRating(Rating rating) {
+    public void updateRating(Rating rating) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                String query = "UPDATE Rating SET RatingValue=?, Comment=? WHERE UserID=?";
-                PreparedStatement pstm = DBConnection.getPreparedStatement(query);
-                pstm.setInt(1, rating.getRatingValue());
-                pstm.setString(2, rating.getComment());
-                pstm.setInt(3, rating.getUserID());
-                pstm.executeUpdate();
-                pstm.close();
+                // First, check if the rating belongs to the user
+                String queryCheck = "SELECT * FROM Rating WHERE RatingID = ? AND UserID = ?";
+                PreparedStatement pstmCheck = DBConnection.getPreparedStatement(queryCheck);
+                pstmCheck.setInt(1, rating.getRatingID());
+                pstmCheck.setInt(2, rating.getUserID()); // Only the owner can update
+                ResultSet rs = pstmCheck.executeQuery();
+
+                if (rs.next()) { // If rating found and belongs to the user
+                    String queryUpdate = "UPDATE Rating SET RatingValue=?, Comment=? WHERE RatingID=?";
+                    PreparedStatement pstmUpdate = DBConnection.getPreparedStatement(queryUpdate);
+                    pstmUpdate.setInt(1, rating.getRatingValue());
+                    pstmUpdate.setString(2, rating.getComment());
+                    pstmUpdate.setInt(3, rating.getRatingID());
+                    pstmUpdate.executeUpdate();
+                    pstmUpdate.close();
+                } else {
+                    System.out.println("You are not authorized to update this rating.");
+                }
+
+                pstmCheck.close();
                 DBConnection.Disconnect();
             } catch (SQLException e) {
                 Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
+                throw e; // Re-throw the exception for servlet-level handling
             }
         }
     }
 
-    public void removeComment(int ratingID) {
+    public void deleteRating(int ratingID, int userID) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                //Delete cartitem from cart
-                String stm = "UPDATE Rating SET Comment = NULL"
-                        + "WHERE RatingID LIKE ?";
-                PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setInt(1, ratingID);
-                pstm.executeUpdate();
-                pstm.close();
+                // Check if the rating belongs to the user
+                String queryCheck = "SELECT * FROM Rating WHERE RatingID = ? AND UserID = ?";
+                PreparedStatement pstmCheck = DBConnection.getPreparedStatement(queryCheck);
+                pstmCheck.setInt(1, ratingID);
+                pstmCheck.setInt(2, userID); // Only the owner can delete
+                ResultSet rs = pstmCheck.executeQuery();
+
+                if (rs.next()) { // If rating found and belongs to the user
+                    String queryDelete = "DELETE FROM Rating WHERE RatingID = ?";
+                    PreparedStatement pstmDelete = DBConnection.getPreparedStatement(queryDelete);
+                    pstmDelete.setInt(1, ratingID);
+                    pstmDelete.executeUpdate();
+                    pstmDelete.close();
+                } else {
+                    System.out.println("You are not authorized to delete this rating.");
+                }
+
+                pstmCheck.close();
                 DBConnection.Disconnect();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
+                throw e; // Re-throw the exception for servlet-level handling
             }
-            DBConnection.Disconnect();
         }
     }
 
-    public void removeRatingValue(int ratingID) {
-        DBConnection.Connect();
+    public void deleteAllRating(int ratingID) {
         if (DBConnection.isConnected()) {
-            try {
-                //Delete cartitem from cart
-                String stm = "UPDATE Rating SET RatingValue = NULL"
-                        + "WHERE RatingID LIKE ?";
-                PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setInt(1, ratingID);
-                pstm.executeUpdate();
-                pstm.close();
-                DBConnection.Disconnect();
-            } catch (Exception e) {
-                Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
-            }
-            DBConnection.Disconnect();
-        }
-    }
-    
-    public void DeleteAllRating(int ratingID){
-                if (DBConnection.isConnected()) {
             try {
                 //Delete cartitem from cart
                 String stm = "DELETE FROM Rating "
@@ -129,8 +135,9 @@ public class RatingDAO {
                 Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
             }
             DBConnection.Disconnect();
-        }       
+        }
     }
+
     public ArrayList<Rating> viewAllRating(int productID) throws SQLException {
         ArrayList<Rating> ratingList = new ArrayList<>();
         ratingList.clear();

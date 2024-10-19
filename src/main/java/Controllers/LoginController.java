@@ -37,28 +37,6 @@ public class LoginController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            String name = request.getParameter("username");
-            String password = request.getParameter("password");
-            Account acc = null;
-            acc = DAOs.LoginDAO.Validate(name, password);
-            if (acc != null) {
-                AccountDAO accountDAO  = new AccountDAO();
-                UserDAO userDAO = new UserDAO();               
-                // Find user by username and load full user data
-                int userID = accountDAO.findUserID(acc.getUserName());
-                
-                User user = userDAO.getUserData(userID);                 
-                HttpSession session = request.getSession();
-                session.setAttribute("user", user);
-                if (user.getRoleID() == 1) {
-                    response.sendRedirect("dashboard.jsp");
-                }else if (user.getRoleID() == 2) {
-                    response.sendRedirect("blabla.jsp");
-                }
-                    response.sendRedirect("blabla.jsp");
-            } else {
-                response.sendRedirect("login.jsp?check=false");
-            }
         }
     } 
 
@@ -86,7 +64,31 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+               try (PrintWriter out = response.getWriter()) {
+            
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            Account acc = null;
+            acc = DAOs.LoginDAO.Validate(username, password);
+            if (acc != null) {
+                AccountDAO accountDAO  = new AccountDAO();
+                UserDAO userDAO = new UserDAO();               
+                // Find user by username and load full user data
+                int userID = accountDAO.findUserID(acc.getUserName());
+                
+                User user = userDAO.getUserData(userID);                 
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                if (user.getRoleID() == 1) {
+                    response.sendRedirect("dashboard.jsp");
+                }else if (user.getRoleID() == 2) {
+                    response.sendRedirect("blabla.jsp");
+                }
+                    response.sendRedirect("blabla.jsp");
+            } else {
+                response.sendRedirect("login.jsp?check=false");
+            }
+        }
     }
 
     /** 
