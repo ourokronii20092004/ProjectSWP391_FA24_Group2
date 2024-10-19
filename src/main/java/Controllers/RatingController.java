@@ -6,6 +6,7 @@ package Controllers;
 
 import DAOs.RatingDAO;
 import Models.Rating;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -37,21 +39,7 @@ public class RatingController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            Models.User user = (Models.User) request.getSession().getAttribute("user");
-            RatingDAO ratingDAO = new RatingDAO();
-            Rating rating = new Rating();
-            ArrayList<Rating> listRating = ratingDAO.viewAllRating(rating.getProductID());
-            
-                String ratingID = request.getParameter("ratingID");
-                String userID = request.getParameter("userID");
-                String productID = request.getParameter("productID");
-                String ratingValue = request.getParameter("ratingValue");
-                String comment = request.getParameter("comment");
-                String createdAt = request.getParameter("createdAt");
-                
-           
-        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -83,11 +71,62 @@ public class RatingController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
+        Models.User user = (Models.User) request.getSession().getAttribute("user");
+        int userID = user.getId();
+        String ratingID = request.getParameter("ratingID");
+        String productID = request.getParameter("productID");
+        String ratingValue = request.getParameter("ratingValue");
+        String comment = request.getParameter("comment");
+        String createdAt = request.getParameter("createdAt");
+
+        RatingDAO ratingDAO = new RatingDAO();
+        Rating rating = new Rating(Integer.parseInt(ratingID), userID, Integer.parseInt(productID), Integer.parseInt(ratingValue), comment, Date.valueOf(createdAt));
+        ArrayList<Rating> listRating;
         try {
-            processRequest(request, response);
+            listRating = ratingDAO.viewAllRating(rating.getProductID());
         } catch (SQLException ex) {
             Logger.getLogger(RatingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+
+            String action = request.getParameter("action");
+            if (action == null) {
+                action = "list";
+            }
+            switch (action) {
+                case "list":
+                    listRating = ratingDAO.viewAllRating(rating.getProductID());
+                    request.setAttribute("ratingList", listRating);
+                    break;
+                case "add":
+                    ratingDAO.addRating(rating);
+                    break;
+                case "updateRating":
+                    ratingDAO.updateRating(rating);
+                    break;
+                case "deleteRating":
+                    ratingDAO.deleteRating(Integer.parseInt(ratingID), userID);
+                    break;
+                case "deleteAsEmployee":
+                    ratingDAO.deleteAllRating(Integer.parseInt(ratingID));
+                    break;
+
+                default:
+                    listRating = ratingDAO.viewAllRating(rating.getProductID());
+                    request.setAttribute("ratingList", listRating);
+                    break;
+            }
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("rating.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
+            // EXCEPTION
+            request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
+            RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
+            dispatcher.forward(request, response);
         }
     }
 

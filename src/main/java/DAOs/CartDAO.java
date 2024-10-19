@@ -26,7 +26,7 @@ public class CartDAO {
             try {
                 ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM CartItem Where CartID like '" + userID + "'");
                 rs.next();
-                CartItem cartItem = new CartItem(rs.getString("CartItemID"), rs.getString("UserID"), rs.getString("ProductID"), rs.getString("Quantity"));
+                CartItem cartItem = new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("ProductID"), rs.getInt("Quantity"));
                 DBConnection.Disconnect();
                 return cartItem;
             } catch (SQLException e) {
@@ -43,10 +43,10 @@ public class CartDAO {
                 String stm = "INSERT INTO CartItem (CartItemID,UserID,ProductID,Quantity)"
                         + "VALUES(?,?,?,?)";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setString(1, cartItem.getCartItemID());
-                pstm.setString(2, cartItem.getUserID());
-                pstm.setString(3, cartItem.getProductID());
-                pstm.setString(4, cartItem.getQuantity());
+                pstm.setInt(1, cartItem.getCartItemID());
+                pstm.setInt(2, cartItem.getUserID());
+                pstm.setInt(3, cartItem.getProductID());
+                pstm.setInt(4, cartItem.getQuantity());
                 pstm.executeUpdate();
                 pstm.close();
                 DBConnection.Disconnect();
@@ -84,10 +84,10 @@ public class CartDAO {
         if (DBConnection.isConnected()) {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM CartItem Where CartID like '" + userID + "'");
             while (rs.next()) {
-                cartList.add(new CartItem(rs.getString("CartItemID"), 
-                                          rs.getString("UserID"), 
-                                          rs.getString("ProductID"), 
-                                          rs.getString("Quantity")));
+                cartList.add(new CartItem(rs.getInt("CartItemID"), 
+                                          rs.getInt("UserID"), 
+                                          rs.getInt("ProductID"), 
+                                          rs.getInt("Quantity")));
             }
         }
         return cartList;

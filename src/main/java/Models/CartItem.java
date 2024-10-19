@@ -10,44 +10,49 @@ package Models;
  */
 public class CartItem {
 
-    private String cartItemID, userID, productID, quantity;
+    private int cartItemID, userID, productID, quantity;
 
-    public CartItem(String cartItemID, String userID, String productID, String quantity) {
+    public CartItem() {
+    }
+
+    public CartItem(int cartItemID, int userID, int productID, int quantity) {
         this.cartItemID = cartItemID;
         this.userID = userID;
         this.productID = productID;
         this.quantity = quantity;
     }
 
-    public String getCartItemID() {
+    public int getCartItemID() {
         return cartItemID;
     }
 
-    public void setCartItemID(String cartItemID) {
+    public void setCartItemID(int cartItemID) {
         this.cartItemID = cartItemID;
     }
 
-    public String getUserID() {
+    public int getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
+    public void setUserID(int userID) {
         this.userID = userID;
     }
 
-    public String getProductID() {
+    public int getProductID() {
         return productID;
     }
 
-    public void setProductID(String productID) {
+    public void setProductID(int productID) {
         this.productID = productID;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+     
+
 }
