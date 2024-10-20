@@ -24,7 +24,7 @@ public class CartDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM CartItem Where CartID like '" + userID + "'");
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM CartItem Where UserID like '" + userID + "'");
                 rs.next();
                 CartItem cartItem = new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("ProductID"), rs.getInt("Quantity"));
                 DBConnection.Disconnect();
