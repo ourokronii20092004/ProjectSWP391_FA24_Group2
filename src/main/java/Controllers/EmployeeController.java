@@ -4,19 +4,26 @@
  */
 package Controllers;
 
+import Models.User;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  *
  * @author CE181515 - Phan Viet Phat
  */
-@WebServlet(name = "EmployeeController", urlPatterns = {"/EmployeeController"})
+@WebServlet("/EmployeeController")
 public class EmployeeController extends HttpServlet {
 
     /**
@@ -36,7 +43,7 @@ public class EmployeeController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployeeController</title>");            
+            out.println("<title>Servlet EmployeeController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet EmployeeController at " + request.getContextPath() + "</h1>");
@@ -57,7 +64,19 @@ public class EmployeeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String path = request.getRequestURI(),
+                contextPath = request.getContextPath();
+        System.out.println("Requested Path: " + path);
+        System.out.println("Context Path: " + contextPath);
+        try {
+            ArrayList<User> empList = new DAOs.EmployeeDAO().viewEmployeeList();
+            request.getSession().setAttribute("empList", empList);
+            RequestDispatcher ds = request.getRequestDispatcher("EmployeeManagement.jsp");
+            ds.forward(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**
@@ -71,7 +90,17 @@ public class EmployeeController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        
+        String action = request.getParameter("action");
+        switch (action) {
+            case "add":
+            
+                
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     /**

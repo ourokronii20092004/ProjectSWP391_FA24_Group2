@@ -132,6 +132,8 @@
                                                 onclick="parent.location.href = this.href; return false;">Settings</a></li>
                         <li class="nav-item"><a class="nav-link" href="adminControl.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Control</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/EmployeeController"
+                                                onclick="parent.location.href = this.href; return false;">Employees</a></li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
