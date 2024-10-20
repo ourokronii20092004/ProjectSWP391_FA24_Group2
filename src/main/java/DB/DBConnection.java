@@ -2,12 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
-
-
-
 package DB;
+
 import java.sql.*;
+
 /**
  *
  * @author CE181515 - Phan Viet Phat
@@ -17,7 +15,7 @@ public class DBConnection {
     private static String cnnString = "jdbc:sqlserver://localhost:1433;"
             + "databaseName=FlowerShop;"
             + "user=sa;"
-            + "password=123;"
+            + "password=sa;"
             + "encrypt=true;trustServerCertificate=true;";
     private static Connection conn = null;
 
@@ -81,8 +79,8 @@ public class DBConnection {
         }
         return 0;
     }
-    
-    public static PreparedStatement getPreparedStatement(String query) throws SQLException{
+
+    public static PreparedStatement getPreparedStatement(String query) throws SQLException {
         return conn.prepareStatement(query);
     }
 
