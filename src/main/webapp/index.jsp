@@ -28,7 +28,7 @@
     <body >
         <div class="d-flex flex-column min-vh-100">
             <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
-                <a href="#" class="d-flex align-items-center text-decoration-none">
+                <a href="dashboard.jsp" class="d-flex align-items-center text-decoration-none">
 
                     <span class="h5 ms-2">PAMB</span>
                 </a>
