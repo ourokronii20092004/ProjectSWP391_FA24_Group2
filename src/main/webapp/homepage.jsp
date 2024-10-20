@@ -12,7 +12,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>PAMB Guest</title>
+        <title>PAMB HomePage</title>
         <link rel="stylesheet" href="../css/homepage.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -39,13 +39,15 @@
                     <a href="#" class="text-decoration-none text-muted">Contact</a>
                 </nav>
                 <div class="d-flex align-items-center gap-3">
-                    <a href="login.jsp" class="btn btn-outline-primary">Login</a>
-                    <a href="register.jsp" class="btn btn-primary">Sign Up</a>
-<!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-                        <path
-                            d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-5.5 0-9 2-9 6v2h18v-2c0-4-3.5-6-9-6z" />
-                    </svg> -->
+                    <a class="nav-link" href="#">Hello, Nguyen Nhat Dang</a>
+                    <a href="cart.html">
+                        <img src="../img/shopping-cart.svg" alt="Cart" class="cart-icon">
+                    </a>
+                    <!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                                            <path
+                                                d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-5.5 0-9 2-9 6v2h18v-2c0-4-3.5-6-9-6z" />
+                                        </svg> -->
                 </div>
             </header>
 
