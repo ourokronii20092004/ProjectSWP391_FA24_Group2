@@ -9,6 +9,7 @@ import Models.Account;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import Hash.HashFunction;
+import java.sql.PreparedStatement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,13 +23,16 @@ public class LoginDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM User where Username like'" + username + "'");
-                rs.next();
-                Account acc = null;
-                if (HashFunction.comparePasswords(password, rs.getString("Salt"), rs.getString("PasswordHash"))) {
-                    acc = new Account(rs.getString("Username"), rs.getString("PasswordHash"), rs.getString("Salt"), rs.getInt("RoleID"));
+                PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM [dbo].[User] where Username like ?");
+                pre.setString(1, username);
+                Account acc;
+                try (ResultSet rs = pre.executeQuery()) {
+                    rs.next();
+                    acc = null;
+                    if (HashFunction.comparePasswords(password, rs.getString("Salt"), rs.getString("PasswordHash"))) {
+                        acc = new Account(rs.getString("Username"), rs.getString("PasswordHash"), rs.getString("Salt"), rs.getInt("RoleID"));
+                    }
                 }
-                rs.close();
                 DBConnection.Disconnect();
                 return acc;
             } catch (SQLException e) {
