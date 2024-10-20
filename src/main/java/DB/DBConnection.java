@@ -14,9 +14,9 @@ import java.sql.*;
  */
 public class DBConnection {
 
-    private static String cnnString = "jdbc:sqlserver://PHUC_BINH;"
+    private static String cnnString = "jdbc:sqlserver://localhost:1433;"
             + "databaseName=FlowerShop;"
-            + "user=binh;"
+            + "user=sa;"
             + "password=123;"
             + "encrypt=true;trustServerCertificate=true;";
     private static Connection conn = null;

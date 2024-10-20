@@ -21,7 +21,7 @@ public class UserDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                ResultSet rs = DBConnection.ExecuteQuery("SELECT *  FROM User Where UserID like '" + userID + "'");
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT *  FROM [dbo].[User] Where UserID like '" + userID + "'");
                 rs.next();
                 User user = new User(rs.getInt("UserID"),
                         rs.getString("Username"),
