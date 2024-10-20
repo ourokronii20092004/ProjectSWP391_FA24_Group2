@@ -40,22 +40,6 @@ public class CartController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-        Models.User user = (Models.User) request.getSession().getAttribute("user");
-        // Retrieve form data
-        String cartItemID = request.getParameter("cartItemID");
-        String userID = request.getParameter("userID");
-        String productID = request.getParameter("productID");
-        String quantity = request.getParameter("quantity");
-        
-        DAOs.CartDAO cartDAO = new CartDAO();
-        ArrayList<CartItem> listCartItem = cartDAO.viewCartItemList(user.getId());
-        //Set product list as a request attribute
-        request.setAttribute("productList", listCartItem);
-        // Forward the request to the JSP page
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
-        }
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -124,7 +108,6 @@ public class CartController extends HttpServlet {
                     request.setAttribute("cartList", listCart);
                     break;
             }
-
             RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
             dispatcher.forward(request, response);
 
