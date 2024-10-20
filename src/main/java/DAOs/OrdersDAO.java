@@ -51,18 +51,20 @@ public class OrdersDAO {
         }
         return null;
     }
-
-    public boolean updateOrder(Order or) throws SQLException {
+    
+        public boolean updateOrder(Order order) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("UPDATE [dbo].[Orders] SET "
-                    + "[OrderStatus] = ? "
-                    + "WHERE OrderID = " + or.getUserID());
-            pre.setString(1, or.getOrderStatus());
+            String sql = "UPDATE [dbo].[Orders] SET [OrderStatus] = ? WHERE OrderID = ?";
+            PreparedStatement pre = DBConnection.getPreparedStatement(sql);
+            pre.setString(1, order.getOrderStatus()); // assuming `getStatus` method exists in the `Order` class
+            pre.setInt(2, order.getOrderId()); // use `getOrderId` for OrderID
             int upCount = pre.executeUpdate();
             DBConnection.Disconnect();
             return upCount > 0;
         }
         return false;
     }
+    
+    
 }
