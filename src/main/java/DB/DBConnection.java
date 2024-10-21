@@ -33,11 +33,7 @@ public class DBConnection {
             conn = DriverManager.getConnection(cnnString);
             if (conn != null) {
                 DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-                System.out.println("Driver name: " + dm.getDriverName());
-                System.out.println("Driver version: " + dm.getDriverVersion());
-                System.out.println("Product name: " + dm.getDatabaseProductName());
-                System.out.println("Product version: " + dm.getDatabaseProductVersion());
-
+                System.out.println("Connected to database!");
             }
         } catch (SQLException | ClassNotFoundException ex) {
         }

@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -28,7 +29,7 @@
                 overflow: hidden;
             }
             .container {
-                background: rgba(0, 0, 0, 0.6);
+                background-color: grey;
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 15px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -95,18 +96,18 @@
         <main class="container">
             <h3>Add Employee</h3>
             <div class="form-content">
-                <form id="employeeForm" action="EmployeeController" method="post" enctype="multipart/form-data">
+                <form id="employeeForm" action="EmployeeController" method="post">
                     <div class="form-group">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" name="username" id="username" class="form-control" placeholder="Username" required>
+                        <input type="text" name="username" class="form-control" placeholder="Username" required>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="form-label">password</label>
-                        <input type="text" class="form-control" name="password" id="password" required>
+                        <label for="password" class="form-label">Password</label>
+                        <input type="text" class="form-control" name="password" required>
                     </div>
                     <div class="form-group">
                         <label for="address" class="form-label">Address</label>
-                        <input type="text" name="address" id="address" class="form-control" placeholder="Address" required>
+                        <input type="text" name="address" id="address" class="form-control" placeholder="Address">
                     </div>
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
@@ -126,23 +127,15 @@
                     </div>
                     <div class="form-group">
                         <label for="pic" class="form-label">Profile Picture</label>
-                        <input type="file" class="form-control" id="pic" name="pic" accept="image/*" required>
+                        <input type="file" class="form-control" id="pic" name="pic" accept="image/*">
                     </div>
-                    <button type="submit" name="add" id="btnNext" class="btn">Add Employee</button>
-                    <a href="#" class="btn btn-secondary mt-3">Back To Main</a>
+                    <input type="submit" class="btn" value="Add Employee"/>
+                    <a href="/EmployeeController" class="btn btn-secondary mt-3">Back To Main</a>
                 </form>
             </div>
         </main>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-        <script>
-            document.getElementById('employeeForm').addEventListener('submit', function (e) {
-                const totalRooms = document.getElementById('txtTotalRooms').value;
-                if (totalRooms <= 0) {
-                    alert('Total Rooms must be a positive number.');
-                    e.preventDefault();
-                }
-            });
-        </script>
+
 
     </body>
 </html>
