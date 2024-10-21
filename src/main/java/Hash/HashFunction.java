@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Project/Maven2/JavaApp/src/main/java/${packagePath}/${mainClassName}.java to edit this template
  */
-
 package Hash;
 
 import java.security.MessageDigest;
@@ -23,9 +22,9 @@ public class HashFunction {
     /**
      * Hashes the provided password with a salt using PBKDF2 With Hmac SHA512.
      *
-     * @param password  The password to hash.
-     * @param salt      The salt to use.
-     * @return          The Base64 encoded hash of the password with the salt.
+     * @param password The password to hash.
+     * @param salt The salt to use.
+     * @return The Base64 encoded hash of the password with the salt.
      */
     public static String hashPassword(String password, byte[] salt) {
         try {
@@ -53,8 +52,8 @@ public class HashFunction {
     }
 
     /**
-     * Compares two byte arrays for equality in a time-constant manner.
-     * Protects against timing attacks.
+     * Compares two byte arrays for equality in a time-constant manner. Protects
+     * against timing attacks.
      *
      * @param a The first byte array.
      * @param b The second byte array.
@@ -70,14 +69,20 @@ public class HashFunction {
         }
         return diff == 0;
     }
-    
+
+    public static String getSaltStringType(byte[] salt) {
+        return Base64.getEncoder().encodeToString(salt); 
+    }
+
     /**
-     * Compares a user's input password to a stored password hash using the provided salt.
+     * Compares a user's input password to a stored password hash using the
+     * provided salt.
      *
      * @param input The user's input password.
      * @param salt The salt used to hash the stored password.
      * @param storedPasswordHash The Base64-encoded hash of the stored password.
-     * @return True if the input password matches the stored password hash, false otherwise.
+     * @return True if the input password matches the stored password hash,
+     * false otherwise.
      */
     public static boolean comparePasswords(String input, String salt, String storedPasswordHash) {
         // Decode the Base64-encoded salt

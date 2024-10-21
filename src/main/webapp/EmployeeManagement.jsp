@@ -22,8 +22,12 @@
                 flex-direction: column;
                 min-height: 100vh;
                 margin: 0;
+                height: 100%;
             }
-
+            .footerIframe {
+                border: none;
+                width: 100%;
+            }
             .card-container {
                 margin-top: 20px;
             }
@@ -55,13 +59,6 @@
                 border: none;
                 width: 100%;
             }
-
-            /* Hide forms initially */
-            #addEmployeeForm,
-            #editEmployeeForm
-            {
-                display: none;
-            }
         </style>
     </head>
 
@@ -69,53 +66,86 @@
         <iframe src="adminNavbar.jsp" height="60px"></iframe>
 
         <!-- User Management -->
-        <div class="row card-container">
+        <div class="container-fluid fullpagecontent">
+
             <div class="col-md-12">
                 <h6 class="card-title">Employee Management</h6>
                 <div class="card">
                     <div class="row">
-                        <div class="col-md-6">
-                            <button id="showAddEmployeeFormBtn" class="btn btn-primary mb-3">Add User</button>
-                            <div id="addEmployeeForm">
-                                <!-- Form to add new user -->
-                            </div>
-                            <div id="editEmployeeForm">
-                                <!-- Form to edit existing user -->
-                            </div>
+                        <div>
+                            <div class="row">
 
-                            <table class="table table-striped">
+                                <a href="/EmployeeController/add" class="btn btn-primary mb-3 col-md-2">Add User</a>
+
+
+                                <input type="text" id="input" onkeyup="searchFunction()" placeholder="Search for names..">
+                            </div>
+                            <table class="table table-striped" id="empList">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Username</th>
+                                        <th>Full name</th>                              
                                         <th>Email</th>
+                                        <th>Created date</th>
+                                        <th>Updated date</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>                            
-                                    <!-- User data will be loaded here -->
-                                    <c:forEach items="${empList}" var="e">
-                                        <thead>
-                                            <tr>
-                                                <td>${e.id}</td>
-                                                <td>${e.userName}</td>
-                                                <td>${e.email}</td>
-                                                <td>Actions</td>
-                                            </tr>
-                                        </thead>
-                                    </c:forEach>
-                            
+                                <!-- User data will be loaded here -->                               
+                                <c:forEach items="${empList}" var="e">
+                                    <tr>
+                                        <td class="col-md-1">${e.id}</td>
+                                        <td class="col-md-1">${e.userName}</td>
+                                        <td class="col-md-3">${e.firstName} ${e.lastName}</td>
+                                        <td class="col-md-3">${e.email}</td>
+                                        <td class="col-md-1">${e.createdAt}</td>
+                                        <td class="col-md-1">${e.updatedAt}</td>                                   
+                                        <td class="col-md-2">
+                                            <form action="/EmployeeController" method="POST" enctype="multipart/form-data">
+                                                <input type="hidden" name="action"/>
+                                                <input onclick="getAction(update)" class="btn btn-secondary" type="submit" value="Update" />
+                                                <input onclick="getAction(delete)" class="btn btn-danger" type="submit" value="Delete" />
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+
                             </table>
-                        </div>
-                        <div class="col-md-6">
-                            <!-- You can add a preview or details section here -->
-                        </div>
+                        </div>                       
                     </div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <iframe src="adminFooter.jsp" height="50px"></iframe>
+            <iframe class="footerIframe" src="adminFooter.jsp" height="70px"></iframe>
         </footer>
     </body>
+    <script>
+        function searchFunction() {
+            // Declare variables
+            var input, filter, table, td, tr, i, txtValue;
+            input = document.getElementById('input');
+            filter = input.value.toUpperCase();
+            table = document.getElementById("empList");
+            tr = table.rows;
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                // Check if td exists
+                if (td) {
+                    txtValue = td.textContent.toUpperCase();
+                    if (txtValue.indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        function getAction(action) {
+            document.querySelector('input[name="action"]').value = action;
+        }
+    </script>
 </html>

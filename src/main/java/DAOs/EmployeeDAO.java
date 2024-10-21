@@ -26,9 +26,9 @@ public class EmployeeDAO {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[User] WHERE RoleID = 3");
             while (rs.next()) {
                 empList.add(new User(rs.getInt("UserID"),
-                        rs.getString("Salt"),
-                        rs.getString("PasswordHash"),
                         rs.getString("Username"),
+                        rs.getString("Salt"),
+                        rs.getString("PasswordHash"),                      
                         rs.getString("Email"),
                         rs.getString("FirstName"),
                         rs.getString("LastName"),
@@ -76,7 +76,9 @@ public class EmployeeDAO {
     public void addEmployee(User emp) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] VALUES(?,?,?,?,?,?,?,?,?)");
+            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] "
+                    + "(Username, Salt, PasswordHash, Email, FirstName, LastName, PhoneNumber, ImageURL, ShippingAddress, RoleID) "
+                    + "VALUES(?,?,?,?,?,?,?,?,?,?)");
             pre.setString(1, emp.getUserName());
             pre.setString(2, emp.getSalt());
             pre.setString(3, emp.getPassword());
@@ -84,10 +86,10 @@ public class EmployeeDAO {
             pre.setString(5, emp.getFirstName());
             pre.setString(6, emp.getLastName());
             pre.setString(7, emp.getPhoneNumber());
-            pre.setString(7, emp.getImgURL());
-            pre.setString(7, emp.getAddress());
-            pre.setInt(8, emp.getRoleID());
-            pre.setInt(9, emp.isIsActive() ? 1 : 0);
+            pre.setString(8, emp.getImgURL());
+            pre.setString(9, emp.getAddress());
+            pre.setInt(10, 3);
+            pre.execute();
             pre.close();
             DBConnection.Disconnect();
         }
@@ -111,6 +113,7 @@ public class EmployeeDAO {
             pre.setString(5, emp.getAddress());
             pre.setInt(6, (emp.isIsActive() ? 1 : 0));
             pre.setInt(7, emp.getId());
+            pre.execute();
             pre.close();
             DBConnection.Disconnect();
         }

@@ -117,7 +117,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
 
-                <a class="navbar-brand">Dashboard</a>
+                <a class="navbar-brand active">Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -126,13 +126,13 @@
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="adminReport.jsp"
+                        <li class="nav-item"><a class="nav-link active" href="adminReport.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Reports</a></li>
-                        <li class="nav-item"><a class="nav-link" href="adminSetting.jsp"
+                        <li class="nav-item"><a class="nav-link active" href="adminSetting.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Settings</a></li>
-                        <li class="nav-item"><a class="nav-link" href="adminControl.jsp"
+                        <li class="nav-item"><a class="nav-link active" href="adminControl.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Control</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/EmployeeController"
+                        <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
