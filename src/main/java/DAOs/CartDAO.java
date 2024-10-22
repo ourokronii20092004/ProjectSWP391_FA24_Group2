@@ -56,7 +56,7 @@ public class CartDAO {
         }
     }
 
-    public void removeCartItem(String cartItemID) {
+    public void removeCartItem(int cartItemID) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
@@ -64,7 +64,7 @@ public class CartDAO {
                 String stm = "DELETE FROM [dbo].[CartItem] "
                         + "WHERE CartItemID LIKE ?";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setString(1, cartItemID);
+                pstm.setInt(1, cartItemID);
                 pstm.executeUpdate();
                 pstm.close();
                 DBConnection.Disconnect();

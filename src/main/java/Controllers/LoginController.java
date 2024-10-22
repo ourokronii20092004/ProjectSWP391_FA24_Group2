@@ -21,23 +21,8 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Nguyen Nhat Dang - CE180010
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
+@WebServlet("/LoginController")
 public class LoginController extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-
-    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -51,6 +36,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+       request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
@@ -64,32 +50,36 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    String username = request.getParameter("username");
-    String password = request.getParameter("password");
-    Account acc = DAOs.LoginDAO.Validate(username, password);
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        Account acc = DAOs.LoginDAO.Validate(username, password);
 
-    if (acc != null) {
-        AccountDAO accountDAO = new AccountDAO();
-        UserDAO userDAO = new UserDAO();               
-        // Find user by username and load full user data
-        int userID = accountDAO.findUserID(acc.getUserName());
+        if (acc != null) {
+            AccountDAO accountDAO = new AccountDAO();
+            UserDAO userDAO = new UserDAO();
+            // Find user by username and load full user data
+            int userID = accountDAO.findUserID(acc.getUserName());
 
-        User user = userDAO.getUserData(userID);                 
-        HttpSession session = request.getSession();
-        session.setAttribute("user", user);
+            User user = userDAO.getUserData(userID);
+            HttpSession session = request.getSession();
+            session.setAttribute("userID", userID);
 
-        // Redirect based on user role
-        if (user.getRoleID() == 1) {
-            response.sendRedirect("dashboard.html");
-        } else if (user.getRoleID() == 2) {
-            response.sendRedirect("homepage.jsp");
+            // Redirect based on user role
+            if (user.getRoleID() == 1) {
+                response.sendRedirect("dashboard.jsp");
+                
+            } else if (user.getRoleID() == 2) {
+                response.sendRedirect("homepage.jsp");
+                
+            } else {
+                response.sendRedirect("homepage.jsp");
+                
+            }
         } else {
-            response.sendRedirect("homepage.jsp");
+            // If account validation fails, redirect to login page with error
+            //response.sendRedirect("login.jsp?check=false");
+            request.getRequestDispatcher("login.jsp?check=false").forward(request, response);
         }
-    } else {
-        // If account validation fails, redirect to login page with error
-        response.sendRedirect("login.jsp?check=false");
-    }       
     }
 
     /**
