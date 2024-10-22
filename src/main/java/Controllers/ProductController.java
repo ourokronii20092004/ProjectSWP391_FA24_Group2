@@ -18,12 +18,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jakarta.servlet.annotation.MultipartConfig;
+import java.io.File;
+import jakarta.servlet.http.Part;
 
 /**
  *
  * @author Le Trung Hau - CE180481
  */
-@WebServlet(name = "ProductController", urlPatterns = {"/"})
+@WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
+@MultipartConfig // For handling file uploads
 public class ProductController extends HttpServlet {
 
     /**
@@ -108,6 +112,12 @@ public class ProductController extends HttpServlet {
                 case "deleted":
                     productList = productDAO.viewDeletedProductList();
                     break;
+                case "delete": {
+                    int productID = Integer.parseInt(request.getParameter("productId"));
+                    productDAO.removeProduct(productID);
+                    response.sendRedirect("ProductController?action=list");
+                    return; //IMPORTANT, TESTING
+                }
                 // SAU NAY THEM CASES THI THEM O DAY
                 default:
                     productList = productDAO.viewProductList();
@@ -115,7 +125,7 @@ public class ProductController extends HttpServlet {
             }
 
             request.setAttribute("productList", productList);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
             dispatcher.forward(request, response);
 
         } catch (SQLException ex) {
@@ -138,8 +148,132 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //processRequest(request, response);
+
+        String action = request.getParameter("action");
+        if (action == null) {
+            action = "list"; // Default action
+        }
         
+        try {
+            ProductDAO productDAO = new ProductDAO();
+
+            switch (action) {
+                case "add": {
+                    String productName = request.getParameter("productName");
+                    String description = request.getParameter("description");
+                    
+                    // INPUT INVALID TEST
+                    if (productName == null || productName.trim().isEmpty()) {
+                        // HANDLE ERROR HERE
+                        request.setAttribute("errorMessage", "Product name is required.");
+                        request.getRequestDispatcher("adminControl.jsp").forward(request, response);
+                        return;//
+                    } 
+
+                    float price = Float.parseFloat(request.getParameter("price"));
+                    int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+                    int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+
+                    //IMG UPLOAD HANDLER
+                    Part filePart = request.getPart("image");
+                    String fileName = getFileName(filePart);
+                    if (fileName == null || fileName.isEmpty()) {
+                        fileName = "default.jpg"; //defaulr
+                    } else {
+                        fileName = new File(fileName).getName();
+                    }
+                    String imageUrl = "img/" + fileName;
+
+                    //
+                    Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
+                    productDAO.addProduct(newProduct);
+                    
+                    //save
+                    if (filePart != null && filePart.getSize() > 0) {
+                        String uploadPath = getServletContext().getRealPath("/img") + File.separator + fileName;
+                        filePart.write(uploadPath);
+                    }
+                    break;
+                }
+                case "update": {
+                    int productId = Integer.parseInt(request.getParameter("productId"));
+                    String updatedProductName = request.getParameter("productName");
+                    String updatedDescription = request.getParameter("description");
+                    float updatedPrice = Float.parseFloat(request.getParameter("price"));
+                    int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
+                    int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+
+                    //IMG UPLOAD HANDLER
+                    Part updateFilePart = request.getPart("image");
+                    String updatedFileName = getFileName(updateFilePart);
+
+                    if (updatedFileName == null || updatedFileName.isEmpty()) {
+                        //DANG FIX
+                        //updatedFileName = productDAO.readProduct(productId).getImageURL();
+                    } else {
+                        updatedFileName = "img/" + new File(updatedFileName).getName();
+                    }
+
+                    Product updatedProduct = new Product(productId, updatedProductName, updatedDescription, updatedPrice, updatedFileName, updatedCategoryId, updatedStockQuantity, null, null);
+                    productDAO.updateProduct(updatedProduct);
+
+                    if (updateFilePart != null && updateFilePart.getSize() > 0) {
+                        String uploadPath = getServletContext().getRealPath("/img") + File.separator + new File(updatedFileName).getName();
+                        updateFilePart.write(uploadPath);
+                    }
+                    break;
+                }
+                
+                //DELETE IS ON TESTING
+                /*case "delete": { 
+                    int productId = Integer.parseInt(request.getParameter("productId"));
+                    Product productToDelete = productDAO.readProduct(productId);
+                    String imageUrl = productToDelete.getImageURL(); 
+                    boolean productDeleted = productDAO.removeProduct(productId); 
+                    if (productDeleted) {
+                        deleteImageFile(imageUrl);
+                    } else {
+                        System.err.println("Error deleting product with ID: " + productId);
+                    }
+                    break;
+                }*/
+            }
+
+            response.sendRedirect("ProductController?action=list");
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NumberFormatException ex) {
+            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    // Helper method to extract file name from Part
+    private String getFileName(Part part) {
+        if (part != null && part.getHeader("content-disposition") != null) {
+            for (String content : part.getHeader("content-disposition").split(";")) {
+                if (content.trim().startsWith("filename")) {
+                    return content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
+                }
+            }
+        }
+        return null;
+    }
+
+    // Helper method to delete an image file
+    private void deleteImageFile(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            String imagePath = getServletContext().getRealPath("/") + imageUrl;
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                boolean deleted = imageFile.delete();
+                if (!deleted) {
+                    //deletion error
+                    System.err.println("Error deleting image: " + imagePath);
+                }
+            }
+        }
     }
 
     /**
@@ -149,7 +283,7 @@ public class ProductController extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Product controller thingy";
     }// </editor-fold>
 
 }

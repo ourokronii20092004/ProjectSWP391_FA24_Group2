@@ -115,7 +115,17 @@ public class ProductDAO {
             pre.close();
             DBConnection.Disconnect();
             if (upCount > 0) {
-                productList.set(productList.indexOf(readProduct(product.getProductID())), product);
+                for (Product p : productList) {
+                    if (p.getProductID() == product.getProductID()) {
+                        p.setProductName(product.getProductName());
+                        p.setDescription(product.getDescription());
+                        p.setPrice(product.getPrice());
+                        p.setImageURL(product.getImageURL());
+                        p.setCategoryID(product.getCategoryID());
+                        p.setStockQuantity(product.getStockQuantity());
+                        break;
+                    }
+                }
                 upCount = 0;
             }
         }

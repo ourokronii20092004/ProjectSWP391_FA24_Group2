@@ -130,7 +130,7 @@
                                                 onclick="parent.location.href = this.href; return false;">Reports</a></li>
                         <li class="nav-item"><a class="nav-link active" href="adminSetting.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Settings</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="adminControl.jsp"
+                        <li class="nav-item"><a class="nav-link active" href="/ProductController"
                                                 onclick="parent.location.href = this.href; return false;">Control</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
