@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  *
  * @author Le Trung Hau - CE180481
  */
-@WebServlet(name = "ProductController", urlPatterns = {"/"})
+@WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
 
     /**
@@ -115,14 +115,14 @@ public class ProductController extends HttpServlet {
             }
 
             request.setAttribute("productList", productList);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
             dispatcher.forward(request, response);
 
         } catch (SQLException ex) {
             Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
             // EXCEPTION
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
-            RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp"); //LAM THEM TRANG ERROR, CHUA CO 404 THI PHAI
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/error.jsp"); //LAM THEM TRANG ERROR, CHUA CO 404 THI PHAI
             dispatcher.forward(request, response);
         }
     }
