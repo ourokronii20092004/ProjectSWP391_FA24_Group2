@@ -24,7 +24,7 @@ public class CartDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM CartItem Where UserID like '" + userID + "'");
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[CartItem] Where UserID like '" + userID + "'");
                 rs.next();
                 CartItem cartItem = new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("ProductID"), rs.getInt("Quantity"));
                 DBConnection.Disconnect();
@@ -40,7 +40,7 @@ public class CartDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                String stm = "INSERT INTO CartItem (CartItemID,UserID,ProductID,Quantity)"
+                String stm = "INSERT INTO [dbo].[CartItem] (CartItemID,UserID,ProductID,Quantity)"
                         + "VALUES(?,?,?,?)";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
                 pstm.setInt(1, cartItem.getCartItemID());
@@ -61,7 +61,7 @@ public class CartDAO {
         if (DBConnection.isConnected()) {
             try {
                 //Delete cartitem from cart
-                String stm = "DELETE FROM CartItem "
+                String stm = "DELETE FROM [dbo].[CartItem] "
                         + "WHERE CartItemID LIKE ?";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
                 pstm.setString(1, cartItemID);
@@ -82,7 +82,7 @@ public class CartDAO {
         cartList.clear();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM CartItem Where CartID like '" + userID + "'");
+            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[CartItem] Where CartID like '" + userID + "'");
             while (rs.next()) {
                 cartList.add(new CartItem(rs.getInt("CartItemID"), 
                                           rs.getInt("UserID"), 

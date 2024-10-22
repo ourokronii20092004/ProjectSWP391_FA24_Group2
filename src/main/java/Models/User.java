@@ -11,14 +11,17 @@ import java.sql.Date;
  * @author phanp
  */
 public class User {
+
     private final int id;
     private String userName;
     private String salt;
     private String password;
-    private String Email;
+    private String email;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
     private String address;
+    private String imgURL;
     private int roleID;
     private boolean isActive;
     private final Date createdAt;
@@ -30,27 +33,28 @@ public class User {
         this.updatedAt = null;
     }
 
-    public User(int id, String userName, String salt, String password, String Email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
+    public User(int id, String userName, String salt, String password, String email, String firstName, String lastName, String phoneNumber, String address, String imgURL, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;
         this.userName = userName;
         this.salt = salt;
         this.password = password;
-        this.Email = Email;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
         this.address = address;
+        this.imgURL = imgURL;
         this.roleID = roleID;
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    
-    
-    public User(int id, String userName, String password, String Email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
+
+    public User(int id, String userName, String password, String email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;
         this.userName = userName;
         this.password = password;
-        this.Email = Email;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -59,21 +63,31 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    
-     public User(int id, String Email, String firstName, String lastName, String address, Date createdAt, Date updatedAt) {
+
+    public User(int id, String email, String firstName, String lastName, String phoneNumber, String imgURL, String address, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.Email = Email;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.imgURL = imgURL;
         this.address = address;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
+    public User(int aInt, String string, String string0, String string1, String string2, String string3, String string4, String string5, int aInt0, boolean b, Date date, Date date0) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    
+
+    
+
     public int getId() {
         return id;
     }
-    
+
     public String getUserName() {
         return userName;
     }
@@ -99,11 +113,11 @@ public class User {
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String Email) {
-        this.Email = Email;
+        this.email = Email;
     }
 
     public String getFirstName() {
@@ -153,4 +167,21 @@ public class User {
     public Date getUpdatedAt() {
         return updatedAt;
     }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getImgURL() {
+        return imgURL;
+    }
+
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
+    }
+
 }

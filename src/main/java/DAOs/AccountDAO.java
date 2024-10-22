@@ -23,7 +23,7 @@ public class AccountDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM User where Username like '" + username + "'");
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[User] where Username like '" + username + "'");
                 rs.next();
                 int id = rs.getInt("UserID");
                 DBConnection.Disconnect();
@@ -44,7 +44,7 @@ public class AccountDAO {
         if (DBConnection.isConnected()) {
 
             try ( PreparedStatement pre = DBConnection.getPreparedStatement(
-                    "UPDATE User "
+                    "UPDATE [dbo].[User] "
                     + "SET Email = ?, "
                     + "    firstName = ?, "
                     + "    lastName = ?, "

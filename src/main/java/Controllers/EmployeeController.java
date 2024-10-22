@@ -4,19 +4,26 @@
  */
 package Controllers;
 
+import Models.User;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author CE181515 - Phan Viet Phat
  */
-@WebServlet(name = "EmployeeController", urlPatterns = {"/EmployeeController"})
+@WebServlet("/EmployeeController/*")
 public class EmployeeController extends HttpServlet {
 
     /**
@@ -36,7 +43,7 @@ public class EmployeeController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployeeController</title>");            
+            out.println("<title>Servlet EmployeeController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet EmployeeController at " + request.getContextPath() + "</h1>");
@@ -57,7 +64,34 @@ public class EmployeeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String path = request.getRequestURI(),
+                contextPath = request.getContextPath();
+        System.out.println("Requested Path: " + path);
+        System.out.println("Context Path: " + contextPath);
+        
+        if (path.startsWith("/EmployeeController")) {
+            if (path.equals("/EmployeeController")) {
+                try {
+                    ArrayList<User> empList = new DAOs.EmployeeDAO().viewEmployeeList();
+                    request.setAttribute("empList", empList);
+                    RequestDispatcher ds = request.getRequestDispatcher("EmployeeManagement.jsp");
+                    System.out.println(request.getRequestURI());
+                    System.out.println(request.getContextPath());
+                    ds.forward(request, response);
+                    return;
+                } catch (SQLException ex) {
+                    Logger.getLogger(EmployeeController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (path.equals("/EmployeeController/add")) {
+                System.out.println(request.getRequestURI());
+                System.out.println(request.getContextPath());
+                request.getSession().setAttribute("action", "add");
+                request.getRequestDispatcher(contextPath + "/EmployeeForm.jsp").forward(request, response);
+            }
+        } else {
+            // Handle other requests or return a 404 error
+        }
+        
     }
 
     /**
@@ -71,7 +105,39 @@ public class EmployeeController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        String username = request.getParameter("username"),
+                password = request.getParameter("password"),
+                address = request.getParameter("address"),
+                email = request.getParameter("email"),
+                firstName = request.getParameter("firstName"),
+                lastName = request.getParameter("lastName"),
+                phoneNumber = request.getParameter("phoneNumber");
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(address);
+        System.out.println(firstName);
+        System.out.println(lastName);
+        System.out.println(phoneNumber);
+        System.out.println(email);
+        File pic = null;
+        
+        String action = (String) request.getSession().getAttribute("action");
+        System.out.println(action);
+        if (action.equals("add")) {
+            request.getSession().removeAttribute("action");
+            byte[] salt = Hash.HashFunction.generateSalt();
+            password = Hash.HashFunction.hashPassword(password, salt);
+            User emp = new User(-1, username, Hash.HashFunction.getSaltStringType(salt), password, email, firstName, lastName, phoneNumber, address, null, 3, true, null, null);
+                          
+            try {
+                new DAOs.EmployeeDAO().addEmployee(emp);
+                response.sendRedirect("/EmployeeController");
+            } catch (SQLException ex) {
+                Logger.getLogger(EmployeeController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
     }
 
     /**

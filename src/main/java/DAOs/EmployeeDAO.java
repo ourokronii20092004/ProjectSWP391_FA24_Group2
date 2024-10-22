@@ -16,16 +16,11 @@ import java.util.ArrayList;
  * @author phanp
  */
 public class EmployeeDAO {
-    
-    public ArrayList<User> empList = new ArrayList<>();
+
     private int upCount;
 
-    public EmployeeDAO() throws SQLException {
-        viewEmployeeList();
-    }
-
-    private void viewEmployeeList() throws SQLException {
-        empList.clear();
+    public ArrayList<User> viewEmployeeList() throws SQLException {
+        ArrayList<User> empList = new ArrayList<>();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[User] WHERE RoleID = 3");
@@ -33,27 +28,47 @@ public class EmployeeDAO {
                 empList.add(new User(rs.getInt("UserID"),
                         rs.getString("Username"),
                         rs.getString("Salt"),
-                        rs.getString("PasswordHash"),
+                        rs.getString("PasswordHash"),                      
                         rs.getString("Email"),
                         rs.getString("FirstName"),
                         rs.getString("LastName"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("ImageURL"),
                         rs.getString("ShippingAddress"),
                         rs.getInt("RoleID"),
                         rs.getByte("IsActive") == 1,
                         rs.getDate("CreatedAt"),
                         rs.getDate("UpdatedAt")));
             }
+            DBConnection.Disconnect();
         }
+        return empList;
     }
 
     public User readEmployee(int id) throws SQLException {
-        if (empList.isEmpty()) {
-            return null;
-        }
-        for (User u : empList) {
-            if (u.getId() == id) {
-                return u;
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                User emp;
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[User] WHERE UserID = " + id);
+                rs.next();
+                emp = new User(rs.getInt("UserID"),
+                        rs.getString("Username"),
+                        rs.getString("Email"),
+                        rs.getString("FirstName"),
+                        rs.getString("LastName"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("ImageURL"),
+                        rs.getString("ShippingAddress"),
+                        rs.getInt("RoleID"),
+                        rs.getByte("IsActive") == 1,
+                        rs.getDate("CreatedAt"),
+                        rs.getDate("UpdatedAt"));
+                DBConnection.Disconnect();
+                return emp;
             }
+        } catch (SQLException e) {
+
         }
         return null;
     }
@@ -61,24 +76,22 @@ public class EmployeeDAO {
     public void addEmployee(User emp) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] VALUES(?,?,?,?,?,?,?,?,?,NULL,NULL)");
+            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] "
+                    + "(Username, Salt, PasswordHash, Email, FirstName, LastName, PhoneNumber, ImageURL, ShippingAddress, RoleID) "
+                    + "VALUES(?,?,?,?,?,?,?,?,?,?)");
             pre.setString(1, emp.getUserName());
             pre.setString(2, emp.getSalt());
             pre.setString(3, emp.getPassword());
             pre.setString(4, emp.getEmail());
             pre.setString(5, emp.getFirstName());
             pre.setString(6, emp.getLastName());
-            pre.setString(7, emp.getAddress());
-            pre.setInt(8, emp.getRoleID());
-            pre.setInt(9, emp.isIsActive() ? 1 : 0);
-            upCount = pre.executeUpdate();
+            pre.setString(7, emp.getPhoneNumber());
+            pre.setString(8, emp.getImgURL());
+            pre.setString(9, emp.getAddress());
+            pre.setInt(10, 3);
+            pre.execute();
             pre.close();
             DBConnection.Disconnect();
-            if (upCount > 0) {
-                viewEmployeeList();
-                upCount = 0;
-            }
-
         }
     }
 
@@ -88,21 +101,21 @@ public class EmployeeDAO {
             PreparedStatement pre = DBConnection.getPreparedStatement("UPDATE [dbo].[User] SET "
                     + "[FirstName] = ?"
                     + ",[LastName] = ?"
+                    + ",[PhoneNumber] = ?"
+                    + ", [ImageURL] = ?"
                     + ",[ShippingAddress] = ?"
-                    + ",[IsActive] = ? "
-                    + "WHERE UserID = ?");
+                    + ",[IsActive] = ?"
+                    + " WHERE UserID = ?");
             pre.setString(1, emp.getFirstName());
             pre.setString(2, emp.getLastName());
-            pre.setString(3, emp.getAddress());
-            pre.setInt(4, (emp.isIsActive() ? 1 : 0));
-            pre.setInt(5, emp.getId());
-            upCount = pre.executeUpdate();
+            pre.setString(3, emp.getPhoneNumber());
+            pre.setString(4, emp.getImgURL());
+            pre.setString(5, emp.getAddress());
+            pre.setInt(6, (emp.isIsActive() ? 1 : 0));
+            pre.setInt(7, emp.getId());
+            pre.execute();
             pre.close();
             DBConnection.Disconnect();
-            if (upCount > 0) {
-                empList.set(empList.indexOf(readEmployee(emp.getId())), emp);
-                upCount = 0;
-            }
         }
     }
 
@@ -111,10 +124,9 @@ public class EmployeeDAO {
         if (DBConnection.isConnected()) {
             upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
                     + "SET isActive = 0"
-                    + "WHERE UserID = " + id
+                    + " WHERE UserID = " + id
             );
             DBConnection.Disconnect();
-            readEmployee(id).setIsActive(false);
             if (upCount > 0) {
                 upCount = 0;
                 return true;

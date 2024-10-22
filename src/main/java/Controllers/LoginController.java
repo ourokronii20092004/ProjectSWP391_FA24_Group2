@@ -51,24 +51,6 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        if (user != null) {
-            if (user.getRoleID() == 1) {
-                // Admin role
-                response.sendRedirect("dashboard.jsp");
-            } else if (user.getRoleID() == 2) {
-                // Other role
-                response.sendRedirect("blabla.jsp");
-            } else {
-                // Default role, or another user role
-                response.sendRedirect("blabla.jsp");
-            }
-        } else {
-            // User is not logged in
-            response.sendRedirect("login.jsp?check=false");
-        }
     }
 
     /**
@@ -82,29 +64,32 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    String username = request.getParameter("username");
+    String password = request.getParameter("password");
+    Account acc = DAOs.LoginDAO.Validate(username, password);
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        Account acc = DAOs.LoginDAO.Validate(username, password);
+    if (acc != null) {
+        AccountDAO accountDAO = new AccountDAO();
+        UserDAO userDAO = new UserDAO();               
+        // Find user by username and load full user data
+        int userID = accountDAO.findUserID(acc.getUserName());
 
-        if (acc != null) {
-            AccountDAO accountDAO = new AccountDAO();
-            UserDAO userDAO = new UserDAO();
+        User user = userDAO.getUserData(userID);                 
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
 
-            // Find user by username and load full user data
-            int userID = accountDAO.findUserID(acc.getUserName());
-            User user = userDAO.getUserData(userID);
-
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-
-            // Redirect based on role (handled in doGet)
-            response.sendRedirect(request.getContextPath() + "/your-servlet-url");
-
+        // Redirect based on user role
+        if (user.getRoleID() == 1) {
+            response.sendRedirect("dashboard.html");
+        } else if (user.getRoleID() == 2) {
+            response.sendRedirect("homepage.jsp");
         } else {
-            // Invalid login credentials
-            response.sendRedirect("login.jsp?check=false");
+            response.sendRedirect("homepage.jsp");
         }
+    } else {
+        // If account validation fails, redirect to login page with error
+        response.sendRedirect("login.jsp?check=false");
+    }       
     }
 
     /**
