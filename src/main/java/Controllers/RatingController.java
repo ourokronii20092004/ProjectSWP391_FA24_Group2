@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  *
  * @author Nguyen Nhat Dang - CE180010
  */
-@WebServlet(name = "RatingController", urlPatterns = {"/kjkjkjkj"})
+@WebServlet(name = "RatingController", urlPatterns = {"/RatingController"})
 public class RatingController extends HttpServlet {
 
     /**

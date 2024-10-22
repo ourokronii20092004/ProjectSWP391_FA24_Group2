@@ -2,7 +2,7 @@
     Document   : index
     Created on : Oct 15, 2024, 2:09:05 PM
     Author     : phanp
---%>
+--%>        
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
