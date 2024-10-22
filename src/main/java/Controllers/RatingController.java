@@ -72,8 +72,8 @@ public class RatingController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        Models.User user = (Models.User) request.getSession().getAttribute("user");
-        int userID = user.getId();
+        int userID =(int)request.getSession().getAttribute("userID");
+        
         String ratingID = request.getParameter("ratingID");
         String productID = request.getParameter("productID");
         String ratingValue = request.getParameter("ratingValue");

@@ -228,4 +228,27 @@ public class ProductDAO {
         }
         return searchResult;
     }
+        public Product getProductByID(int productID) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try {
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[Product] Where ProductID like '" + productID + "'");
+                rs.next();
+                Product product = new Product(
+                        rs.getInt("ProductID"),
+                        rs.getString("ProductName"),
+                        rs.getString("Description"),
+                        rs.getFloat("Price"),
+                        rs.getString("ImageURL"),
+                        rs.getInt("CategoryID"),
+                        rs.getInt("StockQuantity"),
+                        rs.getDate("CreatedAt"),
+                        rs.getDate("UpdatedAt"));
+                DBConnection.Disconnect();
+                return product;
+            } catch (SQLException e) {                
+            }
+        }
+        return null;
+    }
 }

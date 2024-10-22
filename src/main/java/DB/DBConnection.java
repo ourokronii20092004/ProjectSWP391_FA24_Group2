@@ -15,7 +15,7 @@ public class DBConnection {
     private static String cnnString = "jdbc:sqlserver://localhost:1433;"
             + "databaseName=FlowerShop;"
             + "user=sa;"
-            + "password=sa;"
+            + "password=123;"
             + "encrypt=true;trustServerCertificate=true;";
     private static Connection conn = null;
 
