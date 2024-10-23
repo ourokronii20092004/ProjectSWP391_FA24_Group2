@@ -93,7 +93,7 @@
                                 </tr>                       
                                 <!-- User data will be loaded here -->      
 
-                                <c:forEach items="${empList}" var="e">
+                                <c:forEach items="${empList}" var="e">                                 
                                     <c:if test="${e.isActive == true}">
                                         <tr>
                                             <td class="col-md-1">
@@ -104,7 +104,7 @@
                                             <td class="col-md-1">${e.id}</td>
                                             <td class="col-md-1">${e.userName}</td>
                                             <td class="col-md-2">${e.firstName} ${e.lastName}</td>
-                                            <td class="col-md-3">${e.email}</td>
+                                            <td class="col-md-3">${e.email}</td>                                       
                                             <td class="col-md-1">${e.createdAt}</td>
                                             <td class="col-md-1">${e.updatedAt}</td>                                   
                                             <td class="col-md-2">
@@ -119,7 +119,7 @@
                                                         data-user-phoneNumber="${e.phoneNumber}"
                                                         data-user-imgURL="${e.imgURL}"
                                                         class="btn btn-secondary">Details</button>
-                                                <a href="/EmployeeController/deactivate?userID=${e.id}" class="btn btn-danger">Remove</a>   
+                                                <a onclick="return confirm('Are you sure you want to delete User: ${e.userName} | ID: ${e.id}?')" href="/EmployeeController/deactivate?userID=${e.id}" class="btn btn-danger">Remove</a>   
                                             </td>
                                         </tr>
                                     </c:if>
@@ -174,8 +174,10 @@
                                 <label for="pic" class="form-label">Profile Picture</label>
                                 <input type="file" class="form-control" id="pic" name="pic" accept="image/*" disabled="">
                             </div>
-                            <input type="submit" class="btn btn-primary" value="Add Employee"/>      
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <div class=" form-group d-flex justify-content-center">
+                                <input type="submit" class="btn btn-primary me-3 p-2" value="Add employee"/>
+                                <button type="button" class="btn btn-secondary me-3 p-2" data-bs-dismiss="modal">Close</button>   
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">                                         
@@ -225,12 +227,14 @@
                                 <label for="editPhoneNumber" class="form-label">Phone Number</label>
                                 <input type="text" name="phoneNumber" id="editPhoneNumber" class="form-control" placeholder="Phone Number" required>
                             </div>
-                            <div class="form-group">
+                            <div class=" form-group">
                                 <label for="editImgURL" class="form-label">Profile Picture</label>
                                 <input type="file" class="form-control" id="editImgURL" name="pic" accept="image/*" disabled="">
                             </div>
-                            <input type="submit" class="btn btn-primary" value="Update"/>      
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <div class=" form-group d-flex justify-content-center">
+                                <input type="submit" class="btn btn-primary me-3 p-2" value="Update"/>
+                                <button type="button" class="btn btn-secondary me-3 p-2" data-bs-dismiss="modal">Close</button>   
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">                                         

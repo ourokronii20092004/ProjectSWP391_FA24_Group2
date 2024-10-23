@@ -36,13 +36,14 @@ public class EmployeeDAO {
                             rs.getString("FirstName"),
                             rs.getString("LastName"),
                             rs.getString("PhoneNumber"),
-                            rs.getString("ImageURL"),
                             rs.getString("ShippingAddress"),
+                            rs.getString("ImageURL"),
                             rs.getInt("RoleID"),
                             rs.getByte("IsActive") == 1,
                             rs.getDate("CreatedAt"),
-                            rs.getDate("UpdatedAt")));
+                            rs.getDate("UpdatedAt")));                  
                 }
+               
                 DBConnection.Disconnect();
             } catch (SQLException ex) {
                 return empList;
