@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">
-                                    <h5 class="card-title">${product.name}</h5>
+                                    <h5 class="card-title">${product.productName}</h5>
                                     <p class="card-text">${product.description}</p>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                                 <!-- Nút để xóa một mục cụ thể -->
                                 <form action="/CartController" method="post">
                                     <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="cartItemId" value="${item.id}">
+                                    <input type="hidden" name="cartItemId" value="${item.cartItemID}">
                                     <button class="btn delete-btn btn-sm" type="submit">Delete</button>
                                 </form>
                             </div>
@@ -101,7 +101,6 @@
                         </form>
                     </div>
                     <div class="d-flex align-items-center mt-3">
-                        <p class="mt-3 me-2">Total Payment (${totalItems} Products): ₫${totalPayment}</p>
                         <form action="/OrderController" method="post">
                             <button class="btn buy-now" type="submit">Buy</button>
                         </form>
