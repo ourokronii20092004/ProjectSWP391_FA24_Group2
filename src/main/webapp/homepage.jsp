@@ -40,9 +40,11 @@
                 </nav>
                 <div class="d-flex align-items-center gap-3">
                     <a class="nav-link" href="#">Hello, Nguyen Nhat Dang</a>
-                    <a href="cart.jsp">
-                        <img src="../img/icon/shopping-cart.svg" alt="Cart" class="cart-icon" >
-                    </a>
+                    <form action="/CartController" method="POST" style="display: inline;">
+                        <button type="submit" style="border: none; background: none; padding: 0;">
+                            <img src="../img/icon/shopping-cart.svg" alt="Cart" class="cart-icon">
+                        </button>
+                    </form>
                     <!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
                                             <path

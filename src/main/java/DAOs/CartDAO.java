@@ -82,7 +82,7 @@ public class CartDAO {
         cartList.clear();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[CartItem] Where CartID like '" + userID + "'");
+            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[CartItem] Where UserID like '2'");
             while (rs.next()) {
                 cartList.add(new CartItem(rs.getInt("CartItemID"), 
                                           rs.getInt("UserID"), 

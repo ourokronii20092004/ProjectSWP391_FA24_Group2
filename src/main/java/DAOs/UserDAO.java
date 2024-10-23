@@ -30,6 +30,8 @@ public class UserDAO {
                         rs.getString("Email"),
                         rs.getString("FirstName"),
                         rs.getString("LastName"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("ImageURL"),
                         rs.getString("ShippingAddress"),
                         rs.getInt("RoleID"),
                         rs.getByte("IsActive") == 1,

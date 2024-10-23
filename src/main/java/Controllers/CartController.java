@@ -55,7 +55,7 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+    request.getRequestDispatcher("cart.jsp").forward(request, response);
     }
 
     /**
@@ -69,12 +69,12 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int userID = (int) request.getSession().getAttribute("userID");
+        //int userID = (int) request.getSession().getAttribute("userID");
+        int userID = 2;
         // Retrieve form data
 
         CartDAO cartDAO = new CartDAO();
         ProductDAO productDAO = new ProductDAO();
-        
         try {
 
             String action = request.getParameter("action");
@@ -85,7 +85,6 @@ public class CartController extends HttpServlet {
                 case "list":
                     // Retrieve list of cart items
                     ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
-
                     // Create a list of products for each cart item
                     ArrayList<Product> listProduct = new ArrayList<>();
                     for (CartItem cartItem : listCart) {
@@ -96,6 +95,7 @@ public class CartController extends HttpServlet {
                     // Set attributes for cart and products
                     request.setAttribute("cartList", listCart);
                     request.setAttribute("productList", listProduct);
+                    
                     break;
                 case "add":
                     // Retrieve product ID and quantity from request
@@ -154,6 +154,7 @@ public class CartController extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
+    
 
     /**
      * Returns a short description of the servlet.
