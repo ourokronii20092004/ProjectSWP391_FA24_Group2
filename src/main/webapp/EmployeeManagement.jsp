@@ -64,7 +64,6 @@
 
     <body>
         <iframe src="adminNavbar.jsp" height="60px"></iframe>
-
         <!-- User Management -->
         <div class="container-fluid fullpagecontent">
             <div class="col-md-12">
@@ -76,8 +75,7 @@
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-primary mb-3 col-md-2" data-bs-toggle="modal" data-bs-target="#addEmployee">
                                     Add User
-                                </button>
-
+                                </button>                               
                                 <input type="text" id="input" onkeyup="searchFunction()" placeholder="Search for names..">
                             </div>
                             <table class="table table-striped" id="empList">                             
@@ -93,13 +91,18 @@
                                 </tr>                       
                                 <!-- User data will be loaded here -->      
 
-                                <c:forEach items="${empList}" var="e">                                 
+                                <c:forEach items="${empList}" var="e">  
                                     <c:if test="${e.isActive == true}">
                                         <tr>
                                             <td class="col-md-1">
-                                                <c:if test="${p.imageURL != null}">
-                                                    <img src="${p.imageURL}" alt="${p.productName}" height="50">
-                                                </c:if>
+                                                <c:choose>
+                                                    <c:when test="${p.imageURL != null}">
+                                                        <img src="${p.imageURL}" alt="${p.productName}" height="50">
+                                                    </c:when> 
+                                                    <c:otherwise>
+                                                        <img src="img/avt1.jpg" alt="${p.productName}" height="50">
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                             <td class="col-md-1">${e.id}</td>
                                             <td class="col-md-1">${e.userName}</td>
