@@ -68,6 +68,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+      
         try {
             /*
             list: gom het tru may cai da xoa
@@ -76,7 +77,7 @@ public class ProductController extends HttpServlet {
             searchByName: search gan giong ten
             searchByCategory: search id category
             deleted: gom het may cai da xoa
-            */
+             */
             String action = request.getParameter("action");
             if (action == null) {
                 action = "list";
@@ -156,7 +157,7 @@ public class ProductController extends HttpServlet {
         if (action == null) {
             action = "list"; // Default action
         }
-        
+
         try {
             ProductDAO productDAO = new ProductDAO();
 
@@ -164,14 +165,14 @@ public class ProductController extends HttpServlet {
                 case "add": {
                     String productName = request.getParameter("productName");
                     String description = request.getParameter("description");
-                    
+
                     // INPUT INVALID TEST
                     if (productName == null || productName.trim().isEmpty()) {
                         // HANDLE ERROR HERE
                         request.setAttribute("errorMessage", "Product name is required.");
                         request.getRequestDispatcher("adminControl.jsp").forward(request, response);
                         return;//
-                    } 
+                    }
 
                     float price = Float.parseFloat(request.getParameter("price"));
                     int categoryId = Integer.parseInt(request.getParameter("categoryId"));
@@ -190,7 +191,7 @@ public class ProductController extends HttpServlet {
                     //
                     Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
                     productDAO.addProduct(newProduct);
-                    
+
                     //save
                     if (filePart != null && filePart.getSize() > 0) {
                         String uploadPath = getServletContext().getRealPath("/img") + File.separator + fileName;
@@ -226,7 +227,7 @@ public class ProductController extends HttpServlet {
                     }
                     break;
                 }
-                
+
                 //DELETE IS ON TESTING
                 /*case "delete": { 
                     int productId = Integer.parseInt(request.getParameter("productId"));
@@ -250,7 +251,7 @@ public class ProductController extends HttpServlet {
             Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     // Helper method to extract file name from Part
     private String getFileName(Part part) {
         if (part != null && part.getHeader("content-disposition") != null) {

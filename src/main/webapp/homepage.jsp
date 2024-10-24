@@ -4,6 +4,8 @@
     Author     : phanp
 --%>
 
+<%@page import="java.util.ArrayList"%>
+<%@page import="DAOs.ProductDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
@@ -13,7 +15,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PAMB HomePage</title>
-        <link rel="stylesheet" href="../css/homepage.css">
+        
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
@@ -126,18 +128,28 @@
                         </div>
                     </div>
                 </aside>
-                <div class="d-flex flex-wrap gap-4 flex-grow-1">
-                    <c:forEach items="${productList}" var="p">
-                        <div class="product-card">
-                            <img src="${p.imageURL}" alt="${p.productName} Image">
-                            <div class="p-3">
-                                <a href="#"><h3 class="h5">${p.productName}</h3></a>
-                                <p class="text-muted">$${p.price}</p>
-                                <button class="btn btn-primary mt-2">Add to Cart</button>
+                <section class="product-section container" id="product-section">
+                    <div class="row">
+                        <%
+                            ProductDAO productDao = new ProductDAO();
+                            ArrayList<Models.Product> list = productDao.viewProductList();
+                            for (Models.Product pro : list) {
+                        %>
+                        <div class="col-md-4 col-sm-6 mb-4">
+                            <div class="card h-100">
+                                <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1seuY7.img?w=768&h=512&m=6" alt="Product Image" class="card-img-top">
+                                <div class="card-body text-center">
+                                    <a href="#"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
+                                    <p class="text-muted"><%= pro.getPrice()%></p>
+                                    <button class="btn btn-primary mt-2">Add to Cart</button>
+                                </div>
                             </div>
                         </div>
-                    </c:forEach>
-                </div>
+                        <%
+                            }
+                        %>
+                    </div>
+                </section>
             </main>
         </div>
     </body>

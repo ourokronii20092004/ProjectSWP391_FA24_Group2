@@ -6,9 +6,11 @@ package DAOs;
 
 import DB.DBConnection;
 import Models.Product;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -238,7 +240,8 @@ public class ProductDAO {
         }
         return searchResult;
     }
-        public Product getProductByID(int productID) {
+
+    public Product getProductByID(int productID) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
@@ -256,9 +259,27 @@ public class ProductDAO {
                         rs.getDate("UpdatedAt"));
                 DBConnection.Disconnect();
                 return product;
-            } catch (SQLException e) {                
+            } catch (SQLException e) {
             }
         }
         return null;
+    }
+
+    public ResultSet getAll() {
+        DBConnection.Connect();
+        ResultSet rs = null;
+
+        if (DBConnection.isConnected()) {
+            try {
+               
+                rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[Product]");
+                while(rs.next()){
+                    System.out.println("phat");
+                }
+            } catch (Exception ex) {
+                rs = null;
+            }
+        }
+        return rs;
     }
 }
