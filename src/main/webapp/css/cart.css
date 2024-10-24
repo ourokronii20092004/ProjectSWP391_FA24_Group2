@@ -1,0 +1,54 @@
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.new-price {
+    color: red;
+    font-size: 1.2rem;
+}
+
+.flash-sale {
+    color: red;
+    font-size: 0.9rem;
+}
+
+.buy-now {
+    background-color: #FF5722;
+    color: white;
+    border: none;
+}
+
+.buy-now:hover {
+    background-color: #e04e1c;
+}
+
+/* Additional styling for better UI */
+.card {
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-checkbox {
+    margin-right: 15px;
+    border-color: black;
+}
+
+.product-image {
+    max-width: 100px;
+}
+
+.delete-btn {
+    background-color: #FF0000;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #cc0000;
+}
+
+.select-all {
+    margin-left: 15px;
+}
+
+

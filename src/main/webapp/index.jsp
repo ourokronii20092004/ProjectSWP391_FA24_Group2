@@ -2,7 +2,7 @@
     Document   : index
     Created on : Oct 15, 2024, 2:09:05 PM
     Author     : phanp
---%>
+--%>        
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -39,7 +39,7 @@
                     <a href="#" class="text-decoration-none text-muted">Contact</a>
                 </nav>
                 <div class="d-flex align-items-center gap-3">
-                    <a href="login.jsp" class="btn btn-outline-primary">Login</a>
+                    <a href="/LoginController" class="btn btn-outline-primary">Login</a>
                     <a href="register.jsp" class="btn btn-primary">Sign Up</a>
 <!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">

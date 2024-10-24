@@ -15,9 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -68,30 +65,21 @@ public class EmployeeController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
-        
+
         if (path.startsWith("/EmployeeController")) {
-            if (path.equals("/EmployeeController")) {
-                try {
-                    ArrayList<User> empList = new DAOs.EmployeeDAO().viewEmployeeList();
-                    request.setAttribute("empList", empList);
-                    RequestDispatcher ds = request.getRequestDispatcher("EmployeeManagement.jsp");
-                    System.out.println(request.getRequestURI());
-                    System.out.println(request.getContextPath());
-                    ds.forward(request, response);
-                    return;
-                } catch (SQLException ex) {
-                    Logger.getLogger(EmployeeController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else if (path.equals("/EmployeeController/add")) {
-                System.out.println(request.getRequestURI());
-                System.out.println(request.getContextPath());
-                request.getSession().setAttribute("action", "add");
-                request.getRequestDispatcher(contextPath + "/EmployeeForm.jsp").forward(request, response);
+            if (path.contains("deactivate")) {
+                System.out.println("deactivate");
+                doPost(request, response);
+            } else {
+                System.out.println("list");
+                ArrayList<User> empList = new DAOs.EmployeeDAO().viewEmployeeList();
+                request.setAttribute("empList", empList);
+                RequestDispatcher ds = request.getRequestDispatcher("EmployeeManagement.jsp");
+                ds.forward(request, response);
+                return;
             }
-        } else {
-            // Handle other requests or return a 404 error
         }
-        
+
     }
 
     /**
@@ -105,14 +93,19 @@ public class EmployeeController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        String username = request.getParameter("username"),
+        String path = request.getRequestURI(),
+                contextPath = request.getContextPath();
+        System.out.println("Requested Path: " + path);
+        System.out.println("Context Path: " + contextPath);
+        String userID = request.getParameter("userID") == null ? "-1" : request.getParameter("userID"),
+                username = request.getParameter("username"),
                 password = request.getParameter("password"),
                 address = request.getParameter("address"),
                 email = request.getParameter("email"),
                 firstName = request.getParameter("firstName"),
                 lastName = request.getParameter("lastName"),
                 phoneNumber = request.getParameter("phoneNumber");
+        System.out.println(userID);
         System.out.println(username);
         System.out.println(password);
         System.out.println(address);
@@ -121,33 +114,24 @@ public class EmployeeController extends HttpServlet {
         System.out.println(phoneNumber);
         System.out.println(email);
         File pic = null;
-        
+        User emp = new User(Integer.parseInt(userID), username, null, null, email, firstName, lastName, phoneNumber, address, null, 3, true, null, null);
         String action = (String) request.getSession().getAttribute("action");
-        System.out.println(action);
-        if (action.equals("add")) {
-            request.getSession().removeAttribute("action");
-            byte[] salt = Hash.HashFunction.generateSalt();
-            password = Hash.HashFunction.hashPassword(password, salt);
-            User emp = new User(-1, username, Hash.HashFunction.getSaltStringType(salt), password, email, firstName, lastName, phoneNumber, address, null, 3, true, null, null);
-                          
-            try {
-                new DAOs.EmployeeDAO().addEmployee(emp);
-                response.sendRedirect("/EmployeeController");
-            } catch (SQLException ex) {
-                Logger.getLogger(EmployeeController.class.getName()).log(Level.SEVERE, null, ex);
+        if (path.startsWith("/EmployeeController")) {
+            DAOs.EmployeeDAO DAO = new DAOs.EmployeeDAO();
+            if (path.contains("add")) {
+                byte[] salt = Hash.HashFunction.generateSalt();
+                password = Hash.HashFunction.hashPassword(password, salt);
+                emp.setSalt(Hash.HashFunction.getSaltStringType(salt));
+                emp.setPassword(password);
+                DAO.addEmployee(emp);
+            } else if (path.contains("edit")) {
+                DAO.updateEmployee(emp);
+
+            } else if (path.contains("deactivate")) {
+                DAO.removeEmployee(emp.getId());
             }
         }
-        
+        response.sendRedirect("/EmployeeController");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

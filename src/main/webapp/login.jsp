@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="col-md-6 right-box">
-                    <form action="LoginController" method="POST"> 
+                    <form action="LoginController" method="post"> 
                         <div class="row align-items-center">
                             <div class="header-text mb-4">
                                 <h2>PAMB</h2>
