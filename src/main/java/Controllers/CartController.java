@@ -4,10 +4,8 @@
  */
 package Controllers;
 
-import DAOs.ProductDAO;
 import DAOs.CartDAO;
 import Models.CartItem;
-import Models.Product;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,7 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -55,7 +52,7 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    request.getRequestDispatcher("cart.jsp").forward(request, response);
+        request.getRequestDispatcher("cart.jsp").forward(request, response);
     }
 
     /**
@@ -74,7 +71,6 @@ public class CartController extends HttpServlet {
         // Retrieve form data
 
         CartDAO cartDAO = new CartDAO();
-        ProductDAO productDAO = new ProductDAO();
         try {
 
             String action = request.getParameter("action");
@@ -85,17 +81,10 @@ public class CartController extends HttpServlet {
                 case "list":
                     // Retrieve list of cart items
                     ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
-                    // Create a list of products for each cart item
-                    ArrayList<Product> listProduct = new ArrayList<>();
-                    for (CartItem cartItem : listCart) {
-                        Product product = productDAO.getProductByID(cartItem.getProductID());
-                        listProduct.add(product);
-                    }
 
                     // Set attributes for cart and products
                     request.setAttribute("cartList", listCart);
-                    request.setAttribute("productList", listProduct);
-                    
+
                     break;
                 case "add":
                     // Retrieve product ID and quantity from request
@@ -103,21 +92,16 @@ public class CartController extends HttpServlet {
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
 
                     // Create a new CartItem for the current user
-                    CartItem newItem = new CartItem(0, userID, productID, quantity); 
+                    CartItem newItem = new CartItem(0, userID, productID, quantity);
 
                     // Add the item to the cart
                     cartDAO.addCartItem(newItem);
 
                     // Refresh the cart list
                     listCart = cartDAO.viewCartItemList(userID);
-                    listProduct = new ArrayList<>();
-                    for (CartItem item : listCart) {
-                        listProduct.add(productDAO.getProductByID(item.getProductID()));
-                    }
 
                     // Set attributes and forward to the cart page
                     request.setAttribute("cartList", listCart);
-                    request.setAttribute("productList", listProduct);
                     break;
                 case "delete":
                     // Retrieve CartItemID from request
@@ -128,14 +112,9 @@ public class CartController extends HttpServlet {
 
                     // Refresh the cart list
                     listCart = cartDAO.viewCartItemList(userID);
-                    listProduct = new ArrayList<>();
-                    for (CartItem item : listCart) {
-                        listProduct.add(productDAO.getProductByID(item.getProductID()));
-                    }
 
                     // Set attributes and forward to the cart page
                     request.setAttribute("cartList", listCart);
-                    request.setAttribute("productList", listProduct);
                     break;
 
                 default:
@@ -154,7 +133,6 @@ public class CartController extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
-    
 
     /**
      * Returns a short description of the servlet.
