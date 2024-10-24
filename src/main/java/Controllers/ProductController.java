@@ -294,9 +294,8 @@ public class ProductController extends HttpServlet {
                     return;
                     //break;
                 }
+                //DELETE - nuh uh
 
-
-                //OTHER CASES
             }
             if (page.equals("Control")) {
                 response.sendRedirect("ProductController?action=listControl");
