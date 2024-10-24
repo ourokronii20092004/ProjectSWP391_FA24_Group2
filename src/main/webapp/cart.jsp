@@ -44,9 +44,8 @@
                 <h1 class="mb-4">Your Shopping Cart</h1>
 
                 <!-- Iterate through cart items -->
-                <c:forEach var="item" items="${cartList}" varStatus="status">
+                <c:forEach var="item" items="${cartList}">
                     <!-- Với mỗi mục giỏ hàng, lấy sản phẩm tương ứng sử dụng chỉ số trong productList -->
-                    <c:set var="product" value="${productList[status.index]}" />
 
                     <div class="card mb-3">
                         <div class="row g-0 align-items-center">
@@ -55,23 +54,23 @@
                                 <input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}">
                             </div>
                             <div class="col-md-2">
-                                <img src="${product.imageUrl}" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
+                                <img src="" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">
-                                    <h5 class="card-title">${product.productName}</h5>
-                                    <p class="card-text">${product.description}</p>
+                                    <h5 class="card-title">${item.productName}</h5>
+                                    <p class="card-text">${item.description}</p>
                                 </div>
                             </div>
                             <div class="col-md-2 d-flex flex-column justify-content-between">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <p class="price">₫${product.price}</p>
+                                    <p class="price">₫${item.price}</p>
                                 </div>
                                 <div class="input-group mb-3">
                                     <!-- Form để cập nhật số lượng -->
                                     <form action="/CartController" method="post" class="d-flex">
                                         <input type="hidden" name="action" value="update">
-                                        <input type="hidden" name="cartItemId" value="${item.id}">
+                                        <input type="hidden" name="cartItemId" value="${item.cartItemID}">
                                         <button class="btn btn-outline-secondary" type="submit" name="change" value="-">-</button>
                                         <input type="number" class="form-control" name="quantity" value="${item.quantity}" min="1">
                                         <button class="btn btn-outline-secondary" type="submit" name="change" value="+">+</button>

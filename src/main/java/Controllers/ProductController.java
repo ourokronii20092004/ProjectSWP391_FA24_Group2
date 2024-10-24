@@ -67,6 +67,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String path = request.getRequestURI();
         String page = "";
 
@@ -85,6 +86,7 @@ public class ProductController extends HttpServlet {
         searchByCategory: search id category
         deleted: gom het may cai da xoa
         listControl: list top 5 gan nhat cho trang Control
+
              */
             String action = request.getParameter("action");
             if (action == null) {
@@ -217,12 +219,15 @@ public class ProductController extends HttpServlet {
 
                     if (productName == null || productName.trim().isEmpty()) {
                         request.setAttribute("errorMessage", "Product name is required.");
+
+
                         if (page.equals("Control")) {
                             request.getRequestDispatcher("adminControl.jsp").forward(request, response);
                         } else {
                             request.getRequestDispatcher("productManagement.jsp").forward(request, response);
                         }
                         return;
+
                     }
 
                     float price = Float.parseFloat(request.getParameter("price"));
@@ -289,8 +294,8 @@ public class ProductController extends HttpServlet {
                     return;
                     //break;
                 }
-
                 //DELETE - nuh uh
+
             }
             if (page.equals("Control")) {
                 response.sendRedirect("ProductController?action=listControl");

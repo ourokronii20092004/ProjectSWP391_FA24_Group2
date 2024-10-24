@@ -13,7 +13,7 @@ import java.sql.Date;
 public class User {
 
     private final int id;
-    private String userName;
+    private String username;
     private String salt;
     private String password;
     private String email;
@@ -33,9 +33,9 @@ public class User {
         this.updatedAt = null;
     }
 
-    public User(int id, String userName, String salt, String password, String email, String firstName, String lastName, String phoneNumber, String address, String imgURL, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
+    public User(int id, String username, String salt, String password, String email, String firstName, String lastName, String phoneNumber, String address, String imgURL, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.userName = userName;
+        this.username = username;
         this.salt = salt;
         this.password = password;
         this.email = email;
@@ -50,9 +50,9 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public User(int id, String userName, String password, String email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
+    public User(int id, String username, String password, String email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.userName = userName;
+        this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
@@ -66,7 +66,7 @@ public class User {
 
     public User(int id,String username, String email, String firstName, String lastName, String phoneNumber, String imgURL, String address, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.userName = username;
+        this.username = username;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -92,11 +92,11 @@ public class User {
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getSalt() {
