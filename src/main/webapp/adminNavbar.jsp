@@ -134,6 +134,8 @@
                                                 onclick="parent.location.href = this.href; return false;">Control</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/CategoryController"
+                                                onclick="parent.location.href = this.href; return false;">Category</a></li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
