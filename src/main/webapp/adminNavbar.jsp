@@ -130,7 +130,7 @@
                                                 onclick="parent.location.href = this.href; return false;">Reports</a></li>
                         <li class="nav-item"><a class="nav-link active" href="adminSetting.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Settings</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/ProductController"
+                        <li class="nav-item"><a class="nav-link active" href="/ProductController?action=listControl"
                                                 onclick="parent.location.href = this.href; return false;">Control</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
@@ -144,7 +144,7 @@
                         </li>
                         <li class="nav-item d-flex align-items-center">
                             <a href="adminProfile.jsp" onclick="parent.location.href = this.href; return false;"> <img
-                                    src="img/avt1.jpg" alt="Avatar" class="avatar"> </a>
+                                    src="../img/avt/avt3.png" alt="Avatar" class="avatar"> </a>
                             <a href="adminProfile.jsp" onclick="parent.location.href = this.href; return false;"
                                class="username">Endmin</a>
                         </li>
