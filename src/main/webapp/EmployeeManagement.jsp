@@ -96,11 +96,11 @@
                                         <tr>
                                             <td class="col-md-1">
                                                 <c:choose>
-                                                    <c:when test="${p.imageURL != null}">
-                                                        <img src="${p.imageURL}" alt="${p.productName}" height="50">
+                                                    <c:when test="${e.imgURL != null}">
+                                                        <img src="${e.imgURL}" alt="${e.userName}" height="50">
                                                     </c:when> 
                                                     <c:otherwise>
-                                                        <img src="img/avt1.jpg" alt="${p.productName}" height="50">
+                                                        <img src="img/avt1.jpg" alt="${e.userName}" height="50">
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
