@@ -207,44 +207,96 @@
                     </div>
                 </div>
             </div>         
-            
+
             <!-- Category Management -->
             <div class="row card-container">
                 <div class="col-md-12">
                     <h6 class="card-title">Category Management</h6>
                     <div class="card">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <button id="showAddCategoryFormBtn" class="btn btn-primary mb-3">Add Category</button>
-                                <div id="addCategoryForm">
-                                    <!-- Form to add new category -->
-                                    <input type="text" id="categoryName" placeholder="Category Name"
-                                           class="form-control mb-2">
-                                    <button id="addCategoryBtn" class="btn btn-success">Add</button>
+
+                                <c:if test="${not empty message}">
+                                    <div class="alert alert-success" role="alert">${message}</div>
+                                </c:if>
+                                <c:if test="${not empty errorMessage}">
+                                    <div class="alert alert-danger" role="alert">${errorMessage}</div>
+                                </c:if>
+
+                                <div id="addCategoryForm" style="display: none;">
+                                    <form action="categoryController" method="POST">
+                                        <input type="hidden" name="action" value="create">
+                                        <div class="mb-3">
+                                            <label for="categoryName" class="form-label">Category Name:</label>
+                                            <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="parentCategoryId" class="form-label">Parent Category ID (optional):</label>
+                                            <input type="number" class="form-control" id="parentCategoryId" name="parentCategoryId">
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Add Category</button>
+                                    </form>
                                 </div>
-                                <div id="editCategoryForm">
-                                    <!-- Form to edit existing category -->
-                                    <input type="hidden" id="editCategoryId">
-                                    <input type="text" id="editCategoryName" placeholder="Category Name"
-                                           class="form-control mb-2">
-                                    <button id="updateCategoryBtn" class="btn btn-warning">Update</button>
-                                </div>
-                                <table class="table table-striped">
+
+                                <table class="table table-striped" id="categoryListTable">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
                                             <th>Name</th>
+                                            <th>Parent Category ID</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="categoryList">
-                                        <!-- Category data will be loaded here -->
+                                    <tbody>
+                                        <c:forEach items="${categoryList}" var="category">
+                                            <tr>
+                                                <td>${category.categoryId}</td>
+                                                <td>${category.categoryName}</td>
+                                                <td>${category.parentCategoryID}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-warning editCategoryBtn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editCategoryModal"
+                                                            data-category-id="${category.categoryId}"
+                                                            data-category-name="${category.categoryName}"
+                                                            data-category-parent-id="${category.parentCategoryID}">Edit</button>
+                                                    <a href="categoryController?action=delete&categoryId=${category.categoryId}"
+                                                       class="btn btn-sm btn-danger"
+                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa Category này không?')">Delete</a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-md-6">
-                                <!-- You can add a preview or details section here -->
-                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Category Modal -->
+            <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="categoryController" method="POST">
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="categoryId" id="editCategoryId">
+                                <div class="mb-3">
+                                    <label for="editCategoryName" class="form-label">Category Name:</label>
+                                    <input type="text" class="form-control" id="editCategoryName" name="categoryName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editParentCategoryId" class="form-label">Parent Category ID (optional):</label>
+                                    <input type="number" class="form-control" id="editParentCategoryId" name="parentCategoryId">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -331,60 +383,73 @@
         crossorigin="anonymous"></script>
         <script>
 
-            // JavaScript for handling data loading, form submissions, and dynamic updates will go here
+                                                           // JavaScript for handling data loading, form submissions, and dynamic updates will go here
 
-            // Add cat form
-            document.getElementById('showAddCategoryFormBtn').addEventListener('click', function () {
-                document.getElementById('addCategoryForm').style.display = 'block';
-                document.getElementById('editCategoryForm').style.display = 'none';
-            });
+                                                           // Add cat form
+                                                           document.getElementById('showAddCategoryFormBtn').addEventListener('click', function () {
+                                                               document.getElementById('addCategoryForm').style.display = 'block';
+                                                               document.getElementById('editCategoryForm').style.display = 'none';
+                                                           });
 
-            // Show
-            document.getElementById('showAddProductFormBtn').addEventListener('click', function () {
-                document.getElementById('addProductForm').style.display = 'block';
-            });
+                                                           // Show
+                                                           document.getElementById('showAddProductFormBtn').addEventListener('click', function () {
+                                                               document.getElementById('addProductForm').style.display = 'block';
+                                                           });
 
-            // Search Product
-            function searchProduct() {
-                var input, filter, table, tr, td, i, txtValue;
-                input = document.getElementById("productSearchInput");
-                filter = input.value.toUpperCase();
-                table = document.getElementById("productListTable");
-                tr = table.getElementsByTagName("tr");
+                                                           // Search Product
+                                                           function searchProduct() {
+                                                               var input, filter, table, tr, td, i, txtValue;
+                                                               input = document.getElementById("productSearchInput");
+                                                               filter = input.value.toUpperCase();
+                                                               table = document.getElementById("productListTable");
+                                                               tr = table.getElementsByTagName("tr");
 
-                for (i = 0; i < tr.length; i++) {
-                    td = tr[i].getElementsByTagName("td")[2]; // by name
-                    if (td) {
-                        txtValue = td.textContent || td.innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = "";
-                        } else {
-                            tr[i].style.display = "none";
-                        }
-                    }
-                }
-            }
+                                                               for (i = 0; i < tr.length; i++) {
+                                                                   td = tr[i].getElementsByTagName("td")[2]; // by name
+                                                                   if (td) {
+                                                                       txtValue = td.textContent || td.innerText;
+                                                                       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                                                           tr[i].style.display = "";
+                                                                       } else {
+                                                                           tr[i].style.display = "none";
+                                                                       }
+                                                                   }
+                                                               }
+                                                           }
 
-            // edit pro modal 
-            const editProductModal = document.getElementById('editProductModal');
-            editProductModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const productId = button.getAttribute('data-product-id');
-                const productName = button.getAttribute('data-product-name');
-                const productDescription = button.getAttribute('data-product-description');
-                const productPrice = button.getAttribute('data-product-price');
-                const productCategoryId = button.getAttribute('data-product-categoryid');
-                const productStockQuantity = button.getAttribute('data-product-stockquantity');
-                const productImageURL = button.getAttribute('data-product-imageurl');
+                                                           // edit pro modal 
+                                                           const editProductModal = document.getElementById('editProductModal');
+                                                           editProductModal.addEventListener('show.bs.modal', function (event) {
+                                                               const button = event.relatedTarget;
+                                                               const productId = button.getAttribute('data-product-id');
+                                                               const productName = button.getAttribute('data-product-name');
+                                                               const productDescription = button.getAttribute('data-product-description');
+                                                               const productPrice = button.getAttribute('data-product-price');
+                                                               const productCategoryId = button.getAttribute('data-product-categoryid');
+                                                               const productStockQuantity = button.getAttribute('data-product-stockquantity');
+                                                               const productImageURL = button.getAttribute('data-product-imageurl');
 
-                document.getElementById('editProductId').value = productId;
-                document.getElementById('editProductName').value = productName;
-                document.getElementById('editDescription').value = productDescription;
-                document.getElementById('editPrice').value = productPrice;
-                document.getElementById('editCategoryId').value = productCategoryId;
-                document.getElementById('editStockQuantity').value = productStockQuantity;
-                // them data cho may cai modal
-            }); 
+                                                               document.getElementById('editProductId').value = productId;
+                                                               document.getElementById('editProductName').value = productName;
+                                                               document.getElementById('editDescription').value = productDescription;
+                                                               document.getElementById('editPrice').value = productPrice;
+                                                               document.getElementById('editCategoryId').value = productCategoryId;
+                                                               document.getElementById('editStockQuantity').value = productStockQuantity;
+                                                               // them data cho may cai modal
+                                                           });
+
+                                                           // Edit Category Modal
+                                                           const editCategoryModal = document.getElementById('editCategoryModal');
+                                                           editCategoryModal.addEventListener('show.bs.modal', function (event) {
+                                                               const button = event.relatedTarget;
+                                                               const categoryId = button.getAttribute('data-category-id');
+                                                               const categoryName = button.getAttribute('data-category-name');
+                                                               const parentCategoryId = button.getAttribute('data-category-parent-id');
+
+                                                               document.getElementById('editCategoryId').value = categoryId;
+                                                               document.getElementById('editCategoryName').value = categoryName;
+                                                               document.getElementById('editParentCategoryId').value = parentCategoryId;
+                                                           });
         </script>
     </body>
 </html>

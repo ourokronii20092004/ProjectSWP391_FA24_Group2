@@ -11,13 +11,20 @@ package Models;
 public class Category {
     private int categoryId;
     private String categoryName;
-    private int parentCategoryID;
+    private Integer parentCategoryID;
 
-    public Category(int categoryId, String categoryName, int parentCategoryID) {
+    public Category(int categoryId, String categoryName, Integer parentCategoryID) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.parentCategoryID = parentCategoryID;
     }
+
+    public Category(String categoryName, Integer parentCategoryID) {
+        this.categoryName = categoryName;
+        this.parentCategoryID = parentCategoryID;
+    }
+    
+    
 
     public int getCategoryId() {
         return categoryId;
@@ -35,13 +42,15 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public int getParentCategoryID() {
+    public Integer getParentCategoryID() {
         return parentCategoryID;
     }
 
-    public void setParentCategoryID(int parentCategoryID) {
+    public void setParentCategoryID(Integer parentCategoryID) {
         this.parentCategoryID = parentCategoryID;
     }
+
+   
 
 
 }
