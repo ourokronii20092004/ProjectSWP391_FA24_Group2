@@ -11,6 +11,10 @@ package Models;
 public class CartItem {
 
     private int cartItemID, userID, productID, quantity;
+    private String productName;
+    private String description;
+    private float price;
+    private String imageURL;
 
     public CartItem() {
     }
@@ -20,6 +24,17 @@ public class CartItem {
         this.userID = userID;
         this.productID = productID;
         this.quantity = quantity;
+    }
+
+    public CartItem(int cartItemID, int userID, int productID, int quantity, String productName, String description, float price, String imageURL) {
+        this.cartItemID = cartItemID;
+        this.userID = userID;
+        this.productID = productID;
+        this.quantity = quantity;
+        this.productName = productName;
+        this.description = description;
+        this.price = price;
+        this.imageURL = imageURL;
     }
 
     public int getCartItemID() {
@@ -53,6 +68,37 @@ public class CartItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-     
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
 
 }
