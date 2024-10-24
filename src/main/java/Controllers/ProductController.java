@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package Controllers;
 
 import DAOs.ProductDAO;
 import Models.Product;
+import com.google.gson.Gson;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +24,8 @@ import jakarta.servlet.http.Part;
  * @author Le Trung Hau - CE180481
  */
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
+
+@MultipartConfig //handling file upload
 
 public class ProductController extends HttpServlet {
 
@@ -68,15 +67,26 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-      
+
+        String path = request.getRequestURI();
+        String page = "";
+
+        if (path.contains("Control")) {
+            page = "Control";
+        } else if (path.contains("Product")) {
+            page = "Product";
+        }
+
         try {
             /*
-            list: gom het tru may cai da xoa
-            null: gom het tru may cai da xoa
-            default: gom het tru may cai da xoa
-            searchByName: search gan giong ten
-            searchByCategory: search id category
-            deleted: gom het may cai da xoa
+        list: gom het tru may cai da xoa
+        null: gom het tru may cai da xoa
+        default: gom het tru may cai da xoa
+        searchByName: search gan giong ten
+        searchByCategory: search id category
+        deleted: gom het may cai da xoa
+        listControl: list top 5 gan nhat cho trang Control
+
              */
             String action = request.getParameter("action");
             if (action == null) {
@@ -89,7 +99,22 @@ public class ProductController extends HttpServlet {
             switch (action) {
                 case "list":
                     productList = productDAO.viewProductList();
+                    //product management page
+                    if ("Product".equals(request.getParameter("page"))) {
+                        request.setAttribute("productList", productList);
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
+                        dispatcher.forward(request, response);
+                    } else {
+                        //return json data
+                        Gson gson = new Gson();
+                        String jsonResponse = gson.toJson(productList);
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write(jsonResponse);
+                        return;
+                    }
                     break;
+
                 case "searchByName":
                     String searchName = request.getParameter("searchName");
                     if (searchName != null) {
@@ -116,20 +141,31 @@ public class ProductController extends HttpServlet {
                 case "delete": {
                     int productID = Integer.parseInt(request.getParameter("productId"));
                     productDAO.removeProduct(productID);
-                    response.sendRedirect("ProductController?action=list");
-                    return; //IMPORTANT, TESTING
+                    response.sendRedirect("ProductController?action=list&page=Product");
+                    return;
+                    //IMPORTANT, TESTING
                 }
+                case "listControl": {
+                    productList = productDAO.viewProductListControl();
+                    break;
+                }
+
                 // SAU NAY THEM CASES THI THEM O DAY
                 default:
                     productList = productDAO.viewProductList();
                     break;
             }
-
             request.setAttribute("productList", productList);
 
-            RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
 
-            dispatcher.forward(request, response);
+            if (page.equals("Control")) {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
+                dispatcher.forward(request, response);
+            } else {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
+                dispatcher.forward(request, response);
+            }
+
 
         } catch (SQLException ex) {
             Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
@@ -151,54 +187,75 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //processRequest(request, response);
+        String path = request.getRequestURI();
+        String page = "";
+
+        if (path.contains("Control")) {
+            page = "Control";
+        } else if (path.contains("Product")) {
+            page = "Product";
+        }
 
         String action = request.getParameter("action");
         if (action == null) {
-            action = "list"; // Default action
+            action = "listControl";
         }
 
         try {
             ProductDAO productDAO = new ProductDAO();
+
+            String imageUploadPath = getServletContext().getRealPath("/img/pro");
+            File imageUploadDir = new File(imageUploadPath);
+            if (!imageUploadDir.exists()) {
+                imageUploadDir.mkdirs();
+            }
+            Part filePart = request.getPart("image");
+            String fileName = getFileName(filePart);
 
             switch (action) {
                 case "add": {
                     String productName = request.getParameter("productName");
                     String description = request.getParameter("description");
 
-                    // INPUT INVALID TEST
                     if (productName == null || productName.trim().isEmpty()) {
-                        // HANDLE ERROR HERE
                         request.setAttribute("errorMessage", "Product name is required.");
-                        request.getRequestDispatcher("adminControl.jsp").forward(request, response);
-                        return;//
+
+
+                        if (page.equals("Control")) {
+                            request.getRequestDispatcher("adminControl.jsp").forward(request, response);
+                        } else {
+                            request.getRequestDispatcher("productManagement.jsp").forward(request, response);
+                        }
+                        return;
+
                     }
 
                     float price = Float.parseFloat(request.getParameter("price"));
                     int categoryId = Integer.parseInt(request.getParameter("categoryId"));
                     int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
 
-                    //IMG UPLOAD HANDLER
-                    Part filePart = request.getPart("image");
-                    String fileName = getFileName(filePart);
                     if (fileName == null || fileName.isEmpty()) {
-                        fileName = "default.jpg"; //defaulr
+                        fileName = "default.jpg";
                     } else {
                         fileName = new File(fileName).getName();
                     }
-                    String imageUrl = "img/" + fileName;
 
-                    //
-                    Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
+                    String imageUrl = "img/pro/" + fileName;
+
+                    Product newProduct = new Product(0, productName, description, price, imageUrl,
+                            categoryId, stockQuantity, null, null);
                     productDAO.addProduct(newProduct);
 
                     //save
                     if (filePart != null && filePart.getSize() > 0) {
-                        String uploadPath = getServletContext().getRealPath("/img") + File.separator + fileName;
-                        filePart.write(uploadPath);
+                        String fullImagePath = imageUploadPath + File.separator + fileName;
+                        filePart.write(fullImagePath);
                     }
-                    break;
+                    response.sendRedirect("ProductController?action=list&page=Product");
+                    return;
+                    //break;
                 }
+
                 case "update": {
                     int productId = Integer.parseInt(request.getParameter("productId"));
                     String updatedProductName = request.getParameter("productName");
@@ -207,44 +264,45 @@ public class ProductController extends HttpServlet {
                     int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
                     int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
 
-                    //IMG UPLOAD HANDLER
-                    Part updateFilePart = request.getPart("image");
-                    String updatedFileName = getFileName(updateFilePart);
+                    String updatedImageUrl;
 
-                    if (updatedFileName == null || updatedFileName.isEmpty()) {
-                        //DANG FIX
-                        //updatedFileName = productDAO.readProduct(productId).getImageURL();
+                    if (fileName == null || fileName.isEmpty()) {
+                        // Keep existing image
+                        Product existingProduct = productDAO.readProduct(productId);
+                        if (existingProduct != null) {
+                            updatedImageUrl = existingProduct.getImageURL();
+                        } else {
+                            System.err.println("Error: Product with ID " + productId + " not found in the database.");
+                            updatedImageUrl = "img/pro/default.jpg";
+                            //.....
+                        }
                     } else {
-                        updatedFileName = "img/" + new File(updatedFileName).getName();
+                        fileName = new File(fileName).getName();
+                        updatedImageUrl = "img/pro/" + fileName;
+
+                        if (filePart != null && filePart.getSize() > 0) {
+                            String fullImagePath = imageUploadPath + File.separator + fileName;
+                            filePart.write(fullImagePath);
+                        }
                     }
 
-                    Product updatedProduct = new Product(productId, updatedProductName, updatedDescription, updatedPrice, updatedFileName, updatedCategoryId, updatedStockQuantity, null, null);
+                    Product updatedProduct = new Product(productId, updatedProductName, updatedDescription,
+                            updatedPrice, updatedImageUrl, updatedCategoryId,
+                            updatedStockQuantity, null, null);
                     productDAO.updateProduct(updatedProduct);
-
-                    if (updateFilePart != null && updateFilePart.getSize() > 0) {
-                        String uploadPath = getServletContext().getRealPath("/img") + File.separator + new File(updatedFileName).getName();
-                        updateFilePart.write(uploadPath);
-                    }
-                    break;
+                    response.sendRedirect("ProductController?action=list&page=Product");
+                    return;
+                    //break;
                 }
 
-                //DELETE IS ON TESTING
-                /*case "delete": { 
-                    int productId = Integer.parseInt(request.getParameter("productId"));
-                    Product productToDelete = productDAO.readProduct(productId);
-                    String imageUrl = productToDelete.getImageURL(); 
-                    boolean productDeleted = productDAO.removeProduct(productId); 
-                    if (productDeleted) {
-                        deleteImageFile(imageUrl);
-                    } else {
-                        System.err.println("Error deleting product with ID: " + productId);
-                    }
-                    break;
-                }*/
+
+                //OTHER CASES
             }
-
-            response.sendRedirect("ProductController?action=list");
-
+            if (page.equals("Control")) {
+                response.sendRedirect("ProductController?action=listControl");
+            } else {
+                response.sendRedirect("ProductController?action=list&page=Product");
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NumberFormatException ex) {

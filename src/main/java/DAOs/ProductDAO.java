@@ -44,6 +44,31 @@ public class ProductDAO {
         }
         return new ArrayList<>(productList);
     }
+    
+    
+    
+    public ArrayList<Product> viewProductListControl() throws SQLException {
+        productList.clear();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            // SOFT DELETE == STOCK -1
+            ResultSet rs = DBConnection.ExecuteQuery("select top (5) * from Product where StockQuantity > -1 Order By UpdatedAt desc");
+            while (rs.next()) {
+                productList.add(new Product(
+                        rs.getInt("ProductID"),
+                        rs.getString("ProductName"),
+                        rs.getString("Description"),
+                        rs.getFloat("Price"),
+                        rs.getString("ImageURL"),
+                        rs.getInt("CategoryID"),
+                        rs.getInt("StockQuantity"),
+                        rs.getDate("CreatedAt"),
+                        rs.getDate("UpdatedAt")
+                ));
+            }
+        }
+        return new ArrayList<>(productList);
+    }
 
     /*
     Nay la lay may cai "da xoa" ra, neu can thi dung

@@ -16,74 +16,86 @@ public class CategoryDAO {
     ArrayList<Category> categoryList = new ArrayList<>();
     private int upCount;
 
-    public CategoryDAO() throws SQLException {
-        viewCategory();
-    }
-
-    private void viewCategory() throws SQLException {
+    public ArrayList<Category> viewCategory() {
         categoryList.clear();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Category");
-            while (rs.next()) {
-                categoryList.add(new Category(rs.getInt("CategoryID"),
-                        rs.getNString("CategoryName"),
-                        rs.getInt("ParentCategoryID")));
+            try {
+                while (rs.next()) {
+                    categoryList.add(new Category(rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getInt("ParentCategoryID")));
+                }
+
+                DBConnection.Disconnect();
+            } catch (SQLException ex) {
+                return new ArrayList<>(categoryList);
             }
         }
+        return categoryList;
     }
 
-    public Category readCategory(int id) throws SQLException {
-        if (categoryList.isEmpty()) {
-            return null;
-        }
-        for (Category c : categoryList) {
-            if (c.getCategoryId() == id) {
-                return c;
+    public Category readCategory(int id) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                Category emp;
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[Category] WHERE CategoryID = " + id);
+                rs.next();
+                emp = new Category(rs.getInt("CategoryID"),
+                        rs.getNString("CategoryName"),
+                        rs.getInt("ParentCategoryID"));
+                DBConnection.Disconnect();
+                return emp;
             }
+        } catch (SQLException e) {
+            return null;
         }
         return null;
     }
 
-    public void addCategory(Category cate) throws SQLException {
+    public boolean addCategory(Category cate) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[Category] VALUES(?,?,?)");
-            pre.setInt(1, cate.getCategoryId());
-            pre.setString(2, cate.getCategoryName());
-            pre.setInt(3, cate.getParentCategoryID());
-            upCount = pre.executeUpdate();
-            pre.close();
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                viewCategory();
-                upCount = 0;
+            PreparedStatement pre;
+            try {
+                pre = DBConnection.getPreparedStatement("INSERT INTO Category (CategoryName, ParentCategoryID) VALUES (?, ?)");
+                pre.setString(1, cate.getCategoryName());
+                pre.setInt(2, cate.getParentCategoryID());                
+                pre.execute();
+                pre.close();
+                DBConnection.Disconnect();
+                return true;
+            } catch (SQLException ex) {
+                return false;
             }
         }
+        return false;
     }
 
-    public void updateCategory(Category cate) throws SQLException {
+    public boolean updateCategory(Category cate) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("UPDATE [dbo].[Category] SET "
-                    + "[CategoryID] = ?"
-                    + ", [CategoryName] = ?"
-                    + ", [ParentCategoryID] = ?");
-            pre.setInt(1, cate.getCategoryId());
-            pre.setString(2, cate.getCategoryName());
-            pre.setInt(3, cate.getParentCategoryID());
-            upCount = pre.executeUpdate();
-            pre.close();
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                categoryList.set(categoryList.indexOf(readCategory(cate.getCategoryId())), cate);
-                upCount = 0;
+            PreparedStatement pre;
+            try {
+                pre = DBConnection.getPreparedStatement("UPDATE Category SET CategoryName = ?, ParentCategoryID = ? WHERE CategoryID = ?");
+                pre.setString(1, cate.getCategoryName());
+                pre.setInt(2, cate.getParentCategoryID());
+                pre.setInt(3, cate.getCategoryId());
+                pre.execute();
+                pre.close();
+                DBConnection.Disconnect();
+                return true;
+            } catch (SQLException ex) {
+                return false;
             }
         }
+        return false;
     }
 
     private boolean hasChildCategory(int id) throws SQLException {
-        try ( PreparedStatement pre = DBConnection.getPreparedStatement("SELECT COUNT(*) FROM [dbo].[Category] WHERE ParentCategoryID = ?")) {
+        try ( PreparedStatement pre = DBConnection.getPreparedStatement("SELECT COUNT(*) FROM Category WHERE ParentCategoryID = ?")) {
             pre.setInt(1, id);
             try ( ResultSet rs = pre.executeQuery()) {
                 if (rs.next()) {
@@ -95,7 +107,7 @@ public class CategoryDAO {
     }
 
     private void updateChildCategory(int parentId) throws SQLException {
-        String sql = "UPDATE [dbo].[Category] SET ParentCategoryID = NULL WHERE ParentCategoryID = ?";
+        String sql = "UPDATE Category SET ParentCategoryID = 0 WHERE ParentCategoryID = ?";
         try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
             pre.setInt(1, parentId);
             pre.executeUpdate();
@@ -109,22 +121,14 @@ public class CategoryDAO {
                 return false;
             }
             updateChildCategory(id);
-            String sql = "DELETE FROM [dbo].[Category] WHERE CategoryID = ?";
-            try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
-                pre.setInt(1, id);
-                upCount = pre.executeUpdate();
-            }
+            upCount = DBConnection.ExecuteUpdate("DELETE FROM Category WHERE CategoryID = " + id);
             DBConnection.Disconnect();
             if (upCount > 0) {
-                viewCategory();
+                viewCategory(); // Cập nhật lại danh sách category
                 upCount = 0;
                 return true;
             }
         }
         return false;
-    }
-    
-    public ArrayList<Category> getAllCategories() {
-        return new ArrayList<>(categoryList); // Trả về bản sao của categoryList
     }
 }
