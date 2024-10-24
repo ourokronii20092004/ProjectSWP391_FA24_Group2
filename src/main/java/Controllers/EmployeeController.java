@@ -15,9 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -100,7 +97,7 @@ public class EmployeeController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
-        String userID = request.getParameter("userID"),
+        String userID = request.getParameter("userID") == null ? "-1" : request.getParameter("userID"),
                 username = request.getParameter("username"),
                 password = request.getParameter("password"),
                 address = request.getParameter("address"),
@@ -128,14 +125,13 @@ public class EmployeeController extends HttpServlet {
                 emp.setPassword(password);
                 DAO.addEmployee(emp);
             } else if (path.contains("edit")) {
-                {
-                    DAO.updateEmployee(emp);
-                }
+                DAO.updateEmployee(emp);
+
             } else if (path.contains("deactivate")) {
                 DAO.removeEmployee(emp.getId());
             }
-            response.sendRedirect("/EmployeeController");
         }
+        response.sendRedirect("/EmployeeController");
     }
 
 }
