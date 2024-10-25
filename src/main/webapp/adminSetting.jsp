@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -64,11 +65,6 @@
                 height: 50px;
                 object-fit: cover;
             }
-
-            /* Hide edit button initially */
-            #editProductBtn {
-                display: none;
-            }
         </style>
     </head>
 
@@ -84,20 +80,29 @@
                     <h6 class="card-title">Order Management</h6>
                     <div class="card">
                         <div class="row">
-                            <div class="col-md-6">
-                                <table class="table table-striped">
-                                    <thead>
+                            <div class="col-md-12">
+                                <table class="table table-striped">                            
+                                    <tr>
+                                        <th class="col-md-1">ID</th>
+                                        <th class="col-md-1">Username</th>
+                                        <th class="col-md-2">Full name</th>
+                                        <th class="col-md-2">Price</th>
+                                        <th class="col-md-1">Status</th>
+                                        <th class="col-md-1">Order date</th>
+                                        <th class="col-md-3">Action</th>
+                                    </tr>
+                                    <c:forEach items="${orderList}" var="o">                               
                                         <tr>
-                                            <th>Username</th>
-                                            <th>Items</th>
-                                            <th>Stock</th>
-                                            <th>Price</th>
-                                            <th>Confirm</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="orderList">
-                                        <!-- Order data will be loaded here -->
-                                    </tbody>
+                                            <th class="col-md-1">${o.orderID}</th>
+                                            <th class="col-md-2">${o.user.userName}</th>
+                                            <th class="col-md-2">${o.user.firstName} ${o.user.lastName}</th>
+                                            <th class="col-md-2">${o.totalAmount}</th>
+                                            <th class="col-md-2">${o.orderStatus}</th>
+                                            <th class="col-md-1">${o.orderDate}</th>
+                                            <th class="col-md-1">Chưa co cmjhet</th>
+                                        </tr>  
+                                    </c:forEach>                               
+
                                 </table>
                             </div>
                             <div class="col-md-6">

@@ -29,18 +29,20 @@ public class CustomerDAO {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[User] WHERE RoleID = 2");
             while (rs.next()) {
                 cusList.add(new User(rs.getInt("UserID"),
-                        rs.getString("Username"),
-                        rs.getString("Salt"),
-                        rs.getString("PasswordHash"),
-                        rs.getString("Email"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getString("ShippingAddress"),
-                        rs.getInt("RoleID"),
-                        rs.getByte("IsActive") == 1,
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt")));
-            }
+                            rs.getString("Username"),
+                            rs.getString("Salt"),
+                            rs.getString("PasswordHash"),
+                            rs.getString("Email"),
+                            rs.getString("FirstName"),
+                            rs.getString("LastName"),
+                            rs.getString("PhoneNumber"),
+                            rs.getString("ShippingAddress"),
+                            rs.getString("ImageURL"),
+                            rs.getInt("RoleID"),
+                            rs.getByte("IsActive") == 1,
+                            rs.getDate("CreatedAt"),
+                            rs.getDate("UpdatedAt")));                  
+                }
         }
     }
 
