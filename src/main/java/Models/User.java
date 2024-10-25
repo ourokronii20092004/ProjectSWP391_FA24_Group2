@@ -13,7 +13,7 @@ import java.sql.Date;
 public class User {
 
     private final int id;
-    private String username;
+    private String userName;
     private String salt;
     private String password;
     private String email;
@@ -35,7 +35,7 @@ public class User {
 
     public User(int id, String username, String salt, String password, String email, String firstName, String lastName, String phoneNumber, String address, String imgURL, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.username = username;
+        this.userName = username;
         this.salt = salt;
         this.password = password;
         this.email = email;
@@ -52,7 +52,7 @@ public class User {
 
     public User(int id, String username, String password, String email, String firstName, String lastName, String address, int roleID, boolean isActive, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.username = username;
+        this.userName = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
@@ -66,7 +66,7 @@ public class User {
 
     public User(int id,String username, String email, String firstName, String lastName, String phoneNumber, String imgURL, String address, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.username = username;
+        this.userName = username;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -81,22 +81,16 @@ public class User {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-   
-
-    
-
-    
-
     public int getId() {
         return id;
     }
 
     public String getUserName() {
-        return username;
+        return userName;
     }
 
     public void setUserName(String username) {
-        this.username = username;
+        this.userName = username;
     }
 
     public String getSalt() {

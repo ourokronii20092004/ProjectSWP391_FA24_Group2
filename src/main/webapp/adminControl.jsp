@@ -328,7 +328,9 @@
                 integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
         <script>
-
+                                                           function goToProductManagement() {
+                                                               window.location.href = 'ProductController?action=list&page=Product';
+                                                           }
         </script>
     </body>
 </html>

@@ -72,7 +72,7 @@ public class LoginController extends HttpServlet {
                 response.sendRedirect("homepage.jsp");
                 
             } else {
-                response.sendRedirect("homepage.jsp");
+                response.sendRedirect("dashboard.jsp");
                 
             }
         } else {
