@@ -32,14 +32,15 @@ public class CartDAO {
                         + "  Product.ProductName, "
                         + "  Product.Description, "
                         + "  Product.Price, "
-                        + "  Product.ImageURL "
+                        + "  Product.ImageURL, "
+                        + "  Product.StockQuantity "
                         + "FROM "
                         + "  CartItem "
                         + "  INNER JOIN Product ON CartItem.ProductID = Product.ProductID \n"
                         + "WHERE "
                         + "  UserID like '" + userID + "'");
                 rs.next();
-                CartItem cartItem = new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("Quantity"), rs.getInt("ProductID"),rs.getNString("ProductName"),rs.getNString("Description"),rs.getFloat("Price"),rs.getString("ImageURL"));
+                CartItem cartItem = new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("Quantity"), rs.getInt("ProductID"), rs.getNString("ProductName"), rs.getNString("Description"), rs.getFloat("Price"), rs.getString("ImageURL"), rs.getInt("StockQuantity"));
                 DBConnection.Disconnect();
                 return cartItem;
             } catch (SQLException e) {
@@ -94,24 +95,37 @@ public class CartDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT "
-                        + "  CartItem.CartItemID, "
-                        + "  CartItem.UserID, "
-                        + "  CartItem.Quantity, "
-                        + "  CartItem.ProductID, "
-                        + "  Product.ProductName, "
-                        + "  Product.Description, "
-                        + "  Product.Price, "
-                        + "  Product.ImageURL "
-                        + "FROM "
-                        + "  CartItem "
-                        + "  INNER JOIN Product ON CartItem.ProductID = Product.ProductID \n"
-                        + "WHERE "
-                        + "  UserID like '" + userID + "'");
+                    + "  CartItem.CartItemID, "
+                    + "  CartItem.UserID, "
+                    + "  CartItem.Quantity, "
+                    + "  CartItem.ProductID, "
+                    + "  Product.ProductName, "
+                    + "  Product.Description, "
+                    + "  Product.Price, "
+                    + "  Product.ImageURL, "
+                    + "  Product.StockQuantity "
+                    + "FROM "
+                    + "  CartItem "
+                    + "  INNER JOIN Product ON CartItem.ProductID = Product.ProductID \n"
+                    + "WHERE "
+                    + "  UserID like '" + userID + "'");
             while (rs.next()) {
-                cartList.add(new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("Quantity"), rs.getInt("ProductID"),rs.getNString("ProductName"),rs.getNString("Description"),rs.getFloat("Price"),rs.getString("ImageURL")));
+                cartList.add(new CartItem(rs.getInt("CartItemID"), rs.getInt("UserID"), rs.getInt("Quantity"), rs.getInt("ProductID"), rs.getNString("ProductName"), rs.getNString("Description"), rs.getFloat("Price"), rs.getString("ImageURL"), rs.getInt("StockQuantity")));
             }
         }
         return cartList;
     }
 
+    public void updateCartItemQuantity(int cartItemID, int quantity) throws SQLException {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            String stm = "UPDATE CartItem SET Quantity = ? WHERE CartItemID = ?";
+            PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
+            pstm.setInt(1, quantity);
+            pstm.setInt(2, cartItemID);
+            pstm.executeUpdate();
+            pstm.close();
+            DBConnection.Disconnect();
+        }
+    }
 }

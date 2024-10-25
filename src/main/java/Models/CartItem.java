@@ -15,7 +15,8 @@ public class CartItem {
     private String description;
     private float price;
     private String imageURL;
-
+    private int stockQuantity;
+            
     public CartItem() {
     }
 
@@ -26,7 +27,7 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public CartItem(int cartItemID, int userID, int productID, int quantity, String productName, String description, float price, String imageURL) {
+    public CartItem(int cartItemID, int userID, int productID, int quantity, String productName, String description, float price, String imageURL, int stockQuantity) {
         this.cartItemID = cartItemID;
         this.userID = userID;
         this.productID = productID;
@@ -35,6 +36,7 @@ public class CartItem {
         this.description = description;
         this.price = price;
         this.imageURL = imageURL;
+        this.stockQuantity = stockQuantity;
     }
 
     public int getCartItemID() {
@@ -100,5 +102,15 @@ public class CartItem {
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
     }
+
+    public int getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
+
+
 
 }

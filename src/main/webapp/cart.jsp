@@ -54,7 +54,7 @@
                                 <input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}">
                             </div>
                             <div class="col-md-2">
-                                <img src="" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
+                                <img src="item.imageURL" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">
@@ -67,13 +67,12 @@
                                     <p class="price">₫${item.price}</p>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <!-- Form để cập nhật số lượng -->
+                                    <!-- Form to update quantity -->
                                     <form action="/CartController" method="post" class="d-flex">
                                         <input type="hidden" name="action" value="update">
                                         <input type="hidden" name="cartItemId" value="${item.cartItemID}">
-                                        <button class="btn btn-outline-secondary" type="submit" name="change" value="-">-</button>
-                                        <input type="number" class="form-control" name="quantity" value="${item.quantity}" min="1">
-                                        <button class="btn btn-outline-secondary" type="submit" name="change" value="+">+</button>
+                                        <input type="number" class="form-control quantity-input" name="quantity" value="${item.quantity}" min="1" max="${item.stockQuantity}" data-cart-id="${item.cartItemID}">
+                                        <button class="btn btn-primary update-btn" type="submit" style="display: none;">Update</button>
                                     </form>
                                 </div>
                                 <!-- Nút để xóa một mục cụ thể -->
@@ -96,6 +95,8 @@
                         <!-- Button to delete selected items -->
                         <form action="/CartController" method="post" id="deleteSelectedForm">
                             <input type="hidden" name="action" value="deleteSelected">
+                            <!-- Hidden input to store selected cart item IDs -->
+                            <input type="hidden" id="selectedItemsInput" name="selectedItems">
                             <button class="btn delete-btn btn-sm ms-3" type="submit">Delete Selected</button>
                         </form>
                     </div>
@@ -110,10 +111,28 @@
         </div>
 
         <script>
-            // Select all checkbox functionality
             document.getElementById('select-all').addEventListener('click', function () {
                 const checkboxes = document.querySelectorAll('.product-checkbox');
                 checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+                updateSelectedItems(); // Call function to update the hidden field
+            });
+
+            document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedItems);
+            });
+
+            function updateSelectedItems() {
+                const selectedItems = [];
+                document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
+                    selectedItems.push(checkbox.value);
+                });
+                document.getElementById('selectedItemsInput').value = selectedItems.join(',');
+            }
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('input', function () {
+                    const updateButton = this.closest('form').querySelector('.update-btn');
+                    updateButton.style.display = 'inline-block';  // Show the Update button
+                });
             });
         </script>
     </body>
