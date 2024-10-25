@@ -66,68 +66,71 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //int userID = (int) request.getSession().getAttribute("userID");
-        int userID = 2;
-        // Retrieve form data
-
+        int userID =(int)request.getSession().getAttribute("userID");
         CartDAO cartDAO = new CartDAO();
-        try {
 
+        try {
             String action = request.getParameter("action");
             if (action == null) {
                 action = "list";
             }
+
+            ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
+
             switch (action) {
-                case "list":
-                    // Retrieve list of cart items
-                    ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
+                case "update":
+                    int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
+                    int updatedQuantity = Integer.parseInt(request.getParameter("quantity"));
 
-                    // Set attributes for cart and products
+                    // Update the quantity in the database
+                    cartDAO.updateCartItemQuantity(cartItemID, updatedQuantity);
+
+                    // Refresh the cart list after updating
+                    listCart = cartDAO.viewCartItemList(userID);
                     request.setAttribute("cartList", listCart);
-
                     break;
+
+                case "deleteSelected":
+                    String selectedItems = request.getParameter("selectedItems");
+                    if (selectedItems != null && !selectedItems.isEmpty()) {
+                        String[] cartItemIDs = selectedItems.split(",");
+                        for (String id : cartItemIDs) {
+                            cartDAO.removeCartItem(Integer.parseInt(id));
+                        }
+                    }
+                    listCart = cartDAO.viewCartItemList(userID);
+                    request.setAttribute("cartList", listCart);
+                    break;
+
                 case "add":
-                    // Retrieve product ID and quantity from request
                     int productID = Integer.parseInt(request.getParameter("productID"));
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
-
-                    // Create a new CartItem for the current user
                     CartItem newItem = new CartItem(0, userID, productID, quantity);
-
-                    // Add the item to the cart
                     cartDAO.addCartItem(newItem);
-
-                    // Refresh the cart list
                     listCart = cartDAO.viewCartItemList(userID);
-
-                    // Set attributes and forward to the cart page
                     request.setAttribute("cartList", listCart);
                     break;
+
                 case "delete":
-                    // Retrieve CartItemID from request
-                    int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
-
-                    // Remove the cart item
-                    cartDAO.removeCartItem(cartItemID);
-
-                    // Refresh the cart list
+                    int deleteCartItemID = Integer.parseInt(request.getParameter("cartItemId"));
+                    cartDAO.removeCartItem(deleteCartItemID);
                     listCart = cartDAO.viewCartItemList(userID);
-
-                    // Set attributes and forward to the cart page
                     request.setAttribute("cartList", listCart);
                     break;
 
                 default:
+                    // Always retrieve the cart list in case of other actions
                     listCart = cartDAO.viewCartItemList(userID);
                     request.setAttribute("cartList", listCart);
                     break;
             }
+
+            // Forward the updated list to the cart page
             RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
             dispatcher.forward(request, response);
 
         } catch (SQLException ex) {
-            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
-            // EXCEPTION
+            Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
             RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
             dispatcher.forward(request, response);
