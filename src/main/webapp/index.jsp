@@ -18,15 +18,30 @@
         <title>PAMB Guest</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
-                integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
-        crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
-                integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
-        crossorigin="anonymous"></script>
     </head>
 
     <body >
+
+        <!-- Logout Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="d-flex flex-column min-vh-100">
             <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
                 <a href="dashboard.jsp" class="d-flex align-items-center text-decoration-none">
@@ -34,14 +49,14 @@
                     <span class="h5 ms-2">PAMB</span>
                 </a>
                 <nav class="d-none d-lg-flex gap-4">
-                    <a href="#" class="text-decoration-none text-muted">Home</a>
+                    <a href="/LogoutController" class="text-decoration-none text-muted">Home</a>
                     <a href="#" class="text-decoration-none text-muted">Shop</a>
                     <a href="#" class="text-decoration-none text-muted">About</a>
                     <a href="#" class="text-decoration-none text-muted">Contact</a>
                 </nav>
                 <div class="d-flex align-items-center gap-3">
                     <a href="/LoginController" class="btn btn-outline-primary">Login</a>
-                    <a href="register.jsp" class="btn btn-primary">Sign Up</a>
+                    <a href="/RegisterController" class="btn btn-primary">Sign Up</a>
                     <!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
                                             <path
@@ -150,5 +165,20 @@
             </main>
         </div>
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+            integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+            integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function ()   
+        {
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('logout') === 'true') {
+                $('#logoutModal').modal('show');
+            }
+        });
+    </script>
 </html>
 

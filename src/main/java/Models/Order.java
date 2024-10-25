@@ -4,6 +4,7 @@
  */
 package Models;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -11,26 +12,39 @@ import java.util.Date;
  * @author CE181515 - Phan Viet Phat
  */
 public class Order {
-    private final int orderId;
-    private final int userID;
+
+    private final int orderID;
+    private final User user;
+    private final ArrayList<OrderItem> orderItemList;
+    private final Voucher voucher;
     private final Date orderDate;
     private final float totalAmount;
     private String orderStatus;
 
-    public Order(int orderId, int userID, Date orderDate, float totalAmount, String orderStatus) {
-        this.orderId = orderId;
-        this.userID = userID;
+    public Order(int orderId, User user, ArrayList<OrderItem> orderItemList, Voucher voucher, Date orderDate, float totalAmount, String orderStatus) {
+        this.orderID = orderId;
+        this.user = user;
+        this.orderItemList = orderItemList;
+        this.voucher = voucher;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.orderStatus = orderStatus;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public int getOrderID() {
+        return orderID;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
+    }
+
+    public ArrayList<OrderItem> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
     }
 
     public Date getOrderDate() {
@@ -48,7 +62,5 @@ public class Order {
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
-    
-    
-    
+
 }
