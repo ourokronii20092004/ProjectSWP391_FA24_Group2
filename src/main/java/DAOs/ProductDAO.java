@@ -44,9 +44,7 @@ public class ProductDAO {
         }
         return new ArrayList<>(productList);
     }
-    
-    
-    
+
     public ArrayList<Product> viewProductListControl() throws SQLException {
         productList.clear();
         DBConnection.Connect();
@@ -96,12 +94,30 @@ public class ProductDAO {
     }
 
     public Product readProduct(int id) throws SQLException {
-        if (productList.isEmpty()) {
-            return null;
-        }
-        for (Product p : productList) {
-            if (p.getProductID() == id) {
-                return p;
+        String sql = "select * from Product where ProductID = ?";
+
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                pre.setInt(1, id);
+
+                try ( ResultSet rs = pre.executeQuery()) {
+                    if (rs.next()) {
+                        return new Product(
+                                rs.getInt("ProductID"),
+                                rs.getString("ProductName"),
+                                rs.getString("Description"),
+                                rs.getFloat("Price"),
+                                rs.getString("ImageURL"),
+                                rs.getInt("CategoryID"),
+                                rs.getInt("StockQuantity"),
+                                rs.getDate("CreatedAt"),
+                                rs.getDate("UpdatedAt")
+                        );
+                    }
+                }
+            } finally {
+                DBConnection.Disconnect();
             }
         }
         return null;
@@ -296,9 +312,9 @@ public class ProductDAO {
 
         if (DBConnection.isConnected()) {
             try {
-               
+
                 rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[Product]");
-                while(rs.next()){
+                while (rs.next()) {
                     System.out.println("phat");
                 }
             } catch (Exception ex) {
