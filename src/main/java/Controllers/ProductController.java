@@ -279,12 +279,14 @@ public class ProductController extends HttpServlet {
                     String fileName = getFileName(filePart);
                     if (fileName == null || fileName.isEmpty()) {
                         Product existingProduct = productDAO.readProduct(productId);
+                        System.out.println(existingProduct);
                         if (existingProduct != null) {
+                            //updatedImageUrl = "img/pro/default.jpg";
                             updatedImageUrl = existingProduct.getImageURL();
                         } else {
                             System.err.println("Error: Product with ID " + productId + " not found in the database.");
                             updatedImageUrl = "img/pro/default.jpg";
-                            response.sendRedirect("editProductForm.jsp?error=productNotFound&productId=" + productId);
+                            response.sendRedirect("ProductController?action=list&page=Product"); //TESTING, EITHER EDIT PAGE OR MODAL.... EDIT PAGE SOLVE THE PROBLEM RIGJT?
                             return;
                         }
                     } else {
