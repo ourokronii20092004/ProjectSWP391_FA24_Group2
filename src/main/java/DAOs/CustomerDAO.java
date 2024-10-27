@@ -15,20 +15,17 @@ import java.util.ArrayList;
  * @author phanp
  */
 public class CustomerDAO {
-    ArrayList<User> cusList = new ArrayList<>();
+    
     private int upCount;
 
-    public CustomerDAO() throws SQLException {
-        viewCustomerList();
-    }
-
-    private void viewCustomerList() throws SQLException {
-        cusList.clear();
+    public ArrayList<User> viewCustomerList() {
+        ArrayList<User> cusList = new ArrayList<>();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[User] WHERE RoleID = 2");
-            while (rs.next()) {
-                cusList.add(new User(rs.getInt("UserID"),
+            try {
+                while (rs.next()) {
+                    cusList.add(new User(rs.getInt("UserID"),
                             rs.getString("Username"),
                             rs.getString("Salt"),
                             rs.getString("PasswordHash"),
@@ -43,83 +40,112 @@ public class CustomerDAO {
                             rs.getDate("CreatedAt"),
                             rs.getDate("UpdatedAt")));                  
                 }
+               
+                DBConnection.Disconnect();
+            } catch (SQLException ex) {
+                return cusList;
+            }
+
         }
+        return cusList;
     }
 
-    public User readCustomer(int id) throws SQLException {
-        if (cusList.isEmpty()) {
-            return null;
-        }
-        for (User u : cusList) {
-            if (u.getId() == id) {
-                return u;
+    public User readCustomer(int id) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                User cus;
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * from [dbo].[User] WHERE UserID = " + id);
+                rs.next();
+                cus = new User(rs.getInt("UserID"),
+                        rs.getString("Username"),
+                        rs.getString("Email"),
+                        rs.getString("FirstName"),
+                        rs.getString("LastName"),
+                        rs.getString("PhoneNumber"),
+                        rs.getString("ImageURL"),
+                        rs.getString("ShippingAddress"),
+                        rs.getDate("CreatedAt"),
+                        rs.getDate("UpdatedAt"));
+                DBConnection.Disconnect();
+                return cus;
             }
+        } catch (SQLException e) {
+            return null;
         }
         return null;
     }
 
-    public void addCustomer(User cus) throws SQLException {
+    public boolean addCustomer(User cus) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] VALUES(?,?,?,?,?,?,?,?,?,NULL,NULL)");
-            pre.setString(1, cus.getUserName());
-            pre.setString(2, cus.getSalt());
-            pre.setString(3, cus.getPassword());
-            pre.setString(4, cus.getEmail());
-            pre.setString(5, cus.getFirstName());
-            pre.setString(6, cus.getLastName());
-            pre.setString(7, cus.getAddress());
-            pre.setInt(8, cus.getRoleID());
-            pre.setInt(9, cus.isIsActive() ? 1 : 0);
-            upCount = pre.executeUpdate();
-            pre.close();
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                viewCustomerList();
-                upCount = 0;
+            PreparedStatement pre;
+            try {
+                pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] "
+                        + "(Username, Salt, PasswordHash, Email, FirstName, LastName, PhoneNumber, ImageURL, ShippingAddress, RoleID) "
+                        + "VALUES(?,?,?,?,?,?,?,?,?,?)");
+                pre.setString(1, cus.getUserName());
+                pre.setString(2, cus.getSalt());
+                pre.setString(3, cus.getPassword());
+                pre.setString(4, cus.getEmail());
+                pre.setString(5, cus.getFirstName());
+                pre.setString(6, cus.getLastName());
+                pre.setString(7, cus.getPhoneNumber());
+                pre.setString(8, cus.getImgURL());
+                pre.setString(9, cus.getAddress());
+                pre.setInt(10, 3);
+                pre.execute();
+                pre.close();
+                DBConnection.Disconnect();
+                return true;
+            } catch (SQLException ex) {
+                return false;
             }
-
         }
+        return false;
     }
 
-    public void updateCustomer(User cus) throws SQLException {
+    public boolean updateCustomer(User cus) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("UPDATE [dbo].[User] SET "
-                    + "[FirstName] = ?"
-                    + ",[LastName] = ?"
-                    + ",[ShippingAddress] = ?"
-                    + ",[IsActive] = ?"
-                    + " WHERE UserID = ?");
-            pre.setString(1, cus.getFirstName());
-            pre.setString(2, cus.getLastName());
-            pre.setString(3, cus.getAddress());
-            pre.setInt(4, (cus.isIsActive() ? 1 : 0));
-            pre.setInt(5, cus.getId());
-            upCount = pre.executeUpdate();
-            pre.close();
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                cusList.set(cusList.indexOf(readCustomer(cus.getId())), cus);
-                upCount = 0;
+            PreparedStatement pre;
+            try {
+                pre = DBConnection.getPreparedStatement("UPDATE [dbo].[User] SET "
+                        + " [FirstName] = ?"
+                        + ",[LastName] = ?"
+                        + ",[PhoneNumber] = ?"
+                        + ",[ImageURL] = ?"
+                        + ",[ShippingAddress] = ?"
+                        + " WHERE UserID = ?");
+                pre.setString(1, cus.getFirstName());
+                pre.setString(2, cus.getLastName());
+                pre.setString(3, cus.getPhoneNumber());
+                pre.setString(4, cus.getImgURL());
+                pre.setString(5, cus.getAddress()); 
+                pre.setInt(6, cus.getId());
+                pre.execute();
+                pre.close();
+                DBConnection.Disconnect();
+                return true;
+            } catch (SQLException ex) {
+                return false;
             }
         }
+        return false;
     }
 
-    public boolean removeCustomer(int id) throws SQLException {
+    public boolean removeCustomer(int id) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
                     + "SET isActive = 0"
-                    + "WHERE UserID = " + id
+                    + " WHERE UserID = " + id
             );
             DBConnection.Disconnect();
-            readCustomer(id).setIsActive(false);
             if (upCount > 0) {
                 upCount = 0;
                 return true;
             }
-
         }
         return false;
     }

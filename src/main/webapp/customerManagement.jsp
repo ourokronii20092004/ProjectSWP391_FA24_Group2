@@ -1,7 +1,7 @@
 <%-- 
-    Document   : EmployeeManagement
+    Document   : CustomerManagement
     Created on : Oct 20, 2024, 3:57:53 PM
-    Author     : CE181515 - Phan Viet Phat
+    Author     : phanp
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -11,7 +11,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Employee Management</title>
+        <title>Customer Management</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <style>
@@ -67,18 +67,14 @@
         <!-- User Management -->
         <div class="container-fluid fullpagecontent">
             <div class="col-md-12">
-                <h6 class="card-title">Employee Management</h6>
+                <h6 class="card-title">Customer Management</h6>
                 <div class="card">
                     <div class="row">
                         <div>
-                            <div class="row">
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary mb-3 col-md-2" data-bs-toggle="modal" data-bs-target="#addEmployee">
-                                    Add User
-                                </button>                               
+                            <div class="row mb-3 ">
                                 <input type="text" id="input" onkeyup="searchFunction()" placeholder="Search for names..">
                             </div>
-                            <table class="table table-striped" id="empList">                             
+                            <table class="table table-striped" id="cusList">                             
                                 <tr>
                                     <th class="col-md-1">Picture</th>
                                     <th class="col-md-1">ID</th>
@@ -91,38 +87,38 @@
                                 </tr>                       
                                 <!-- User data will be loaded here -->      
 
-                                <c:forEach items="${empList}" var="e">  
-                                    <c:if test="${e.isActive == true}">
+                                <c:forEach items="${cusList}" var="c">  
+                                    <c:if test="${c.isActive == true}">
                                         <tr>
                                             <td class="col-md-1">
                                                 <c:choose>
-                                                    <c:when test="${e.imgURL != null}">
-                                                        <img src="${e.imgURL}" alt="${e.userName}" height="50">
+                                                    <c:when test="${c.imgURL != null}">
+                                                        <img src="${c.imgURL}" alt="${c.userName}" height="50">
                                                     </c:when> 
                                                     <c:otherwise>
-                                                        <img src="img/avt1.jpg" alt="${e.userName}" height="50">
+                                                        <img src="img/avt1.jpg" alt="${c.userName}" height="50">
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <td class="col-md-1">${e.id}</td>
-                                            <td class="col-md-1">${e.userName}</td>
-                                            <td class="col-md-2">${e.firstName} ${e.lastName}</td>
-                                            <td class="col-md-3">${e.email}</td>                                       
-                                            <td class="col-md-1">${e.createdAt}</td>
-                                            <td class="col-md-1">${e.updatedAt}</td>                                   
+                                            <td class="col-md-1">${c.id}</td>
+                                            <td class="col-md-1">${c.userName}</td>
+                                            <td class="col-md-2">${c.firstName} ${c.lastName}</td>
+                                            <td class="col-md-3">${c.email}</td>                                       
+                                            <td class="col-md-1">${c.createdAt}</td>
+                                            <td class="col-md-1">${c.updatedAt}</td>                                   
                                             <td class="col-md-2">
                                                 <button data-bs-toggle="modal" 
-                                                        data-bs-target="#editEmployee"
-                                                        data-user-id ="${e.id}"
-                                                        data-user-username="${e.userName}"
-                                                        data-user-firstName="${e.firstName}"
-                                                        data-user-lastName="${e.lastName}"
-                                                        data-user-email="${e.email}"
-                                                        data-user-address="${e.address}"
-                                                        data-user-phoneNumber="${e.phoneNumber}"
-                                                        data-user-imgURL="${e.imgURL}"
+                                                        data-bs-target="#editCustomer"
+                                                        data-user-id ="${c.id}"
+                                                        data-user-username="${c.userName}"
+                                                        data-user-firstName="${c.firstName}"
+                                                        data-user-lastName="${c.lastName}"
+                                                        data-user-email="${c.email}"
+                                                        data-user-address="${c.address}"
+                                                        data-user-phoneNumber="${c.phoneNumber}"
+                                                        data-user-imgURL="${c.imgURL}"
                                                         class="btn btn-secondary">Details</button>
-                                                <a onclick="return confirm('Are you sure you want to delete User: ${e.userName} | ID: ${e.id}?')" href="/EmployeeController/deactivate?userID=${e.id}" class="btn btn-danger">Remove</a>   
+                                                <a onclick="return confirm('Are you sure you want to delete User: ${c.userName} | ID: ${c.id}?')" href="/CustomerController/deactivate?userID=${c.id}" class="btn btn-danger">Remove</a>   
                                             </td>
                                         </tr>
                                     </c:if>
@@ -133,75 +129,20 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- Modal Add -->
-        <div class="modal fade" id="addEmployee" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Employee</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="employeeForm" action="EmployeeController/add" method="post">
-                            <div class="form-group">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control" id="username" placeholder="Username">
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="text" class="form-control" name="password"  placeholder="Password" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" name="address" id="address" class="form-control" placeholder="Address">
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="text" name="email" id="email" class="form-control" placeholder="Email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="firstName" class="form-label">First name</label>
-                                <input type="text" name="firstName" id="firstName" class="form-control" placeholder="First name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName" class="form-label">Last name</label>
-                                <input type="text" name="lastName" id="lastName" class="form-control" placeholder="Last name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Phone Number" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="pic" class="form-label">Profile Picture</label>
-                                <input type="file" class="form-control" id="pic" name="pic" accept="image/*" disabled="">
-                            </div>
-                            <div class=" form-group d-flex justify-content-center">
-                                <input type="submit" class="btn btn-primary me-3 p-2" value="Add employee"/>
-                                <button type="button" class="btn btn-secondary me-3 p-2" data-bs-dismiss="modal">Close</button>   
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">                                         
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Modal Edit -->
-        <div class="modal fade" id="editEmployee" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="editCustomer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Employee's detail information</h1>
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Customer's detail information</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="employeeForm" action="EmployeeController/edit" method="post">
+                        <form id="customerForm" action="customerController/edit" method="post">
                             <div class="row mb-2">
                                 <div class="col-md-3 form-group">
                                     <label for="editId" class="form-label">ID</label>
-                                    <input type="text" name="userID" id="editID" class="form-control"  readonly="" >
+                                    <input type="text" name="userID" id="editID" class="form-control"  readonly="" disabled="">
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <label for="editUsername" class="form-label">Username</label>
@@ -210,7 +151,7 @@
                             </div>
                             <div class="form-group mb-2">
                                 <label for="editAddress" class="form-label">Address</label>
-                                <input type="text" name="address" id="editAddress" class="form-control">
+                                <input type="text" name="address" id="editAddress" class="form-control" readonly="" disabled="">
                             </div>
                             <div class="form-group mb-2">
                                 <label for="editEmail" class="form-label">Email</label>
@@ -219,24 +160,19 @@
                             <div class="row mb-2">
                                 <div class="col-md-6 form-group">
                                     <label for="editFirstName" class="form-label">First name</label>
-                                    <input type="text" name="firstName" id="editFirstName" class="form-control" placeholder="First name" required>
+                                    <input type="text" name="firstName" id="editFirstName" class="form-control" placeholder="First name" readonly="" disabled="">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="editLastName" class="form-label">Last name</label>
-                                    <input type="text" name="lastName" id="editLastName" class="form-control" placeholder="Last name" required>
+                                    <input type="text" name="lastName" id="editLastName" class="form-control" placeholder="Last name" readonly="" disabled="">
                                 </div>
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="editPhoneNumber" class="form-label">Phone Number</label>
-                                <input type="text" name="phoneNumber" id="editPhoneNumber" class="form-control" placeholder="Phone Number" required>
-                            </div>
-                            <div class=" form-group mb-2">
-                                <label for="editImgURL" class="form-label">Profile Picture</label>
-                                <input type="file" class="form-control" id="editImgURL" name="pic" accept="image/*" disabled="">
+                                <input type="text" name="phoneNumber" id="editPhoneNumber" class="form-control" placeholder="Phone Number" readonly="" disabled="">
                             </div>
                             <div class=" form-group d-flex justify-content-center">
-                                <input type="submit" class="btn btn-primary me-3 p-2" value="Update"/>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>   
+                                <button type="button" class="btn btn-secondary me-3 p-2 align-items-center" data-bs-dismiss="modal">Close</button>   
                             </div>
                         </form>
                     </div>
@@ -259,7 +195,7 @@
             var input, filter, table, td, tr, i, txtValue;
             input = document.getElementById('input');
             filter = input.value.toUpperCase();
-            table = document.getElementById("empList");
+            table = document.getElementById("cusList");
             tr = table.rows;
             // Loop through all list items, and hide those who don't match the search query
             for (i = 0; i < tr.length; i++) {
@@ -276,9 +212,10 @@
             }
         }
 
-        // edit employee modal 
-        const editEmployee = document.getElementById('editEmployee');
-        editEmployee.addEventListener('show.bs.modal', function (event) {
+
+// edit employee modal 
+        const editCustomer = document.getElementById('editCustomer');
+        editCustomer.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-user-id');
             const username = button.getAttribute('data-user-username');
