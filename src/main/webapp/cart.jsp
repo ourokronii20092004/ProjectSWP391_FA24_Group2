@@ -54,7 +54,7 @@
                                 <input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}">
                             </div>
                             <div class="col-md-2">
-                                <img src="item.imageURL" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
+                                <img src="D:\image\4a5be7e32326b23d789ec4bd16c0c17a.jpg" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">

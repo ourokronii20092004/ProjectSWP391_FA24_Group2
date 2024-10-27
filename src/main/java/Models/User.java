@@ -66,7 +66,7 @@ public class User {
 
     public User(int id,String username, String email, String firstName, String lastName, String phoneNumber, String imgURL, String address, Date createdAt, Date updatedAt) {
         this.id = id;
-        this.username = username;
+        this.userName = username;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;

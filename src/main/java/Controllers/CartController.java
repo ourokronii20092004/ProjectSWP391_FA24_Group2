@@ -75,9 +75,17 @@ public class CartController extends HttpServlet {
                 action = "list";
             }
 
-            ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
-
             switch (action) {
+                case "list":
+                    // Retrieve list of cart items
+                    ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
+                    for (CartItem cartItem : listCart) {        
+                        System.out.println(cartItem.getImageURL());
+                    }
+                    // Set attributes for cart and products
+                    request.setAttribute("cartList", listCart);
+
+                    break;
                 case "update":
                     int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
                     int updatedQuantity = Integer.parseInt(request.getParameter("quantity"));

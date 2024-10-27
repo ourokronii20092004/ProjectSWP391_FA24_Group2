@@ -119,7 +119,7 @@ public class CartDAO {
     public void updateCartItemQuantity(int cartItemID, int quantity) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            String stm = "UPDATE CartItem SET Quantity = ? WHERE CartItemID = ?";
+            String stm = "UPDATE [dbo].[CartItem] SET Quantity = ? WHERE CartItemID = ?";
             PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
             pstm.setInt(1, quantity);
             pstm.setInt(2, cartItemID);
