@@ -149,11 +149,18 @@
                         %>
                         <div class="col-md-4 col-sm-6 mb-4">
                             <div class="card h-100">
-                                <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1seuY7.img?w=768&h=512&m=6" alt="Product Image" class="card-img-top">
+                                <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
                                     <a href="#"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
-                                    <p class="text-muted"><%= pro.getPrice()%></p>
-                                    <button class="btn btn-primary mt-2">Add to Cart</button>
+                                    <p class="text-muted">$<%= pro.getPrice()%></p>
+                                    <!-- Form để thêm sản phẩm vào giỏ hàng -->
+                                    <form action="" method="post">
+                                        <a href="#" class="text-decoration-none text-muted">Home</a>
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
+                                        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px; margin: 0 auto;">                                        
+                                        <a href="/LoginController" class="btn btn-primary">Add to Cart</a>
+                                    </form>
                                 </div>
                             </div>
                         </div>

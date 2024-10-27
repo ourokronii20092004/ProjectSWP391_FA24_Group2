@@ -67,8 +67,14 @@ public class CartController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int userID =(int)request.getSession().getAttribute("userID");
+        //int userID = 2;
         CartDAO cartDAO = new CartDAO();
-
+        //check session
+//       if (userID != 1 || userID != 2 || userID != 3 ) {
+//            // Nếu userID không có, chuyển về trang đăng nhập
+//            response.sendRedirect("/LoginController");
+//            return;
+//        }
         try {
             String action = request.getParameter("action");
             if (action == null) {
@@ -79,9 +85,6 @@ public class CartController extends HttpServlet {
                 case "list":
                     // Retrieve list of cart items
                     ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
-                    for (CartItem cartItem : listCart) {        
-                        System.out.println(cartItem.getImageURL());
-                    }
                     // Set attributes for cart and products
                     request.setAttribute("cartList", listCart);
 
@@ -113,8 +116,8 @@ public class CartController extends HttpServlet {
                 case "add":
                     int productID = Integer.parseInt(request.getParameter("productID"));
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    CartItem newItem = new CartItem(0, userID, productID, quantity);
-                    cartDAO.addCartItem(newItem);
+                    cartDAO.addCartItem(userID,productID,quantity);
+                    request.setAttribute("successMessage", "Item added to cart successfully!");
                     listCart = cartDAO.viewCartItemList(userID);
                     request.setAttribute("cartList", listCart);
                     break;
