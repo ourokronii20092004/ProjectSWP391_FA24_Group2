@@ -115,6 +115,7 @@
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- Add Product Modal -->
             <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">

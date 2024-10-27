@@ -12,22 +12,6 @@ function loadProducts() {
         .then(products => {
             productTableBody.innerHTML = ''; 
             products.forEach(product => {
-                const createdAt = new Date(product.createdAt).toLocaleDateString(); 
-                const updatedAt = new Date(product.updatedAt).toLocaleDateString();
-
-                const row = `
-                    <tr>
-                        <td>
-                            ${product.imageURL ? `<img src="${product.imageURL}" alt="${product.productName}">` : ''} 
-                        </td>
-                        <td>${product.productID}</td>
-                        <td>${product.productName}</td>
-                        <td>${product.description}</td>
-                        <td>${product.price}</td>
-                        <td>${product.categoryID}</td>
-                        <td>${product.stockQuantity}</td>
-                        <td>${createdAt}</td>
-                        <td>${updatedAt}</td>
                         <td>  <div class="btn-group" role="group" aria-label="no">
                             <button class="btn btn-sm btn-warning editProductBtn" 
                                     data-bs-toggle="modal"
@@ -69,7 +53,6 @@ function attachEditButtonListeners() {
             const modal = document.getElementById('editProductModal');
             const form = modal.querySelector('form');
 
-            //
             const productId = this.getAttribute('data-product-id');
             const productName = this.getAttribute('data-product-name');
             const description = this.getAttribute('data-product-description');
@@ -79,14 +62,6 @@ function attachEditButtonListeners() {
             const imageUrl = this.getAttribute('data-product-imageurl');
             const createdAt = this.getAttribute('data-product-createdat');
             const updatedAt = this.getAttribute('data-product-updatedat');
-
-            //
-            form.querySelector('[name="productId"]').value = productId;
-            form.querySelector('[name="productName"]').value = productName;
-            form.querySelector('[name="description"]').value = description;
-            form.querySelector('[name="price"]').value = price;
-            form.querySelector('[name="categoryId"]').value = categoryId;
-            form.querySelector('[name="stockQuantity"]').value = stockQuantity;
             //
         });
     });
