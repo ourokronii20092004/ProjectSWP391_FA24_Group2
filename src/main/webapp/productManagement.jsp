@@ -97,14 +97,14 @@
                                 <table class="table table-striped" id="productListTable">
                                     <thead>
                                         <tr>
-                                            <th style="width: 5%;">Image</th>
-                                            <th style="width: 5%;">ID</th>
-                                            <th style="width: 10%;">Name</th>
-                                            <th style="width: 40%;">Description</th>
-                                            <th style="width: 10%;">Price</th>
-                                            <th style="width: 10%;">Category ID</th>
-                                            <th style="width: 10%;">Stock</th>
-                                            <th style="width: 10%;">Actions</th>
+                                            <th>Image</th>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Price</th>
+                                            <th>Category ID</th>
+                                            <th>Stock</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="productTableBody">
