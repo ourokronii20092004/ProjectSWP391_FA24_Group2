@@ -124,7 +124,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.jsp"
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="dashboard.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Home</a></li>
                         <li class="nav-item"><a class="nav-link active" href="adminReport.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Reports</a></li>
@@ -134,6 +134,8 @@
                                                 onclick="parent.location.href = this.href; return false;">Control</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/CustomerController"
+                                                onclick="parent.location.href = this.href; return false;">Customer</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/CategoryController"
                                                 onclick="parent.location.href = this.href; return false;">Category</a></li>
                     </ul>
