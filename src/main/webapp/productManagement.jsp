@@ -85,33 +85,31 @@
                     <div class="card">
                         <div class="row">
                             <div class="col-md-12">
-
                                 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
                                     Add Product
                                 </button>
 
-                                <!-- Search Bar -->
                                 <input type="text" id="productSearchInput" onkeyup="searchProduct()" placeholder="Search for products...">
 
-                                <!-- Product Table -->
                                 <table class="table table-striped" id="productListTable">
                                     <thead>
                                         <tr>
-                                            <th>Image</th>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                            <th>Price</th>
-                                            <th>Category ID</th>
-                                            <th>Stock</th>
-                                            <th>Actions</th>
+                                            <th style="width: 10%;">Image</th>
+                                            <th style="width: 5%;">ID</th>
+                                            <th style="width: 15%;">Name</th>
+                                            <th style="width: 25%;">Description</th>
+                                            <th style="width: 10%;">Price</th>
+                                            <th style="width: 10%;">Category ID</th>
+                                            <th style="width: 5%;">Stock</th>
+                                            <th style="width: 10%;">Created</th> 
+                                            <th style="width: 10%;">Modified</th> 
+                                            <th style="width: 10%;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="productTableBody">
                                         <!-- Product data will be loaded here -->
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
                     </div>
