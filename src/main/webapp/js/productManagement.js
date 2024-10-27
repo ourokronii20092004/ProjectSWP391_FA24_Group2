@@ -3,59 +3,66 @@ function loadProducts() {
     const url = 'ProductController?action=list';
 
     fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(products => {
-                productTableBody.innerHTML = '';
-                products.forEach(product => {
-                    const row = `
-                        <tr>
-                            <td>
-                                <c:if test="${product.imageURL != null}">
-                                    <img src="${product.imageURL}" alt="${product.productName}"> 
-                                </c:if>
-                            </td>
-                            <td>${product.productID}</td>
-                            <td>${product.productName}</td>
-                            <td>${product.description}</td>
-                            <td>${product.price}</td>
-                            <td>${product.categoryID}</td>
-                            <td>${product.stockQuantity}</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning editProductBtn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editProductModal"
-                                        data-product-id="${product.productID}"
-                                        data-product-name="${product.productName}"
-                                        data-product-description="${product.description}"
-                                        data-product-price="${product.price}"
-                                        data-product-categoryid="${product.categoryID}"
-                                        data-product-stockquantity="${product.stockQuantity}"
-                                        data-product-imageurl="${product.imageURL}">Edit</button>
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(products => {
+            productTableBody.innerHTML = ''; 
+            products.forEach(product => {
 
-                                <a href="ProductController?action=delete&productId=${product.productID}"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
-                            </td>
-                        </tr>
-                    `;
-                    productTableBody.innerHTML += row;
-                });
+                const createdAt = new Date(product.createdAt).toLocaleDateString(); 
+                const updatedAt = new Date(product.updatedAt).toLocaleDateString();
 
-                //event listener edit btn
-                attachEditButtonListeners();
-            })
-            .catch(error => {
-                console.error('Error loading products:', error);
-                //error
+                const row = `
+                    <tr>
+                        <td>
+                            ${product.imageURL ? `<img src="${product.imageURL}" alt="${product.productName}">` : ''} 
+                        </td>
+                        <td>${product.productID}</td>
+                        <td>${product.productName}</td>
+                        <td>${product.description}</td>
+                        <td>${product.price}</td>
+                        <td>${product.categoryID}</td>
+                        <td>${product.stockQuantity}</td>
+                        <td>${createdAt}</td>
+                        <td>${updatedAt}</td>
+                        <td>  <div class="btn-group" role="group" aria-label="Basic example">
+                            <button class="btn btn-sm btn-warning editProductBtn" 
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editProductModal"
+                                    data-product-id="${product.productID}"
+                                    data-product-name="${product.productName}"
+                                    data-product-description="${product.description}"
+                                    data-product-price="${product.price}"
+                                    data-product-categoryid="${product.categoryID}"
+                                    data-product-stockquantity="${product.stockQuantity}"
+                                    data-product-imageurl="${product.imageURL}"
+                                    data-product-createdat="${product.createdAt}"
+                                    data-product-updatedat="${product.updatedAt}">
+                                Edit
+                            </button>
+
+                            <a href="ProductController?action=delete&productId=${product.productID}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this product?')">
+                                Delete
+                            </a> </div>
+                        </td>
+                    </tr>
+                `;
+                productTableBody.innerHTML += row; 
             });
+
+            attachEditButtonListeners();
+        })
+        .catch(error => {
+            console.error('Error loading products:', error);
+        });
 }
 
-//event listener edit btn
 function attachEditButtonListeners() {
     const editButtons = document.querySelectorAll('.editProductBtn');
     editButtons.forEach(button => {
@@ -63,7 +70,7 @@ function attachEditButtonListeners() {
             const modal = document.getElementById('editProductModal');
             const form = modal.querySelector('form');
 
-            //get
+            // Get data attributes from the button
             const productId = this.getAttribute('data-product-id');
             const productName = this.getAttribute('data-product-name');
             const description = this.getAttribute('data-product-description');
@@ -71,25 +78,26 @@ function attachEditButtonListeners() {
             const categoryId = this.getAttribute('data-product-categoryid');
             const stockQuantity = this.getAttribute('data-product-stockquantity');
             const imageUrl = this.getAttribute('data-product-imageurl');
+            const createdAt = this.getAttribute('data-product-createdat');
+            const updatedAt = this.getAttribute('data-product-updatedat');
 
-            //add
+            // Set form field values
             form.querySelector('[name="productId"]').value = productId;
             form.querySelector('[name="productName"]').value = productName;
             form.querySelector('[name="description"]').value = description;
             form.querySelector('[name="price"]').value = price;
             form.querySelector('[name="categoryId"]').value = categoryId;
             form.querySelector('[name="stockQuantity"]').value = stockQuantity;
-            //can thi them
+            //
         });
     });
 }
 
-//loadProducts()
+
 document.addEventListener('DOMContentLoaded', function () {
     loadProducts();
 });
 
-// Search product
 function searchProduct() {
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("productSearchInput");
