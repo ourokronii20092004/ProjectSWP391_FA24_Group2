@@ -67,7 +67,6 @@
                 display: none;
             }
 
-
             #productListTable img {
                 height: 50px;
                 width: auto;
@@ -78,7 +77,6 @@
         <iframe src="adminNavbar.jsp" height="60px"></iframe>
 
         <div class="container-fluid fullpagecontent">
-            <!-- Product Management -->
             <div class="row card-container">
                 <div class="col-md-12">
                     <h6 class="card-title">Product Management</h6>
@@ -115,7 +113,6 @@
                     </div>
                 </div>
             </div>
-        </div>
 
             <!-- Add Product Modal -->
             <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
