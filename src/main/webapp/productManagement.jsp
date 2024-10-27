@@ -8,106 +8,109 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Management | PAMP</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <style>
-        body {
-            background-color: #F5F7FB;
-            color: #1C1554;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product Management | PAMP</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <style>
+            body {
+                background-color: #F5F7FB;
+                color: #1C1554;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                margin: 0;
+            }
 
-        .card-container {
-            margin-top: 20px;
-        }
+            .card-container {
+                margin-top: 20px;
+            }
 
-        .card-title {
-            color: #888;
-            margin-bottom: 10px;
-        }
+            .card-title {
+                color: #888;
+                margin-bottom: 10px;
+            }
 
-        .card {
-            background-color: #FFFFFF;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            border: none;
-            padding: 20px;
-        }
+            .card {
+                background-color: #FFFFFF;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+                border: none;
+                padding: 20px;
+            }
 
-        .fullpagecontent {
-            flex: 1;
-        }
+            .fullpagecontent {
+                flex: 1;
+            }
 
-        footer {
-            background-color: #3E3E3E;
-            color: #FFFFFF;
-            text-align: center;
-            padding: 1rem 0;
-        }
+            footer {
+                background-color: #3E3E3E;
+                color: #FFFFFF;
+                text-align: center;
+                padding: 1rem 0;
+            }
 
-        iframe {
-            border: none;
-            width: 100%;
-        }
+            iframe {
+                border: none;
+                width: 100%;
+            }
 
-        /* Hide forms initially */
-        #addCategoryForm,
-        #editCategoryForm,
-        #addProductForm,
-        #editProductForm,
-        #addUserForm,
-        #editUserForm,
-        #editCommentForm {
-            display: none;
-        }
+            /* Hide forms initially */
+            #addCategoryForm,
+            #editCategoryForm,
+            #addProductForm,
+            #editProductForm,
+            #addUserForm,
+            #editUserForm,
+            #editCommentForm {
+                display: none;
+            }
 
-        #productListTable img {
-            height: 50px;
-            width: auto;
-        }
-    </style>
-</head>
-<body>
-    <iframe src="adminNavbar.jsp" height="60px"></iframe>
 
-    <div class="container-fluid fullpagecontent">
-        <div class="row card-container">
-            <div class="col-md-12">
-                <h6 class="card-title">Product Management</h6>
-                <div class="card">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                                Add Product
-                            </button>
+            #productListTable img {
+                height: 50px;
+                width: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <iframe src="adminNavbar.jsp" height="60px"></iframe>
 
-                            <input type="text" id="productSearchInput" onkeyup="searchProduct()" placeholder="Search for products...">
+        <div class="container-fluid fullpagecontent">
+            <!-- Product Management -->
+            <div class="row card-container">
+                <div class="col-md-12">
+                    <h6 class="card-title">Product Management</h6>
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                                    Add Product
+                                </button>
 
-                            <table class="table table-striped" id="productListTable">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 10%;">Image</th>
-                                        <th style="width: 5%;">ID</th>
-                                        <th style="width: 15%;">Name</th>
-                                        <th style="width: 25%;">Description</th>
-                                        <th style="width: 10%;">Price</th>
-                                        <th style="width: 10%;">Category ID</th>
-                                        <th style="width: 5%;">Stock</th>
-                                        <th style="width: 10%;">Created</th> 
-                                        <th style="width: 10%;">Modified</th> 
-                                        <th style="width: 10%;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="productTableBody">
-                                    <!-- Product data will be loaded here -->
-                                </tbody>
-                            </table>
+                                <input type="text" id="productSearchInput" onkeyup="searchProduct()" placeholder="Search for products...">
+
+                                <table class="table table-striped" id="productListTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 10%;">Image</th>
+                                            <th style="width: 5%;">ID</th>
+                                            <th style="width: 15%;">Name</th>
+                                            <th style="width: 25%;">Description</th>
+                                            <th style="width: 10%;">Price</th>
+                                            <th style="width: 10%;">Category ID</th>
+                                            <th style="width: 5%;">Stock</th>
+                                            <th style="width: 10%;">Created</th> 
+                                            <th style="width: 10%;">Modified</th> 
+                                            <th style="width: 10%;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productTableBody">
+                                        <!-- Product data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
