@@ -1,4 +1,4 @@
-function loadProducts() {
+    function loadProducts() {
     const productTableBody = document.getElementById('productTableBody');
     const url = 'ProductController?action=list';
 
@@ -18,7 +18,7 @@ function loadProducts() {
                     const row = `
                     <tr>
                         <td>
-                            ${product.imageURL ? `<img src="${product.imageURL}" alt="${product.productName}">` : ''} 
+                            <c:if test="${product.imageURL !== null}"><img src="${product.imageURL}" alt="${product.productName}"></c:if> 
                         </td>
                         <td>${product.productID}</td>
                         <td>${product.productName}</td>
