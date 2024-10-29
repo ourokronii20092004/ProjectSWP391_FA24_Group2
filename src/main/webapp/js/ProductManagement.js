@@ -77,7 +77,9 @@ function validateProductForm(form) {
 
     const categoryId = parseInt(categoryIdInput.value);
 
+
     const stockQuantity = parseInt(stockQuantityInput.value);
+
     if (!isValidStockQuantity(stockQuantity)) {
         alert("Stock quantity must be between 0 and 10,000,000.");
         return false;
@@ -147,4 +149,6 @@ function searchProduct() {
             }
         }
     }
+
 }
+
