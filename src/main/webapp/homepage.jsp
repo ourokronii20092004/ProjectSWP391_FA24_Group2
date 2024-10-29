@@ -54,7 +54,19 @@
                                         </svg> -->
                 </div>
             </header>
-
+            <!-- Hiển thị thông báo thành công -->
+            <%-- Success Message Alert --%>
+            <c:if test="${not empty successMessage}">
+                <div id="successAlert" class="alert alert-success text-center" role="alert">
+                    ${successMessage}
+                </div>
+                <script>
+                    // Hide the success message after 5 seconds
+                    setTimeout(function () {
+                        document.getElementById('successAlert').style.display = 'none';
+                    }, 5000);
+                </script>
+            </c:if>
             <div class="p-3">
                 <form class="d-flex align-items-center">
                     <input type="search" class="form-control me-2" placeholder="Search products..." aria-label="Search">

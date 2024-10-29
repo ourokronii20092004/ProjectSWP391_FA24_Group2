@@ -38,12 +38,7 @@
                     </a>
                 </div>
             </header>
-            <!-- Hiển thị thông báo thành công -->
-            <c:if test="${not empty successMessage}">
-                <div class="alert alert-success" role="alert">
-                    ${successMessage}
-                </div>
-            </c:if>
+
             <!-- Cart -->
             <div class="container mt-4">
                 <h1 class="mb-4">Your Shopping Cart</h1>
