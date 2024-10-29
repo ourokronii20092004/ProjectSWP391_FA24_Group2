@@ -375,6 +375,31 @@ public class ProductDAO {
         return searchResult;
     }
 
+    public boolean isValidCategoryId(int categoryId) {
+        String sql = "select 1 from Category where CategoryID = ?";
+        boolean isValid = false;
+
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, categoryId);
+
+                    try ( ResultSet rs = pre.executeQuery()) {
+                        isValid = rs.next();
+                        
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error checking category ID: " + ex.getMessage(), ex);
+        } finally {
+            DBConnection.Disconnect();
+        }
+        System.out.println("Category: " + categoryId + " | " + isValid);
+        return isValid;
+    }
+
     ///////////////////////////////////////////////////
     public Product getProductByID(int productID) {
         DBConnection.Connect();

@@ -118,13 +118,6 @@ public class ProductController extends HttpServlet {
                     System.out.println("doGet: " + action);
                     break;
                 }
-                case "edit": {
-                    int productID = Integer.parseInt(request.getParameter("productId"));
-                    Product product = productDAO.readProduct(productID);
-                    request.setAttribute("product", product);
-                    System.out.println("doGet: " + action);
-                    break;
-                }
                 default:
                     productList = productDAO.viewProductList();
                     System.out.println("doGet: " + action);
@@ -149,84 +142,32 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getRequestURI();
-        String page = "";
-
-        if (path.contains("Control")) {
-            page = "Control";
-        } else if (path.contains("Product")) {
-            page = "Product";
-        }
-
         String action = request.getParameter("action");
         if (action == null) {
             action = "listControl";
         }
-
         ProductDAO productDAO = new ProductDAO();
         Part filePart = request.getPart("image");
         String originalFileName = getFileName(filePart);
         switch (action) {
-            case "add": {
-                System.out.println("doPost: " + action);
-                String productName = request.getParameter("productName");
-                String description = request.getParameter("description");
-
-                if (productName == null || productName.trim().isEmpty()) {
-                    request.setAttribute("errorMessage", "Product name is required.");
-                    redirectWithError(request, response, page);
-                    return;
-                }
-
-                float price;
-                try {
-                    price = Float.parseFloat(request.getParameter("price"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid price format.");
-                    redirectWithError(request, response, page);
-                    return;
-                }
-
-                int categoryId;
-                try {
-                    categoryId = Integer.parseInt(request.getParameter("categoryId"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid category ID format.");
-                    redirectWithError(request, response, page);
-                    return;
-                }
-
-                int stockQuantity;
-                try {
-                    stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid stock quantity format.");
-                    redirectWithError(request, response, page);
-                    return;
-                }
-
+            case "add":
+                System.out.println("doPost: add");
                 String newFileName = "";
                 if (filePart != null && filePart.getSize() > 0) {
                     String contentType = filePart.getContentType();
                     if (!isValidImageType(contentType)) {
-                        request.setAttribute("errorMessage", "Invalid image type. Please upload a JPG, JPEG, or PNG file.");
-                        redirectWithError(request, response, page);
-                        return;
+                        System.out.println("Product image of the wrong type.");
                     }
-
                     String fileExtension = getFileExtension(originalFileName);
                     newFileName = "product_" + System.currentTimeMillis() + fileExtension;
-
                     InputStream imageStream = filePart.getInputStream();
                     String relativeUploadPath = "/img/pro/" + newFileName;
                     String fullUploadPath = getServletContext().getRealPath(relativeUploadPath);
-
                     File targetFile = new File(fullUploadPath);
                     File parentDir = targetFile.getParentFile();
                     if (!parentDir.exists()) {
                         parentDir.mkdirs();
                     }
-
                     try ( OutputStream out = new FileOutputStream(fullUploadPath)) {
                         byte[] buffer = new byte[1024];
                         int length;
@@ -235,78 +176,49 @@ public class ProductController extends HttpServlet {
                         }
                     } catch (IOException e) {
                         System.err.println("Error saving image: " + e.getMessage());
-                        e.printStackTrace();
-                        request.setAttribute("errorMessage", "Error saving image.");
-                        redirectWithError(request, response, page);
-                        return;
                     }
+                    System.out.println("Product image saved at: " + fullUploadPath);
                 } else {
-
                     newFileName = "default.jpg";
+                    System.out.println("Product image not uploaded. Using deafult.jpg");
                 }
-
                 String imageUrl = "img/pro/" + newFileName;
+                System.out.println("Product image saved at: " + imageUrl);
+                String productName = request.getParameter("productName");
+                String description = request.getParameter("description");
+                float price = Float.parseFloat(request.getParameter("price"));
+                int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+                int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
                 Product newProduct = new Product(0, productName, description, price, imageUrl,
                         categoryId, stockQuantity, null, null);
                 productDAO.addProduct(newProduct);
-
                 response.sendRedirect("ProductController?action=list&page=Product");
-                return;
-            }
-
-            case "update": {
-                System.out.println("doPost: " + action);
-                int productId;
-                try {
-                    productId = Integer.parseInt(request.getParameter("productId"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid Product ID");
-                    request.getRequestDispatcher("productManagement.jsp").forward(request, response);
-                    return;
-                }
+                break;
+            case "update":
+                System.out.println("doPost: update");
+                int productId = Integer.parseInt(request.getParameter("productId"));
                 String updatedProductName = request.getParameter("productName");
                 String updatedDescription = request.getParameter("description");
-                float updatedPrice;
-                try {
-                    updatedPrice = Float.parseFloat(request.getParameter("price"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid price format.");
-                    request.getRequestDispatcher("productManagement.jsp").forward(request, response);
-                    return;
-                }
-                int updatedCategoryId;
-                try {
-                    updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid category ID format.");
-                    request.getRequestDispatcher("productManagement.jsp").forward(request, response);
-                    return;
-                }
-                int updatedStockQuantity;
-                try {
-                    updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-                } catch (NumberFormatException e) {
-                    request.setAttribute("errorMessage", "Invalid stock quantity format.");
-                    request.getRequestDispatcher("productManagement.jsp").forward(request, response);
-                    return;
-                }
+                float updatedPrice = Float.parseFloat(request.getParameter("price"));
+                int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
+                int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
                 String updatedImageUrl;
                 String fileName = getFileName(filePart);
                 if (fileName == null || fileName.isEmpty()) {
+                    System.out.println("Product image not uploaded");
                     Product existingProduct = productDAO.readProduct(productId);
-                    System.out.println(existingProduct);
                     if (existingProduct != null) {
-                        updatedImageUrl = "img/pro/default.jpg";
-                        //updatedImageUrl = existingProduct.getImageURL();
+                        updatedImageUrl = existingProduct.getImageURL();
+                        System.out.println("Product image not changed");
                     } else {
                         System.err.println("Error: Product with ID " + productId + " not found in the database.");
                         updatedImageUrl = "img/pro/default.jpg";
-                        response.sendRedirect("ProductController?action=list&page=Product");
-                        return;
                     }
                 } else {
+                    System.out.println("Product image uploaded");
                     fileName = new File(fileName).getName();
                     updatedImageUrl = "img/pro/" + fileName;
+                    System.out.println("Product image saved at: " + updatedImageUrl);
                     if (filePart != null && filePart.getSize() > 0) {
                         String fullImagePath = getServletContext().getRealPath("/") + updatedImageUrl;
                         try ( OutputStream out = new FileOutputStream(fullImagePath)) {
@@ -320,14 +232,12 @@ public class ProductController extends HttpServlet {
                         }
                     }
                 }
-
                 Product updatedProduct = new Product(productId, updatedProductName, updatedDescription,
                         updatedPrice, updatedImageUrl, updatedCategoryId,
                         updatedStockQuantity, null, null);
                 productDAO.updateProduct(updatedProduct);
                 response.sendRedirect("ProductController?action=list&page=Product");
-                return;
-            }
+                break;
         }
     }
 
@@ -338,26 +248,10 @@ public class ProductController extends HttpServlet {
 
     private String getFileExtension(String fileName) {
         if (fileName == null) {
-            return ""; // Or handle null cases as needed
+            return "";
         }
         int dotIndex = fileName.lastIndexOf('.');
         return (dotIndex > 0) ? fileName.substring(dotIndex) : "";
-    }
-
-    private boolean isValidImageType(String contentType) {
-        // Add more image types as needed
-        return contentType != null
-                && (contentType.equals("image/jpeg")
-                || contentType.equals("image/png"));
-    }
-
-    private void redirectWithError(HttpServletRequest request, HttpServletResponse response, String page)
-            throws ServletException, IOException {
-        if (page.equals("Control")) {
-            request.getRequestDispatcher("adminControl.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("productManagement.jsp").forward(request, response);
-        }
     }
 
     private String getFileName(Part part) {
@@ -370,4 +264,11 @@ public class ProductController extends HttpServlet {
         }
         return null;
     }
+
+    private boolean isValidImageType(String contentType) {
+        return contentType != null
+                && (contentType.equals("image/jpeg")
+                || contentType.equals("image/png"));
+    }
 }
+
