@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <!DOCTYPE html>
 <html>
     <head>
@@ -108,7 +108,37 @@
                                         </tr>
                                     </thead>
                                     <tbody id="productTableBody">
-                                        <!-- Product data will be loaded here -->
+                                        <c:forEach items="${productList}" var="product"> 
+                                            <tr>
+                                                <td>
+                                                    <c:if test="${not empty product.imageURL}">
+                                                        <img src="${product.imageURL}" alt="${product.productName}"> 
+                                                    </c:if>
+                                                </td>
+                                                <td>${product.productID}</td>
+                                                <td>${product.productName}</td>
+                                                <td>${product.description}</td>
+                                                <td>${product.price}</td>
+                                                <td>${product.categoryID}</td>
+                                                <td>${product.stockQuantity}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-warning editProductBtn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editProductModal"
+                                                            data-product-id="${product.productID}"
+                                                            data-product-name="${product.productName}"
+                                                            data-product-description="${product.description}"
+                                                            data-product-price="${product.price}"
+                                                            data-product-categoryid="${product.categoryID}"
+                                                            data-product-stockquantity="${product.stockQuantity}"
+                                                            data-product-imageurl="${product.imageURL}">Edit</button>
+
+                                                    <a href="ProductController?action=delete&productId=${product.productID}"
+                                                       class="btn btn-sm btn-danger"
+                                                       onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach> 
                                     </tbody>
                                 </table>
                             </div>
@@ -211,6 +241,55 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-        <script src="js/productManagement.js"></script>
+        <script>
+                                                           document.addEventListener('DOMContentLoaded', function () {
+                                                               attachEditButtonListeners();
+                                                           });
+
+                                                           function attachEditButtonListeners() {
+                                                               const editButtons = document.querySelectorAll('.editProductBtn');
+                                                               editButtons.forEach(button => {
+                                                                   button.addEventListener('click', function (event) {
+                                                                       const modal = document.getElementById('editProductModal');
+                                                                       const form = modal.querySelector('form');
+
+                                                                       const productId = this.getAttribute('data-product-id');
+                                                                       const productName = this.getAttribute('data-product-name');
+                                                                       const description = this.getAttribute('data-product-description');
+                                                                       const price = this.getAttribute('data-product-price');
+                                                                       const categoryId = this.getAttribute('data-product-categoryid');
+                                                                       const stockQuantity = this.getAttribute('data-product-stockquantity');
+                                                                       const imageUrl = this.getAttribute('data-product-imageurl');
+
+                                                                       form.querySelector('[name="productId"]').value = productId;
+                                                                       form.querySelector('[name="productName"]').value = productName;
+                                                                       form.querySelector('[name="description"]').value = description;
+                                                                       form.querySelector('[name="price"]').value = price;
+                                                                       form.querySelector('[name="categoryId"]').value = categoryId;
+                                                                       form.querySelector('[name="stockQuantity"]').value = stockQuantity;
+                                                                   });
+                                                               });
+                                                           }
+
+// Search product
+                                                           function searchProduct() {
+                                                               var input, filter, table, tr, td, i, txtValue;
+                                                               input = document.getElementById("productSearchInput");
+                                                               filter = input.value.toUpperCase();
+                                                               table = document.getElementById("productListTable");
+                                                               tr = table.getElementsByTagName("tr");
+                                                               for (i = 0; i < tr.length; i++) {
+                                                                   td = tr[i].getElementsByTagName("td")[2];
+                                                                   if (td) {
+                                                                       txtValue = td.textContent || td.innerText;
+                                                                       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                                                           tr[i].style.display = "";
+                                                                       } else {
+                                                                           tr[i].style.display = "none";
+                                                                       }
+                                                                   }
+                                                               }
+                                                           }
+        </script>
     </body>
 </html>
