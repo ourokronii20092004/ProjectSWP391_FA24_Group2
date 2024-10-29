@@ -64,7 +64,7 @@
                             </div>
                             <div class="col-md-2 d-flex flex-column justify-content-between">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <p class="price">₫${item.price}</p>
+                                    <p class="price">₫${item.price} x ${item.quantity} = ₫${item.price * item.quantity}</p>
                                 </div>
                                 <div class="input-group mb-3">
                                     <!-- Form to update quantity -->
