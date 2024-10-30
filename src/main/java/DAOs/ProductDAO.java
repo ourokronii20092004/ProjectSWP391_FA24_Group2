@@ -158,6 +158,7 @@ public class ProductDAO {
                     pre.setInt(5, product.getCategoryID());
                     pre.setInt(6, product.getStockQuantity());
                     upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by addProduct: " + upCount);
                 }
                 if (upCount > 0) {
                     viewProductList();
@@ -214,8 +215,8 @@ public class ProductDAO {
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, id);
                     upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by removeProduct: " + upCount); //TEST
                 }
-
                 if (upCount > 0) {
                     Product product = readProduct(id);
                     if (product != null) {
@@ -229,6 +230,7 @@ public class ProductDAO {
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error removing product: " + ex.getMessage(), ex);
+            ex.printStackTrace(); //test
         } finally {
             DBConnection.Disconnect();
         }
@@ -243,14 +245,13 @@ public class ProductDAO {
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, id);
                     upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by removeProductFinal: " + upCount); //TEST
                 }
-
                 if (upCount > 0) {
                     Product productToRemove = readProduct(id);
                     if (productToRemove != null) {
                         productList.remove(productToRemove);
                     }
-
                     upCount = 0;
                     return true; // ok
                 } else {
@@ -269,10 +270,11 @@ public class ProductDAO {
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
-                String sql = "update Product set StockQuantity = 0 where ProductID = ?";
+                String sql = "update Product set StockQuantity = 0 where ProductID = ? and StockQuantity = -1";
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, id);
                     upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by restoreProduct: " + upCount); //TEST
                 }
 
                 if (upCount > 0) {
@@ -378,16 +380,13 @@ public class ProductDAO {
     public boolean isValidCategoryId(int categoryId) {
         String sql = "select 1 from Category where CategoryID = ?";
         boolean isValid = false;
-
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, categoryId);
-
                     try ( ResultSet rs = pre.executeQuery()) {
                         isValid = rs.next();
-                        
                     }
                 }
             }
