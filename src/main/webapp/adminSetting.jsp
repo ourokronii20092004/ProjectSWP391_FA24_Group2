@@ -85,8 +85,9 @@
                                     <tr>
                                         <th class="col-md-1">ID</th>
                                         <th class="col-md-1">Username</th>
-                                        <th class="col-md-2">Full name</th>
-                                        <th class="col-md-2">Price</th>
+                                        <th class="col-md-1">Full name</th>
+                                        <th class="col-md-1">Order Items</th>
+                                        <th class="col-md-1">Price</th>
                                         <th class="col-md-1">Status</th>
                                         <th class="col-md-1">Order date</th>
                                         <th class="col-md-3">Action</th>
@@ -94,12 +95,17 @@
                                     <c:forEach items="${orderList}" var="o">                               
                                         <tr>
                                             <th class="col-md-1">${o.orderID}</th>
-                                            <th class="col-md-2">${o.user.userName}</th>
-                                            <th class="col-md-2">${o.user.firstName} ${o.user.lastName}</th>
-                                            <th class="col-md-2">${o.totalAmount}</th>
-                                            <th class="col-md-2">${o.orderStatus}</th>
+                                            <th class="col-md-1">${o.user.userName}</th>
+                                            <th class="col-md-1">${o.user.firstName} ${o.user.lastName}</th>
+                                            <th class="col-md-1">
+                                                <c:forEach items="${o.orderItemList}" var="ot">                                            
+                                                   ${ot.product.productName} x${ot.quantity}<br>
+                                                </c:forEach>
+                                               </th>
+                                            <th class="col-md-1">${o.totalAmount}</th>
+                                            <th class="col-md-1">${o.orderStatus}</th>
                                             <th class="col-md-1">${o.orderDate}</th>
-                                            <th class="col-md-1">Chưa co cmjhet</th>
+                                            <th class="col-md-3">Chưa co cmjhet</th>
                                         </tr>  
                                     </c:forEach>                               
 
@@ -168,56 +174,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-        <script>
-            // Sample order data (replace with your actual data)
-            var orderData = [
-                {username: "user123", items: "Roses (2), Lilies (1)", stock: "enough", price: "$45", confirmed: false},
-                {username: "flowerfan", items: "Tulips (5)", stock: "not enough", price: "$30", confirmed: false},
-                        // ... add more order data
-            ];
-
-            // Sample product data (replace with your actual data)
-            var productData = [
-                {image: "path/to/image1.jpg", id: "P001", name: "Rose", price: "$10", description: "Beautiful red rose...", categories: "Flower, Red", inStock: 100, lastUpdated: "2024-01-15"},
-                {image: "path/to/image2.jpg", id: "P002", name: "Lily", price: "$15", description: "Elegant white lily...", categories: "Flower, White", inStock: 50, lastUpdated: "2024-01-20"},
-                        // ... add more product data
-            ];
-
-            // Function to load order data into the table
-            function loadOrderData() {
-                var orderList = document.getElementById("orderList");
-                for (var i = 0; i < orderData.length; i++) {
-                    var order = orderData[i];
-                    var row = orderList.insertRow();
-                    row.insertCell().textContent = order.username;
-                    row.insertCell().textContent = order.items;
-                    row.insertCell().textContent = order.stock;
-                    row.insertCell().textContent = order.price;
-                    var confirmCell = row.insertCell();
-                    var checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.checked = order.confirmed;
-                    confirmCell.appendChild(checkbox);
-                }
-            }
-
-            // Function to load product data into the table
-            function loadProductData() {
-                var productList = document.getElementById("productList");
-                for (var i = 0; i < productData.length; i++) {
-                    var product = productData[i];
-                    var row = productList.insertRow();
-                    row.insertCell().innerHTML = '<img src="' + product.image + '" alt="' + product.name + '" class="product-image">';
-                    row.insertCell().textContent = product.id;
-                    row.insertCell().textContent = product.name;
-                    // ... add other product details to the table row
-                }
-            }
-
-            // Call the functions to load data
-            loadOrderData();
-            loadProductData();
-        </script>
+       
     </body>
 </body>
 </html>
