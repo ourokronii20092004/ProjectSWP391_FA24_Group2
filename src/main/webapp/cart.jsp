@@ -54,7 +54,7 @@
                                 <input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}">
                             </div>
                             <div class="col-md-2">
-                                <img src="item.imageURL" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
+                                <img src="D:\image\4a5be7e32326b23d789ec4bd16c0c17a.jpg" class="img-fluid rounded-start product-image" alt="Hình ảnh sản phẩm">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">
@@ -64,7 +64,7 @@
                             </div>
                             <div class="col-md-2 d-flex flex-column justify-content-between">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <p class="price">₫${item.price}</p>
+                                    <p class="price">₫${item.price} x ${item.quantity} = ₫${item.price * item.quantity}</p>
                                 </div>
                                 <div class="input-group mb-3">
                                     <!-- Form to update quantity -->

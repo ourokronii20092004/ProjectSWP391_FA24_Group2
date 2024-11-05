@@ -66,68 +66,77 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int userID =(int)request.getSession().getAttribute("userID");
+        ///int userID = (int) request.getSession().getAttribute("userID");
+        int userID = 2;
         CartDAO cartDAO = new CartDAO();
-
+        //check session
+//       if (userID != 1 || userID != 2 || userID != 3 ) {
+//            // Nếu userID không có, chuyển về trang đăng nhập
+//            response.sendRedirect("/LoginController");
+//            return;
+//        }
         try {
             String action = request.getParameter("action");
             if (action == null) {
                 action = "list";
             }
+            //if ("add".equals(action)) {
+                //int productID = Integer.parseInt(request.getParameter("productID"));
+                //int quantity = Integer.parseInt(request.getParameter("quantity"));
+                //cartDAO.addCartItem(userID, productID, quantity);
+                //request.setAttribute("successMessage", "Item added to cart successfully!");
+                //response.sendRedirect("homepage.jsp");
+            //}
+        ArrayList<CartItem> listCart;
+        switch (action) {
+            case "add":
+                int productID = Integer.parseInt(request.getParameter("productID"));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                cartDAO.addCartItem(userID, productID, quantity);
+                
+                // Set a success message in session or cookie if you want it displayed on homepage
+                request.getSession().setAttribute("successMessage", "Item added to cart successfully!");
+                
+                // Redirect to homepage after adding item to cart
+                response.sendRedirect("homepage.jsp");
+                return;
 
-            ArrayList<CartItem> listCart = cartDAO.viewCartItemList(userID);
+            case "list":
+                listCart = cartDAO.viewCartItemList(userID);
+                request.setAttribute("cartList", listCart);
+                break;
 
-            switch (action) {
-                case "update":
-                    int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
-                    int updatedQuantity = Integer.parseInt(request.getParameter("quantity"));
+            case "update":
+                int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
+                int updatedQuantity = Integer.parseInt(request.getParameter("quantity"));
+                cartDAO.updateCartItemQuantity(cartItemID, updatedQuantity);
+                break;
 
-                    // Update the quantity in the database
-                    cartDAO.updateCartItemQuantity(cartItemID, updatedQuantity);
-
-                    // Refresh the cart list after updating
-                    listCart = cartDAO.viewCartItemList(userID);
-                    request.setAttribute("cartList", listCart);
-                    break;
-
-                case "deleteSelected":
-                    String selectedItems = request.getParameter("selectedItems");
-                    if (selectedItems != null && !selectedItems.isEmpty()) {
-                        String[] cartItemIDs = selectedItems.split(",");
-                        for (String id : cartItemIDs) {
-                            cartDAO.removeCartItem(Integer.parseInt(id));
-                        }
+            case "deleteSelected":
+                String selectedItems = request.getParameter("selectedItems");
+                if (selectedItems != null && !selectedItems.isEmpty()) {
+                    String[] cartItemIDs = selectedItems.split(",");
+                    for (String id : cartItemIDs) {
+                        cartDAO.removeCartItem(Integer.parseInt(id));
                     }
-                    listCart = cartDAO.viewCartItemList(userID);
-                    request.setAttribute("cartList", listCart);
-                    break;
+                }
+                break;
 
-                case "add":
-                    int productID = Integer.parseInt(request.getParameter("productID"));
-                    int quantity = Integer.parseInt(request.getParameter("quantity"));
-                    CartItem newItem = new CartItem(0, userID, productID, quantity);
-                    cartDAO.addCartItem(newItem);
-                    listCart = cartDAO.viewCartItemList(userID);
-                    request.setAttribute("cartList", listCart);
-                    break;
+            case "delete":
+                int deleteCartItemID = Integer.parseInt(request.getParameter("cartItemId"));
+                cartDAO.removeCartItem(deleteCartItemID);
+                break;
 
-                case "delete":
-                    int deleteCartItemID = Integer.parseInt(request.getParameter("cartItemId"));
-                    cartDAO.removeCartItem(deleteCartItemID);
-                    listCart = cartDAO.viewCartItemList(userID);
-                    request.setAttribute("cartList", listCart);
-                    break;
+            default:
+                break;
+        }
 
-                default:
-                    // Always retrieve the cart list in case of other actions
-                    listCart = cartDAO.viewCartItemList(userID);
-                    request.setAttribute("cartList", listCart);
-                    break;
-            }
-
-            // Forward the updated list to the cart page
-            RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
-            dispatcher.forward(request, response);
+        // Retrieve the updated cart list and forward to cart.jsp
+        listCart = cartDAO.viewCartItemList(userID);
+        request.setAttribute("cartList", listCart);
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
+        dispatcher.forward(request, response);
 
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);

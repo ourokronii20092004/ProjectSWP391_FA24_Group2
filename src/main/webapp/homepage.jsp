@@ -15,7 +15,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PAMB HomePage</title>
-        
+
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
@@ -54,7 +54,19 @@
                                         </svg> -->
                 </div>
             </header>
-
+            <!-- Hiển thị thông báo thành công -->
+            <%-- Success Message Alert --%>
+            <c:if test="${not empty successMessage}">
+                <div id="successAlert" class="alert alert-success text-center" role="alert">
+                    ${successMessage}
+                </div>
+                <script>
+                    // Hide the success message after 5 seconds
+                    setTimeout(function () {
+                        document.getElementById('successAlert').style.display = 'none';
+                    }, 5000);
+                </script>
+            </c:if>
             <div class="p-3">
                 <form class="d-flex align-items-center">
                     <input type="search" class="form-control me-2" placeholder="Search products..." aria-label="Search">
@@ -139,11 +151,17 @@
                         %>
                         <div class="col-md-4 col-sm-6 mb-4">
                             <div class="card h-100">
-                                <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1seuY7.img?w=768&h=512&m=6" alt="Product Image" class="card-img-top">
+                                <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
                                     <a href="#"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
-                                    <p class="text-muted"><%= pro.getPrice()%></p>
-                                    <button class="btn btn-primary mt-2">Add to Cart</button>
+                                    <p class="text-muted">$<%= pro.getPrice()%></p>
+                                    <!-- Form để thêm sản phẩm vào giỏ hàng -->
+                                    <form action="/CartController" method="post">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
+                                        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px; margin: 0 auto;">
+                                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

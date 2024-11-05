@@ -50,17 +50,16 @@ public class CartDAO {
         return null;
     }
 
-    public void addCartItem(CartItem cartItem) {
+    public void addCartItem(int userID, int productID, int quantity) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                String stm = "INSERT INTO [dbo].[CartItem] (CartItemID,UserID,ProductID,Quantity)"
-                        + "VALUES(?,?,?,?)";
+                String stm = "INSERT INTO [dbo].[CartItem] (UserID,ProductID,Quantity)"
+                        + "VALUES(?,?,?)";
                 PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setInt(1, cartItem.getCartItemID());
-                pstm.setInt(2, cartItem.getUserID());
-                pstm.setInt(3, cartItem.getProductID());
-                pstm.setInt(4, cartItem.getQuantity());
+                pstm.setInt(1, userID);
+                pstm.setInt(2, productID);
+                pstm.setInt(3, quantity);
                 pstm.executeUpdate();
                 pstm.close();
                 DBConnection.Disconnect();
@@ -119,7 +118,7 @@ public class CartDAO {
     public void updateCartItemQuantity(int cartItemID, int quantity) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            String stm = "UPDATE CartItem SET Quantity = ? WHERE CartItemID = ?";
+            String stm = "UPDATE [dbo].[CartItem] SET Quantity = ? WHERE CartItemID = ?";
             PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
             pstm.setInt(1, quantity);
             pstm.setInt(2, cartItemID);

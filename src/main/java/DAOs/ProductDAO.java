@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,48 +24,62 @@ public class ProductDAO {
     ArrayList<Product> productList = new ArrayList<>();
     private int upCount;
 
-    public ArrayList<Product> viewProductList() throws SQLException {
-        productList.clear();
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            // SOFT DELETE == STOCK -1
-            ResultSet rs = DBConnection.ExecuteQuery("SELECT * from Product where StockQuantity > -1");
-            while (rs.next()) {
-                productList.add(new Product(
-                        rs.getInt("ProductID"),
-                        rs.getString("ProductName"),
-                        rs.getString("Description"),
-                        rs.getFloat("Price"),
-                        rs.getString("ImageURL"),
-                        rs.getInt("CategoryID"),
-                        rs.getInt("StockQuantity"),
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt")
-                ));
+    public ArrayList<Product> viewProductList() {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * from Product WHERE StockQuantity > -1");
+                while (rs.next()) {
+                    productList.add(new Product(
+                            rs.getInt("ProductID"),
+                            rs.getString("ProductName"),
+                            rs.getString("Description"),
+                            rs.getFloat("Price"),
+                            rs.getString("ImageURL"),
+                            rs.getInt("CategoryID"),
+                            rs.getInt("StockQuantity"),
+                            rs.getDate("CreatedAt"),
+                            rs.getDate("UpdatedAt")
+                    ));
+                    //System.out.println(rs.getInt("ProductID"));
+                }
+                rs.close();
             }
+        } catch (SQLException e) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error fetching product: ", e);
+            return new ArrayList<>();
+        } finally {
+            DBConnection.Disconnect();
         }
         return new ArrayList<>(productList);
     }
 
     public ArrayList<Product> viewProductListControl() throws SQLException {
         productList.clear();
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            // SOFT DELETE == STOCK -1
-            ResultSet rs = DBConnection.ExecuteQuery("select top (5) * from Product where StockQuantity > -1 Order By UpdatedAt desc");
-            while (rs.next()) {
-                productList.add(new Product(
-                        rs.getInt("ProductID"),
-                        rs.getString("ProductName"),
-                        rs.getString("Description"),
-                        rs.getFloat("Price"),
-                        rs.getString("ImageURL"),
-                        rs.getInt("CategoryID"),
-                        rs.getInt("StockQuantity"),
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt")
-                ));
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                ResultSet rs = DBConnection.ExecuteQuery("select top (5) * from Product where StockQuantity > -1 Order By UpdatedAt desc");
+                while (rs.next()) {
+                    productList.add(new Product(
+                            rs.getInt("ProductID"),
+                            rs.getString("ProductName"),
+                            rs.getString("Description"),
+                            rs.getFloat("Price"),
+                            rs.getString("ImageURL"),
+                            rs.getInt("CategoryID"),
+                            rs.getInt("StockQuantity"),
+                            rs.getDate("CreatedAt"),
+                            rs.getDate("UpdatedAt")
+                    ));
+                }
+                rs.close();
             }
+        } catch (SQLException e) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error fetching product: ", e);
+            return new ArrayList<>();
+        } finally {
+            DBConnection.Disconnect();
         }
         return new ArrayList<>(productList);
     }
@@ -93,113 +109,192 @@ public class ProductDAO {
         return new ArrayList<>(productList);
     }
 
-    public Product readProduct(int id) throws SQLException {
+    public Product readProduct(int id) {
         String sql = "select * from Product where ProductID = ?";
+        Product product = null;
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, id);
 
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
-                pre.setInt(1, id);
-
-                try ( ResultSet rs = pre.executeQuery()) {
-                    if (rs.next()) {
-                        return new Product(
-                                rs.getInt("ProductID"),
-                                rs.getString("ProductName"),
-                                rs.getString("Description"),
-                                rs.getFloat("Price"),
-                                rs.getString("ImageURL"),
-                                rs.getInt("CategoryID"),
-                                rs.getInt("StockQuantity"),
-                                rs.getDate("CreatedAt"),
-                                rs.getDate("UpdatedAt")
-                        );
+                    try ( ResultSet rs = pre.executeQuery()) {
+                        if (rs.next()) {
+                            product = new Product(
+                                    rs.getInt("ProductID"),
+                                    rs.getString("ProductName"),
+                                    rs.getString("Description"),
+                                    rs.getFloat("Price"),
+                                    rs.getString("ImageURL"),
+                                    rs.getInt("CategoryID"),
+                                    rs.getInt("StockQuantity"),
+                                    rs.getDate("CreatedAt"),
+                                    rs.getDate("UpdatedAt")
+                            );
+                        }
                     }
                 }
-            } finally {
-                DBConnection.Disconnect();
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error fetching product: " + ex.getMessage(), ex);
+            throw new RuntimeException("Error reading product", ex);
+        } finally {
+            DBConnection.Disconnect();
         }
-        return null;
+
+        return product;
     }
 
-    public void addProduct(Product product) throws SQLException {
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("INSERT INTO Product (ProductName, Description, Price, ImageURL, CategoryID, StockQuantity) VALUES (?, ?, ?, ?, ?, ?)");
-            pre.setString(1, product.getProductName());
-            pre.setString(2, product.getDescription());
-            pre.setFloat(3, product.getPrice());
-            pre.setString(4, product.getImageURL());
-            pre.setInt(5, product.getCategoryID());
-            pre.setInt(6, product.getStockQuantity());
-            upCount = pre.executeUpdate();
-            pre.close();
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                viewProductList();
-                upCount = 0;
-            }
-        }
-    }
-
-    public void updateProduct(Product product) throws SQLException {
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("UPDATE Product SET ProductName = ?, Description = ?, Price = ?, ImageURL = ?, CategoryID = ?, StockQuantity = ? WHERE ProductID = ?");
-            pre.setString(1, product.getProductName());
-            pre.setString(2, product.getDescription());
-            pre.setFloat(3, product.getPrice());
-            pre.setString(4, product.getImageURL());
-            pre.setInt(5, product.getCategoryID());
-            pre.setInt(6, product.getStockQuantity());
-            pre.setInt(7, product.getProductID());
-            upCount = pre.executeUpdate();
-            pre.close();
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                for (Product p : productList) {
-                    if (p.getProductID() == product.getProductID()) {
-                        p.setProductName(product.getProductName());
-                        p.setDescription(product.getDescription());
-                        p.setPrice(product.getPrice());
-                        p.setImageURL(product.getImageURL());
-                        p.setCategoryID(product.getCategoryID());
-                        p.setStockQuantity(product.getStockQuantity());
-                        break;
-                    }
+    public void addProduct(Product product) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                String sql = "insert into Product (ProductName, Description, Price, ImageURL, CategoryID, StockQuantity) values (?, ?, ?, ?, ?, ?)";
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setString(1, product.getProductName());
+                    pre.setString(2, product.getDescription());
+                    pre.setFloat(3, product.getPrice());
+                    pre.setString(4, product.getImageURL());
+                    pre.setInt(5, product.getCategoryID());
+                    pre.setInt(6, product.getStockQuantity());
+                    upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by addProduct: " + upCount);
                 }
-                upCount = 0;
+                if (upCount > 0) {
+                    viewProductList();
+                    upCount = 0;
+                } else {
+                    Logger.getLogger(ProductDAO.class.getName()).log(Level.WARNING, "Failed to add product: No rows affected.");
+                }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error adding product: " + ex.getMessage(), ex);
+        } finally {
+            DBConnection.Disconnect();
         }
     }
 
-    public boolean removeProduct(int id) throws SQLException {
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            // SOFT DELETE == STOCK -1
-            upCount = DBConnection.ExecuteUpdate("UPDATE Product SET StockQuantity = -1 WHERE ProductID = " + id);
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                upCount = 0;
-                return true;
+    public void updateProduct(Product product) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                String sql = "update Product set ProductName = ?, Description = ?, Price = ?, ImageURL = ?, CategoryID = ?, StockQuantity = ? where ProductID = ?";
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setString(1, product.getProductName());
+                    pre.setString(2, product.getDescription());
+                    pre.setFloat(3, product.getPrice());
+                    pre.setString(4, product.getImageURL());
+                    pre.setInt(5, product.getCategoryID());
+                    pre.setInt(6, product.getStockQuantity());
+                    pre.setInt(7, product.getProductID());
+                    upCount = pre.executeUpdate();
+                }
+
+                if (upCount > 0) {
+                    int index = productList.indexOf(readProduct(product.getProductID()));
+                    if (index != -1) {
+                        productList.set(index, product);
+                    }
+                    upCount = 0;
+                } else {
+                    Logger.getLogger(ProductDAO.class.getName()).log(Level.WARNING, "Failed to update product: No rows affected.");
+                }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error updating product: " + ex.getMessage(), ex);
+        } finally {
+            DBConnection.Disconnect();
         }
-        return false;
     }
 
-    public boolean removeProductFinal(int id) throws SQLException {
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            // HARD DELETE
-            upCount = DBConnection.ExecuteUpdate("DELETE FROM Product WHERE ProductID = " + id);
-            DBConnection.Disconnect();
-            if (upCount > 0) {
-                upCount = 0;
-                return true;
+    public boolean removeProduct(int id) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                String sql = "update Product set StockQuantity = -1 where ProductID = ?"; // soft delete
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, id);
+                    upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by removeProduct: " + upCount); //TEST
+                }
+                if (upCount > 0) {
+                    Product product = readProduct(id);
+                    if (product != null) {
+                        product.setStockQuantity(-1);
+                    }
+                    upCount = 0;
+                    return true; // ok
+                } else {
+                    Logger.getLogger(ProductDAO.class.getName()).log(Level.WARNING, "Failed to remove product: No rows affected.");
+                }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error removing product: " + ex.getMessage(), ex);
+            ex.printStackTrace(); //test
+        } finally {
+            DBConnection.Disconnect();
         }
-        return false;
+        return false; // not ok
+    }
+
+    public boolean removeProductFinal(int id) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                String sql = "delete from Product where ProductID = ?"; // hard delete
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, id);
+                    upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by removeProductFinal: " + upCount); //TEST
+                }
+                if (upCount > 0) {
+                    Product productToRemove = readProduct(id);
+                    if (productToRemove != null) {
+                        productList.remove(productToRemove);
+                    }
+                    upCount = 0;
+                    return true; // ok
+                } else {
+                    Logger.getLogger(ProductDAO.class.getName()).log(Level.WARNING, "Failed to delete product: No rows affected.");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error deleting product: " + ex.getMessage(), ex);
+        } finally {
+            DBConnection.Disconnect();
+        }
+        return false; // not ok
+    }
+
+    public boolean restoreProduct(int id) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                String sql = "update Product set StockQuantity = 0 where ProductID = ? and StockQuantity = -1";
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, id);
+                    upCount = pre.executeUpdate();
+                    System.out.println("Rows affected by restoreProduct: " + upCount); //TEST
+                }
+
+                if (upCount > 0) {
+                    Product productToRestore = readProduct(id);
+                    if (productToRestore != null) {
+                        productToRestore.setStockQuantity(0);
+                    }
+
+                    upCount = 0;
+                    return true; // ok
+                } else {
+                    Logger.getLogger(ProductDAO.class.getName()).log(Level.WARNING, "Failed to restore product: No rows affected.");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error restoring product: " + ex.getMessage(), ex);
+        } finally {
+            DBConnection.Disconnect();
+        }
+        return false; //not ok
     }
 
     public ArrayList<Product> searchProductsByName(String productName) throws SQLException {
@@ -282,6 +377,29 @@ public class ProductDAO {
         return searchResult;
     }
 
+    public boolean isValidCategoryId(int categoryId) {
+        String sql = "select 1 from Category where CategoryID = ?";
+        boolean isValid = false;
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, categoryId);
+                    try ( ResultSet rs = pre.executeQuery()) {
+                        isValid = rs.next();
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error checking category ID: " + ex.getMessage(), ex);
+        } finally {
+            DBConnection.Disconnect();
+        }
+        System.out.println("Category: " + categoryId + " | " + isValid);
+        return isValid;
+    }
+
+    ///////////////////////////////////////////////////
     public Product getProductByID(int productID) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
