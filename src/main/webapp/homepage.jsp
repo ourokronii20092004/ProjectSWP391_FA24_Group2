@@ -59,11 +59,16 @@
             <c:if test="${not empty successMessage}">
                 <div id="successAlert" class="alert alert-success text-center" role="alert">
                     ${successMessage}
+
                 </div>
                 <script>
                     // Hide the success message after 5 seconds
                     setTimeout(function () {
                         document.getElementById('successAlert').style.display = 'none';
+                    <%
+                                        // Clear the successMessage in the session or request scope
+                                        request.setAttribute("successMessage", null);
+                    %>
                     }, 5000);
                 </script>
             </c:if>
