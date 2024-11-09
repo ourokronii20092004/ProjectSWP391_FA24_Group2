@@ -9,9 +9,9 @@ import DAOs.UserDAO;
 import Models.Account;
 import Models.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,7 +36,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
@@ -57,27 +57,40 @@ public class LoginController extends HttpServlet {
         if (acc != null) {
             AccountDAO accountDAO = new AccountDAO();
             UserDAO userDAO = new UserDAO();
-            // Find user by username and load full user data
             int userID = accountDAO.findUserID(acc.getUserName());
-
             User user = userDAO.getUserData(userID);
             HttpSession session = request.getSession();
             session.setAttribute("userID", userID);
 
+            // Handle Remember Me
+            String remember = request.getParameter("remember");
+            if ("on".equals(remember)) {
+                // Create cookies for username and password
+                Cookie usernameCookie = new Cookie("username", username);
+                Cookie passwordCookie = new Cookie("password", password);
+                usernameCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+                passwordCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+                response.addCookie(usernameCookie);
+                response.addCookie(passwordCookie);
+            } else {
+                // If "Remember Me" is not selected, clear the cookies
+                Cookie usernameCookie = new Cookie("username", "");
+                Cookie passwordCookie = new Cookie("password", "");
+                usernameCookie.setMaxAge(0);
+                passwordCookie.setMaxAge(0);
+                response.addCookie(usernameCookie);
+                response.addCookie(passwordCookie);
+            }
+
             // Redirect based on user role
             if (user.getRoleID() == 1) {
                 response.sendRedirect("dashboard.jsp");
-                
             } else if (user.getRoleID() == 2) {
                 response.sendRedirect("homepage.jsp");
-                
             } else {
                 response.sendRedirect("dashboard.jsp");
-                
             }
         } else {
-            // If account validation fails, redirect to login page with error
-            //response.sendRedirect("login.jsp?check=false");
             request.getRequestDispatcher("login.jsp?check=false").forward(request, response);
         }
     }

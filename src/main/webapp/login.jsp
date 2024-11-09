@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="jakarta.servlet.http.Cookie" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +23,20 @@
                     <p class="text-white fs-2">Some content here</p>
                     <small class="text-white text-wrap text-center">Description or something here</small>
                 </div>
-
+                <%
+                    String username = "";
+                    String password = "";
+                    Cookie[] cookies = request.getCookies();
+                    if (cookies != null) {
+                        for (Cookie cookie : cookies) {
+                            if ("username".equals(cookie.getName())) {
+                                username = cookie.getValue();
+                            } else if ("password".equals(cookie.getName())) {
+                                password = cookie.getValue();
+                            }
+                        }
+                    }
+                %>
                 <div class="col-md-6 right-box">
                     <form action="LoginController" method="post"> 
                         <div class="row align-items-center">
@@ -44,10 +58,10 @@
                                 %>
                             </div>
                             <div class="input-group mb-3">
-                                <input type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Username" required />
+                                <input type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Username" value="<%= username%>" required />
                             </div>
                             <div class="input-group mb-1">
-                                <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required />
+                                <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" value="<%= password%>" required />
                             </div>
 
                             <div class="input-group mb-3 mt-3 d-flex justify-content-between">
@@ -60,7 +74,7 @@
                             </div>
 
                             <div class="form-check ms-3 mb-3">
-                                <input type="checkbox" class="form-check-input" id="formCheck" />
+                                <input type="checkbox" class="form-check-input" id="formCheck" name="remember" <%= !username.isEmpty() ? "checked" : ""%> />
                                 <label for="formCheck"><small>Remember Me</small></label>
                             </div>
 

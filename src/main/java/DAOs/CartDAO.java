@@ -54,14 +54,36 @@ public class CartDAO {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try {
-                String stm = "INSERT INTO [dbo].[CartItem] (UserID,ProductID,Quantity)"
-                        + "VALUES(?,?,?)";
-                PreparedStatement pstm = DBConnection.getPreparedStatement(stm);
-                pstm.setInt(1, userID);
-                pstm.setInt(2, productID);
-                pstm.setInt(3, quantity);
-                pstm.executeUpdate();
-                pstm.close();
+                // First, check if the cart item already exists
+                String checkQuery = "SELECT Quantity FROM [dbo].[CartItem] WHERE UserID = ? AND ProductID = ?";
+                PreparedStatement checkStmt = DBConnection.getPreparedStatement(checkQuery);
+                checkStmt.setInt(1, userID);
+                checkStmt.setInt(2, productID);
+                ResultSet rs = checkStmt.executeQuery();
+
+                if (rs.next()) {
+                    // If the item exists, update its quantity
+                    int currentQuantity = rs.getInt("Quantity");
+                    String updateQuery = "UPDATE [dbo].[CartItem] SET Quantity = ? WHERE UserID = ? AND ProductID = ?";
+                    PreparedStatement updateStmt = DBConnection.getPreparedStatement(updateQuery);
+                    updateStmt.setInt(1, currentQuantity + quantity);
+                    updateStmt.setInt(2, userID);
+                    updateStmt.setInt(3, productID);
+                    updateStmt.executeUpdate();
+                    updateStmt.close();
+                } else {
+                    // If the item does not exist, insert a new row
+                    String insertQuery = "INSERT INTO [dbo].[CartItem] (UserID, ProductID, Quantity) VALUES (?, ?, ?)";
+                    PreparedStatement insertStmt = DBConnection.getPreparedStatement(insertQuery);
+                    insertStmt.setInt(1, userID);
+                    insertStmt.setInt(2, productID);
+                    insertStmt.setInt(3, quantity);
+                    insertStmt.executeUpdate();
+                    insertStmt.close();
+                }
+
+                rs.close();
+                checkStmt.close();
                 DBConnection.Disconnect();
             } catch (SQLException e) {
                 Logger.getLogger(CartDAO.class.getName()).log(Level.SEVERE, null, e);

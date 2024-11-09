@@ -81,62 +81,62 @@ public class CartController extends HttpServlet {
                 action = "list";
             }
             //if ("add".equals(action)) {
-                //int productID = Integer.parseInt(request.getParameter("productID"));
-                //int quantity = Integer.parseInt(request.getParameter("quantity"));
-                //cartDAO.addCartItem(userID, productID, quantity);
-                //request.setAttribute("successMessage", "Item added to cart successfully!");
-                //response.sendRedirect("homepage.jsp");
+            //int productID = Integer.parseInt(request.getParameter("productID"));
+            //int quantity = Integer.parseInt(request.getParameter("quantity"));
+            //cartDAO.addCartItem(userID, productID, quantity);
+            //request.setAttribute("successMessage", "Item added to cart successfully!");
+            //response.sendRedirect("homepage.jsp");
             //}
-        ArrayList<CartItem> listCart;
-        switch (action) {
-            case "add":
-                int productID = Integer.parseInt(request.getParameter("productID"));
-                int quantity = Integer.parseInt(request.getParameter("quantity"));
-                cartDAO.addCartItem(userID, productID, quantity);
-                
-                // Set a success message in session or cookie if you want it displayed on homepage
-                request.getSession().setAttribute("successMessage", "Item added to cart successfully!");
-                
-                // Redirect to homepage after adding item to cart
-                response.sendRedirect("homepage.jsp");
-                return;
+            ArrayList<CartItem> listCart;
+            switch (action) {
+                case "add":
+                    int productID = Integer.parseInt(request.getParameter("productID"));
+                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+                    cartDAO.addCartItem(userID, productID, quantity);
 
-            case "list":
-                listCart = cartDAO.viewCartItemList(userID);
-                request.setAttribute("cartList", listCart);
-                break;
+// After setting successMessage and forwarding to JSP
+                    request.setAttribute("successMessage", "Item added to cart successfully!");
 
-            case "update":
-                int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
-                int updatedQuantity = Integer.parseInt(request.getParameter("quantity"));
-                cartDAO.updateCartItemQuantity(cartItemID, updatedQuantity);
-                break;
+// Forward to the JSP to display the message
+                    request.getRequestDispatcher("homepage.jsp").forward(request, response);
+                    return;
 
-            case "deleteSelected":
-                String selectedItems = request.getParameter("selectedItems");
-                if (selectedItems != null && !selectedItems.isEmpty()) {
-                    String[] cartItemIDs = selectedItems.split(",");
-                    for (String id : cartItemIDs) {
-                        cartDAO.removeCartItem(Integer.parseInt(id));
+                case "list":
+                    listCart = cartDAO.viewCartItemList(userID);
+                    request.setAttribute("cartList", listCart);
+                    break;
+
+                case "update":
+                    int cartItemID = Integer.parseInt(request.getParameter("cartItemId"));
+                    int updatedQuantity = Integer.parseInt(request.getParameter("quantity"));
+                    cartDAO.updateCartItemQuantity(cartItemID, updatedQuantity);
+                    break;
+
+                case "deleteSelected":
+                    String selectedItems = request.getParameter("selectedItems");
+                    if (selectedItems != null && !selectedItems.isEmpty()) {
+                        String[] cartItemIDs = selectedItems.split(",");
+                        for (String id : cartItemIDs) {
+                            cartDAO.removeCartItem(Integer.parseInt(id));
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case "delete":
-                int deleteCartItemID = Integer.parseInt(request.getParameter("cartItemId"));
-                cartDAO.removeCartItem(deleteCartItemID);
-                break;
+                case "delete":
+                    int deleteCartItemID = Integer.parseInt(request.getParameter("cartItemId"));
+                    cartDAO.removeCartItem(deleteCartItemID);
+                    break;
 
-            default:
-                break;
-        }
+                default:
+                    break;
+            }
 
-        // Retrieve the updated cart list and forward to cart.jsp
-        listCart = cartDAO.viewCartItemList(userID);
-        request.setAttribute("cartList", listCart);
-        
-        RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
-        dispatcher.forward(request, response);
+            // Retrieve the updated cart list and forward to cart.jsp
+            listCart = cartDAO.viewCartItemList(userID);
+            request.setAttribute("cartList", listCart);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
+            dispatcher.forward(request, response);
 
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
