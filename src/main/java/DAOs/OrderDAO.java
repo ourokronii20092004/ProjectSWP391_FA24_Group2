@@ -27,14 +27,15 @@ public class OrderDAO {
             try {
                 while (rs.next()) {
                     orderList.add(new Order(rs.getInt("OrderID"),
-                            new CustomerDAO().readCustomer(rs.getInt("UserID")),
+                            new UserDAO().getUserData(rs.getInt("UserID")),
                             new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
                             null, //Voucher
                             rs.getDate("OrderDate"),
                             rs.getFloat("TotalAmount"),
                             rs.getString("OrderStatus")));
-
+                    System.out.println(orderList.get(orderList.size() - 1).getOrderItemList().size());
                 }
+
                 rs.close();
                 DBConnection.Disconnect();
                 return orderList;
