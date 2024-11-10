@@ -62,33 +62,36 @@ public class LoginController extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("userID", userID);
             if (user.isIsActive()) {
-            // Handle Remember Me
-            String remember = request.getParameter("remember");
-            if ("on".equals(remember)) {
-                // Create cookies for username and password
-                Cookie usernameCookie = new Cookie("username", username);
-                Cookie passwordCookie = new Cookie("password", password);
-                usernameCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-                passwordCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
-            } else {
-                // If "Remember Me" is not selected, clear the cookies
-                Cookie usernameCookie = new Cookie("username", "");
-                Cookie passwordCookie = new Cookie("password", "");
-                usernameCookie.setMaxAge(0);
-                passwordCookie.setMaxAge(0);
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
-            }
+                // Handle Remember Me
+                String remember = request.getParameter("remember");
+                if ("on".equals(remember)) {
+                    // Create cookies for username and password
+                    Cookie usernameCookie = new Cookie("username", username);
+                    Cookie passwordCookie = new Cookie("password", password);
+                    usernameCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+                    passwordCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+                    response.addCookie(usernameCookie);
+                    response.addCookie(passwordCookie);
+                } else {
+                    // If "Remember Me" is not selected, clear the cookies
+                    Cookie usernameCookie = new Cookie("username", "");
+                    Cookie passwordCookie = new Cookie("password", "");
+                    usernameCookie.setMaxAge(0);
+                    passwordCookie.setMaxAge(0);
+                    response.addCookie(usernameCookie);
+                    response.addCookie(passwordCookie);
+                }
 
-            // Redirect based on user role
-            if (user.getRoleID() == 1) {
-                response.sendRedirect("dashboard.jsp");
-            } else if (user.getRoleID() == 2) {
-                response.sendRedirect("homepage.jsp");
+                // Redirect based on user role
+                if (user.getRoleID() == 1) {
+                    response.sendRedirect("dashboard.jsp");
+                } else if (user.getRoleID() == 2) {
+                    response.sendRedirect("homepage.jsp");
+                } else {
+                    response.sendRedirect("dashboard.jsp");
+                }
             } else {
-                response.sendRedirect("dashboard.jsp");
+                request.getRequestDispatcher("login.jsp?check=false").forward(request, response);
             }
         } else {
             request.getRequestDispatcher("login.jsp?check=false").forward(request, response);
