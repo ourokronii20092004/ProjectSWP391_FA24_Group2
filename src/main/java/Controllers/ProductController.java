@@ -127,6 +127,9 @@ public class ProductController extends HttpServlet {
             if ("listControl".equals(action)) {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
                 dispatcher.forward(request, response);
+            } else if ("deleted".equals(action)) {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("restoreProduct.jsp");
+                dispatcher.forward(request, response);
             } else {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
                 dispatcher.forward(request, response);
@@ -147,6 +150,10 @@ public class ProductController extends HttpServlet {
             action = "listControl";
         }
         ProductDAO productDAO = new ProductDAO();
+        if ("bulkAction".equals(action)) {
+            handleBulkAction(request, response, productDAO);
+            return;
+        }
         Part filePart = request.getPart("image");
         String originalFileName = getFileName(filePart);
         switch (action) {
@@ -246,6 +253,28 @@ public class ProductController extends HttpServlet {
         return "Product controller thingy";
     }
 
+    private void handleBulkAction(HttpServletRequest request, HttpServletResponse response, ProductDAO productDAO) throws IOException {
+        String[] selectedProducts = request.getParameterValues("selectedProducts");
+        String bulkAction = request.getParameter("bulkRestore") != null ? "restore" : (request.getParameter("bulkDelete") != null ? "deleteFinal" : null);
+
+        if (selectedProducts != null && bulkAction != null) {
+            for (String productIdStr : selectedProducts) {
+                try {
+                    int productId = Integer.parseInt(productIdStr);
+                    if ("restore".equals(bulkAction)) {
+                        productDAO.restoreProduct(productId);
+                    } else {
+                        productDAO.removeProductFinal(productId);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error parsing product ID: " + e.getMessage());
+
+                }
+            }
+        }
+        response.sendRedirect("ProductController?action=deleted&page=Product"); // Redirect after bulk action
+    }
+
     private String getFileExtension(String fileName) {
         if (fileName == null) {
             return "";
@@ -271,4 +300,3 @@ public class ProductController extends HttpServlet {
                 || contentType.equals("image/png"));
     }
 }
-
