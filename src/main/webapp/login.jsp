@@ -41,18 +41,25 @@
                                 </div>
                                 <%
                                     }
+                                    if ("register".equals(check)) {
+                                %>
+                                <div class="alert alert-success" role="alert">
+                                    Confirm success! Please login!
+                                </div>
+                                <%
+                                    }
                                 %>
                             </div>
                             <div class="input-group mb-3">
-                                <input type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Username" required />
+                                <input minlength="8" type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Username" required />
                             </div>
                             <div class="input-group mb-1">
-                                <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required />
+                                <input minlength="8" type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required />
                             </div>
 
                             <div class="input-group mb-3 mt-3 d-flex justify-content-between">
                                 <div class="row">
-                                    <small>Don't have an account? <a href="register.jsp">Sign Up</a></small>
+                                    <small>Don't have an account? <a href="/RegisterController">Sign Up</a></small>
                                 </div> 
                                 <div class="row">
                                     <small><a href="#">Forget Password?</a></small>

@@ -36,7 +36,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
@@ -63,17 +63,18 @@ public class LoginController extends HttpServlet {
             User user = userDAO.getUserData(userID);
             HttpSession session = request.getSession();
             session.setAttribute("userID", userID);
+            if (user.isIsActive()) {
+                // Redirect based on user role
+                if (user.getRoleID() == 1) {
+                    response.sendRedirect("dashboard.jsp");
 
-            // Redirect based on user role
-            if (user.getRoleID() == 1) {
-                response.sendRedirect("dashboard.jsp");
-                
-            } else if (user.getRoleID() == 2) {
-                response.sendRedirect("homepage.jsp");
-                
-            } else {
-                response.sendRedirect("dashboard.jsp");
-                
+                } else if (user.getRoleID() == 2) {
+                    response.sendRedirect("homepage.jsp");
+
+                } else {
+                    response.sendRedirect("dashboard.jsp");
+
+                }
             }
         } else {
             // If account validation fails, redirect to login page with error

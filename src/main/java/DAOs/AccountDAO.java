@@ -6,6 +6,7 @@ package DAOs;
 
 import DAOs.LoginDAO;
 import DB.DBConnection;
+import Models.Account;
 import Models.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,8 +37,29 @@ public class AccountDAO {
         return -1;
     }
 
+    //Phat
+    public Models.Account findUserbyUsername(String username) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try {
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[User] where Username like '" + username + "'");
+                rs.next();
+                Models.Account account = new Account(rs.getString("Username"),
+                        rs.getString("PasswordHash"),
+                        rs.getString("Salt"),
+                        rs.getInt("RoleID"),
+                        rs.getInt("IsActive") == 1);
+                DBConnection.Disconnect();
+                return account;
+            } catch (SQLException e) {
+                Logger.getLogger(LoginDAO.class.getName()).log(Level.SEVERE, null, e);
+                return null;
+            }
+        }
+        return null;
+    }
+
     //Binh
-    
     public void updateProfile(int id, User newinfo) {
         DBConnection.Connect();
 
@@ -92,5 +114,21 @@ public class AccountDAO {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean recoverAcconut(int id) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            int upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
+                    + "SET isActive = 1"
+                    + " WHERE UserID = " + id
+            );
+            DBConnection.Disconnect();
+            if (upCount > 0) {
+                upCount = 0;
+                return true;
+            }
+        }
+        return false;
     }
 }
