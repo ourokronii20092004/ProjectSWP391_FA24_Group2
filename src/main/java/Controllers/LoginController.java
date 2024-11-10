@@ -61,7 +61,7 @@ public class LoginController extends HttpServlet {
             User user = userDAO.getUserData(userID);
             HttpSession session = request.getSession();
             session.setAttribute("userID", userID);
-
+            if (user.isIsActive()) {
             // Handle Remember Me
             String remember = request.getParameter("remember");
             if ("on".equals(remember)) {
