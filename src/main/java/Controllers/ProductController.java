@@ -242,23 +242,23 @@ public class ProductController extends HttpServlet {
         String action = request.getParameter("action");
         action = (action == null) ? "listControl" : action;
         ProductDAO productDAO = new ProductDAO();
-        
+
         System.out.println("doPost: " + action);
         switch (action) {
             case "add": {
-                
+
                 String imageUrl = ImageHelper.saveImage(request.getPart("image"), "pro", getServletContext().getRealPath("/"));
                 if (imageUrl != null) {
-                    
+
                     String productName = request.getParameter("productName");
                     String description = request.getParameter("description");
                     float price = Float.parseFloat(request.getParameter("price"));
                     int categoryId = Integer.parseInt(request.getParameter("categoryId"));
                     int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-                    
+
                     Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
                     productDAO.addProduct(newProduct);
-                    
+
                     response.sendRedirect("ProductController?action=list&page=Product");
                 } else {
                     request.setAttribute("errorMessage", "Image upload failed.");
@@ -268,29 +268,32 @@ public class ProductController extends HttpServlet {
                 return;
             }
             case "update": {
-                
+
                 int productId = Integer.parseInt(request.getParameter("productId"));
                 String updatedProductName = request.getParameter("productName");
                 String updatedDescription = request.getParameter("description");
                 float updatedPrice = Float.parseFloat(request.getParameter("price"));
                 int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
                 int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-                
-                String updatedImageUrl = ImageHelper.saveImage(request.getPart("image"), "pro", getServletContext().getRealPath("/"));
-                
-                if (updatedImageUrl == null && request.getPart("image").getSize() > 0) {
-                    request.setAttribute("errorMessage", "Image upload failed.");
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
-                    dispatcher.forward(request, response);
-                    return;
-                }
-                if (updatedImageUrl == null) {
-                    
-                    Product existingProduct = productDAO.readProduct(productId);
+
+                Part imagePart = request.getPart("image");
+                String updatedImageUrl;
+
+                if (imagePart != null && imagePart.getSize() > 0) {
+                    updatedImageUrl = ImageHelper.saveImage(imagePart, "pro", getServletContext().getRealPath("/"));
+
+                    if (updatedImageUrl == null) {
+                        request.setAttribute("errorMessage", "Image upload failed.");
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
+                        dispatcher.forward(request, response);
+                        return;
+                    }
+                } else {
                     String path = "img" + File.separator + "pro" + File.separator + "default.jpg";
+                    Product existingProduct = productDAO.readProduct(productId);
                     updatedImageUrl = (existingProduct != null) ? existingProduct.getImageURL() : path;
                 }
-                
+
                 Product updatedProduct = new Product(productId, updatedProductName, updatedDescription, updatedPrice, updatedImageUrl, updatedCategoryId, updatedStockQuantity, null, null);
                 productDAO.updateProduct(updatedProduct);
                 response.sendRedirect("ProductController?action=list&page=Product");

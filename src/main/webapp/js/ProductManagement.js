@@ -4,7 +4,21 @@ document.addEventListener('DOMContentLoaded', function () {
         attachEditButtonListeners();
         attachFormValidation();
     });
+
+    
+
 });
+
+
+function resizeTextarea(event) {
+    const textarea = event.target.closest('.modal-body').querySelector('textarea');
+    const modalBody = event.target.closest('.modal-body');
+    if (textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = modalBody.clientHeight + 'px';
+    }
+}
+
 
 function attachEditButtonListeners() {
     const editButtons = document.querySelectorAll('.editProductBtn');
@@ -26,9 +40,40 @@ function attachEditButtonListeners() {
             form.querySelector('[name="price"]').value = price;
             form.querySelector('[name="categoryId"]').value = categoryId;
             form.querySelector('[name="stockQuantity"]').value = stockQuantity;
+            const imageURL = this.getAttribute('data-product-imageurl');
+
+            const preview = document.getElementById('editProduct_imagePreview');
+            if (imageURL) {
+                preview.src = imageURL;
+                preview.classList.remove("d-none");
+            } else {
+                preview.src = "#"; //place holder
+                preview.classList.add("d-none"); //hide -> no img
+            }
+
         });
     });
 }
+
+
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = function () {
+        preview.src = reader.result;
+        preview.classList.remove("d-none"); //show preview
+    }
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "#"; //place holder
+        preview.classList.add("d-none"); //hide -> no img
+    }
+}
+
 
 function attachFormValidation() {
     const addProductForm = document.querySelector('#addProductModal form');
@@ -251,14 +296,14 @@ function fetchCategoriesAndUpdateRestoreProductTable() {
         if (xhr.status >= 200 && xhr.status < 300) {
             try {
                 const categoryData = JSON.parse(xhr.response);
-                updateRestoreProductTable(categoryData); 
+                updateRestoreProductTable(categoryData);
             } catch (e) {
                 console.error('Error parsing category data:', e.message, xhr.response);
                 alert("Error loading category names.");
             }
         } else {
             console.error(`XHR error! Status: ${xhr.status}, Response: ${xhr.response}`);
-            alert("Error loading category names."); 
+            alert("Error loading category names.");
         }
     };
     xhr.onerror = function () {
