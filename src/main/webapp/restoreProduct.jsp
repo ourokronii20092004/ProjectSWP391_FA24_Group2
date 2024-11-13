@@ -37,7 +37,6 @@
                 margin-bottom: 1rem;
                 table-layout: fixed;
             }
-
             #productListTable th, #productListTable td {
                 padding: 1.5rem 1rem;
                 border-bottom: 1px solid #dee2e6;
@@ -141,48 +140,52 @@
             }
         </style>
     </head>
-    <body>
 
-        <iframe src="adminNavbar.jsp" height="60px"></iframe>
-        <div class="container-fluid">
-            <div class="card">
+
+</style>
+<body>
+    <iframe src="adminNavbar.jsp" height="60px"></iframe>
+    <div class="container-fluid">
+        <div class="card">
+
+            <div class="top-actions">
                 <h5 class="card-title">Restore Products</h5>
+                <div class="back-button-container">
+                    <a href="ProductController?action=list&page=Product" class="btn btn-primary">Back to Product List</a>
+                </div>
+            </div>
 
-                <c:if test="${not empty noResultsMessage}">
-                    <div class="alert alert-warning" role="alert">
-                        ${noResultsMessage}
-                    </div>
-                </c:if>
-                
-                <form action="ProductController" method="POST" id="productActionsForm">
-                    <input type="hidden" name="action" value="bulkAction">
-                    <div class="top-actions">
-                        <div class="bulk-actions">
-                            <button type="submit" class="btn btn-success me-2" name="bulkRestore" value="restore">Restore Selected</button>
-                            <button type="submit" class="btn btn-danger" name="bulkDelete" value="deleteFinal" onclick="return confirm('This action is irreversible. Are you sure you want to permanently delete selected products?')">Delete Selected</button>
-                        </div>
+            <c:if test="${not empty noResultsMessage}">
+                <div class="alert alert-warning" role="alert">
+                    ${noResultsMessage}
+                </div>
+            </c:if>
 
-                        <div class="back-button-container">
-                            <a href="ProductController?action=list&page=Product" class="btn btn-primary">Back to Product List</a>
-                        </div>
-                    </div>
-                </form>
-                <form action="ProductController" method="GET" id="restoreProductSearchForm">  
-                    <input type="hidden" name="action" value="searchDeleted"> 
 
-                    <div class="search-and-filter">
-                        <input type="text" name="searchName" placeholder="Search by name..." class="form-control">
-                        <select name="categoryId" class="form-select">
-                            <option value="">All Categories</option>
-                            <c:forEach items="${categoryList}" var="category">
-                                <option value="${category.categoryId}">${category.categoryName}</option> 
-                            </c:forEach>
-                        </select>
-                        <button type="submit" class="search-button">
-                            <img src="img/icon/search.svg" alt="Search">
-                        </button>
-                    </div>
-                </form>
+            <form action="ProductController" method="GET" id="restoreProductSearchForm" class="search-and-filter">
+                <input type="hidden" name="action" value="searchDeleted">
+
+                <input type="text" name="searchName" placeholder="Search by name..." class="form-control">
+                <select name="categoryId" class="form-select">
+                    <option value="">All Categories</option>
+                    <c:forEach items="${categoryList}" var="category">
+                        <option value="${category.categoryId}">${category.categoryName}</option> 
+                    </c:forEach>
+                </select>
+                <button type="submit" class="search-button">
+                    <img src="img/icon/search.svg" alt="Search">
+                </button>
+
+            </form>
+
+            <form action="ProductController" method="POST" id="productActionsForm">
+                <input type="hidden" name="action" value="bulkAction">
+
+                <div class="bulk-actions">
+                    <button type="submit" class="btn btn-success me-2" name="bulkRestore" value="restore">Restore Selected</button>
+                    <button type="submit" class="btn btn-danger" name="bulkDelete" value="deleteFinal" onclick="return confirm('This action is irreversible. Are you sure you want to permanently delete selected products?')">Delete Selected</button>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table" id="productListTable">
                         <thead>
@@ -212,23 +215,24 @@
                             </c:forEach>
                         </tbody>
                     </table>
-                </div> 
-                </form>
-            </div>
+                </div>
+            </form> 
         </div>
-        <footer>
-            <iframe src="adminFooter.jsp" height="70px"></iframe>
-        </footer>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="js/ProductManagement.js"></script>
-        <script>
-                                const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-                                const individualCheckboxes = document.querySelectorAll('input[name="selectedProducts"]');
-                                selectAllCheckbox.addEventListener('change', function () {
-                                    individualCheckboxes.forEach(checkbox => {
-                                        checkbox.checked = this.checked;
-                                    });
-                                });
-        </script>
-    </body>
+    </div>
+    <footer>
+        <iframe src="adminFooter.jsp" height="70px"></iframe>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ProductManagement.js"></script>
+    <script>
+                        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+                        const individualCheckboxes = document.querySelectorAll('input[name="selectedProducts"]');
+                        selectAllCheckbox.addEventListener('change', function () {
+                            individualCheckboxes.forEach(checkbox => {
+                                checkbox.checked = this.checked;
+                            });
+                        });
+    </script>
+
+</body>
 </html>

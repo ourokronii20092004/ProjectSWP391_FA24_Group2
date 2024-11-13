@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import jakarta.servlet.annotation.MultipartConfig;
 import java.io.File;
 import jakarta.servlet.http.Part;
+import java.awt.BorderLayout;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -354,15 +355,17 @@ public class ProductController extends HttpServlet {
     private void handleBulkAction(HttpServletRequest request, HttpServletResponse response, ProductDAO productDAO) throws IOException {
         String[] selectedProducts = request.getParameterValues("selectedProducts");
         String bulkAction = request.getParameter("bulkRestore") != null ? "restore" : (request.getParameter("bulkDelete") != null ? "deleteFinal" : null);
-
+        System.out.println("doPost: " + bulkAction);
         if (selectedProducts != null && bulkAction != null) {
             for (String productIdStr : selectedProducts) {
+                System.out.println("Product ID: " + productIdStr);
                 try {
                     int productId = Integer.parseInt(productIdStr);
                     if ("restore".equals(bulkAction)) {
                         productDAO.restoreProduct(productId);
                     } else {
                         productDAO.removeProductFinal(productId);
+                        
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("Error parsing product ID: " + e.getMessage());
@@ -370,6 +373,7 @@ public class ProductController extends HttpServlet {
                 }
             }
         }
+        System.out.println("IF NO PRODUCT ID HAS BEEN SHOWN, THE LOGIC CODE WAS NOT RAN");
         response.sendRedirect("ProductController?action=deleted&page=Product"); // Redirect after bulk action
     }
 
