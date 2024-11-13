@@ -66,8 +66,7 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ///int userID = (int) request.getSession().getAttribute("userID");
-        int userID = 2;
+        int userID = (int) request.getSession().getAttribute("userID");
         CartDAO cartDAO = new CartDAO();
         //check session
 //       if (userID != 1 || userID != 2 || userID != 3 ) {
@@ -80,7 +79,7 @@ public class CartController extends HttpServlet {
             if (action == null) {
                 action = "list";
             }
-            //if ("add".equals(action)) {
+//if ("add".equals(action)) {
             //int productID = Integer.parseInt(request.getParameter("productID"));
             //int quantity = Integer.parseInt(request.getParameter("quantity"));
             //cartDAO.addCartItem(userID, productID, quantity);
@@ -94,10 +93,10 @@ public class CartController extends HttpServlet {
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
                     cartDAO.addCartItem(userID, productID, quantity);
 
-// After setting successMessage and forwarding to JSP
+                   // After setting successMessage and forwarding to JSP
                     request.setAttribute("successMessage", "Item added to cart successfully!");
 
-// Forward to the JSP to display the message
+                   // Forward to the JSP to display the message
                     request.getRequestDispatcher("homepage.jsp").forward(request, response);
                     return;
 
@@ -141,7 +140,7 @@ public class CartController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
-            RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
+RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
             dispatcher.forward(request, response);
         }
     }
