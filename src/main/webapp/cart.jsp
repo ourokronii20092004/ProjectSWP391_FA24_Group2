@@ -81,12 +81,14 @@
                         <a href="#" class="nav-link active">Contact</a>
                     </nav>
                     <div class="d-flex align-items-center gap-3">
-                                        <% int userID = (int) request.getSession().getAttribute("userID");
-    UserDAO userDAO = new UserDAO();
+
+                        <% int userID = (int) request.getSession().getAttribute("userID");
+UserDAO userDAO = new UserDAO();
+
                             
-    User user = userDAO.getUserData(userID);
-    String name = user.getUserName();
-                %>
+User user = userDAO.getUserData(userID);
+String name = user.getUserName();
+                        %>
                         <a class="nav-link" href="#">Hello, <%= name %></a>
 
                     </div>
@@ -181,10 +183,11 @@
             }
 
             document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('input', function () {
-                    const updateButton = this.closest('form').querySelector('.update-btn');
+            input.addEventListener('input', function () {
+            const updateButton = this.closest('form').querySelector('.update-btn');
                     updateButton.style.display = 'inline-block';
-                });/-strong/-heart:>:o:-((:-h });
+            });
+            });
         </script>
 
     </body>

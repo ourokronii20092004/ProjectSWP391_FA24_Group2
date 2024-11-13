@@ -140,14 +140,30 @@ public class RatingDAO {
 
     public ArrayList<Rating> viewAllRating(int productID) throws SQLException {
         ArrayList<Rating> ratingList = new ArrayList<>();
-        ratingList.clear();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Rating Where ProductID like '" + productID + "'");
-            while (rs.next()) {
-                ratingList.add(new Rating(rs.getInt("RatingID"), rs.getInt("UserID"), rs.getInt("ProductID"), rs.getInt("RatingValue"), rs.getString("Comment"), rs.getDate("CreatedAt")));
+            String query = "SELECT * FROM Rating WHERE ProductID = ?";
+            try (PreparedStatement pstm = DBConnection.getPreparedStatement(query)) {
+                pstm.setInt(1, productID);
+                ResultSet rs = pstm.executeQuery();
+                while (rs.next()) {
+                    ratingList.add(new Rating(
+                        rs.getInt("RatingID"),
+                        rs.getInt("User ID"),
+                        rs.getInt("ProductID"),
+                        rs.getInt("RatingValue"),
+                        rs.getString("Comment"),
+                        rs.getDate("CreatedAt")
+                    ));
+                }
+                rs.close();
+            } catch (SQLException e) {
+                Logger.getLogger(RatingDAO.class.getName()).log(Level.SEVERE, null, e);
+            } finally {
+                DBConnection.Disconnect();
             }
         }
         return ratingList;
     }
+    
 }
