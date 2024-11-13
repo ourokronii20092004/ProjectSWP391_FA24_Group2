@@ -94,18 +94,18 @@
                                     </tr>
                                     <c:forEach items="${orderList}" var="o">                               
                                         <tr>
-                                            <th class="col-md-1">${o.orderID}</th>
-                                            <th class="col-md-1">${o.user.userName}</th>
-                                            <th class="col-md-1">${o.user.firstName} ${o.user.lastName}</th>
-                                            <th class="col-md-1">
+                                            <td class="col-md-1">${o.orderID}</td>
+                                            <td class="col-md-1">${o.user.userName}</th>
+                                            <td class="col-md-1">${o.user.firstName} ${o.user.lastName}</td>
+                                            <td class="col-md-1">
                                                 <c:forEach items="${o.orderItemList}" var="ot">                                            
-                                                   ${ot.product.productName} x${ot.quantity}<br>
+                                                    ${ot.product.productName} x${ot.quantity}<br>
                                                 </c:forEach>
-                                               </th>
-                                            <th class="col-md-1">${o.totalAmount}</th>
-                                            <th class="col-md-1">${o.orderStatus}</th>
-                                            <th class="col-md-1">${o.orderDate}</th>
-                                            <th class="col-md-3">Chưa co cmjhet</th>
+                                            </td>
+                                            <td class="col-md-1">${o.totalAmount}</td>
+                                            <td class="col-md-1">${o.orderStatus}</td>
+                                            <td class="col-md-1">${o.orderDate}</td>
+                                            <td class="col-md-1"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
                                         </tr>  
                                     </c:forEach>                               
 
@@ -174,7 +174,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-       
+
     </body>
 </body>
 </html>

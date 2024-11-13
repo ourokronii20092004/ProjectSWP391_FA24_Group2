@@ -4,7 +4,6 @@
  */
 package Controllers;
 
-import Models.Order;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,14 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 /**
  *
  * @author CE181515 - Phan Viet Phat
  */
-@WebServlet(name = "OrderController", urlPatterns = {"/OrderController/*"})
-public class OrderController extends HttpServlet {
+@WebServlet(name = "OrderDetailController", urlPatterns = {"/OrderDetailController"})
+public class OrderDetailController extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -38,15 +36,15 @@ public class OrderController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
-
-        if (path.equals(contextPath + "/OrderController")) {
-            System.out.println("list");
-            ArrayList<Order> orderList = new DAOs.OrderDAO().viewAllOrders();
-            request.setAttribute("orderList", orderList);
-            RequestDispatcher ds = request.getRequestDispatcher("adminSetting.jsp");
-            ds.forward(request, response);
-        } else {
-            response.sendRedirect("/OrderController");
+        if (path.equals(contextPath + "/OrderDetailController")) {
+            System.out.println("Detail");
+            int orderID = Integer.parseInt(request.getParameter("orderID"));
+            Models.Order order = new DAOs.OrderDAO().readOrder(orderID);
+            if (order != null) {
+                request.setAttribute("order", order);
+                RequestDispatcher ds = request.getRequestDispatcher("OrderDetailForm.jsp");
+                ds.forward(request, response);
+            }
         }
     }
 
@@ -61,6 +59,7 @@ public class OrderController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
     }
 
     /**
