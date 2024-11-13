@@ -154,35 +154,6 @@ function searchProduct() {
     }
 }
 
-function fetchCategoriesAndUpdateTable(callback) {
-    console.log("Fetching categories using XHR...");
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'ProductController?action=getCategories');
-    xhr.onload = function () {
-        if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-                const categoryData = JSON.parse(xhr.response);
-                updateProductTable(categoryData);
-                if (callback)
-                    callback();
-            } catch (e) {
-                console.error('Error parsing category data (XHR):', e.message, xhr.response);
-                alert("Error loading category names. Invalid data received from the server.");
-            }
-        } else {
-            console.error(`XHR error! Status: ${xhr.status}, Response: ${xhr.response}`);
-            alert("Error Loading Category Names");
-        }
-    };
-
-    xhr.onerror = function () {
-        console.error("XHR request failed");
-        alert("Error Loading Category Names. Network or server error.");
-    };
-
-    xhr.send();
-}
-
 function updateProductTable(categoryData) {
     const tableRows = document.querySelectorAll("#productTableBody tr");
 

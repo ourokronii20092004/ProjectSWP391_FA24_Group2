@@ -33,7 +33,6 @@ public class DBConnection {
             conn = DriverManager.getConnection(cnnString);
             if (conn != null) {
                 DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-                System.out.println("Connected to database!");
             }
         } catch (SQLException | ClassNotFoundException ex) {
         }
