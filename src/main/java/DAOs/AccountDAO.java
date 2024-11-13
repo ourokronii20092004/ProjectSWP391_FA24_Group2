@@ -38,6 +38,24 @@ public class AccountDAO {
     }
 
     //Phat
+    public int findUserIDByEmail(String email) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try {
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[User] where Email like '" + email + "'");
+                rs.next();
+                int id = rs.getInt("UserID");
+                DBConnection.Disconnect();
+                return id;
+            } catch (SQLException e) {
+                Logger.getLogger(LoginDAO.class.getName()).log(Level.SEVERE, null, e);
+                return -1;
+            }
+        }
+        return -1;
+    }
+
+    //Phat
     public Models.Account findUserbyUsername(String username) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
