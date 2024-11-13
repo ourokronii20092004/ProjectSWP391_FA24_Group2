@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="DAOs.UserDAO"%>
+<%@page import="Models.User"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -25,7 +27,25 @@
             .fullpagecontent {
                 flex: 1;
             }
+            .nav-link {
+                position: relative;
+                padding-bottom: 10px;
+            }
 
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                background-color: #00BFFF;
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
             footer {
                 background-color: #3E3E3E;
                 color: #FFFFFF;
@@ -47,26 +67,28 @@
     </head>
 
     <body>
-
-
+        <!-- Header -->
         <div class="container-fluid fullpagecontent">
             <div class="col-md-12">
                 <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
                     <a href="#" class="d-flex align-items-center text-decoration-none">
                         <span class="h5 ms-2">PAMB</span>
-
                     </a>
                     <nav class="d-none d-lg-flex gap-4">
-                        <a href="homepage.jsp" class="text-decoration-none text-muted">Home</a>
-                        <a href="#" class="text-decoration-none text-muted">Shop</a>
-                        <a href="#" class="text-decoration-none text-muted">About</a>
-                        <a href="#" class="text-decoration-none text-muted">Contact</a>
+                        <a href="homepage.jsp" class="nav-link active">Home</a>
+                        <a href="#" class="nav-link active">Shop</a>
+                        <a href="#" class="nav-link active">About</a>
+                        <a href="#" class="nav-link active">Contact</a>
                     </nav>
                     <div class="d-flex align-items-center gap-3">
-                        <a class="nav-link" href="#">Hello, Nguyen Nhat Dang</a>
-                        <a href="/CartController">
-                            <img src="../img/icon/shopping-cart.svg" alt="Cart" class="cart-icon">
-                        </a>
+                                        <%/-strong/-heart:>:o:-((:-h int userID = (int) request.getSession().getAttribute("userID");
+    UserDAO userDAO = new UserDAO();
+                            
+    User user = userDAO.getUserData(userID);
+    String name = user.getUserName();
+                %>
+                        <a class="nav-link" href="#">Hello, <%= name %></a>
+
                     </div>
                 </header>
                 <h6 class="card-title">Your Shopping Cart</h6>
@@ -85,7 +107,7 @@
                         </form>
                     </div>
 
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-striped ">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col"><input type="checkbox" id="select-all"></th>
@@ -107,12 +129,11 @@
                                     <td>
                                         <form action="/CartController" method="post" class="d-inline">
                                             <input type="hidden" name="action" value="update">
-                                            <input type="hidden" name="cartItemId" value="${item.cartItemID}">
-                                            <input type="number" class="form-control quantity-input" name="quantity" value="${item.quantity}" min="1" max="${item.stockQuantity}">
+                                            <input type="hidden" name="cartItemId" value="${item.cartItemID}">/-strong/-heart:>:o:-((:-h <input type="number" class="form-control quantity-input" name="quantity" value="${item.quantity}" min="1" max="${item.stockQuantity}">
                                             <button class="btn btn-sm btn-primary update-btn mt-2 ms-4" type="submit" style="display: none;">Update</button>
                                         </form>
                                     </td>
-                                    <td>₫${item.price * item.quantity}</td>
+                                    <td>${item.price * item.quantity} VND</td>
                                     <td>
                                         <form action="/CartController" method="post" class="d-inline" onsubmit="return confirmRemoveSingle()">
                                             <input type="hidden" name="action" value="delete">
@@ -163,8 +184,7 @@
                 input.addEventListener('input', function () {
                     const updateButton = this.closest('form').querySelector('.update-btn');
                     updateButton.style.display = 'inline-block';
-                });
-            });
+                });/-strong/-heart:>:o:-((:-h });
         </script>
 
     </body>

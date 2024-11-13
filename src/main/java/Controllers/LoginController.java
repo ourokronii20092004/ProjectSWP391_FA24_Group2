@@ -86,7 +86,7 @@ public class LoginController extends HttpServlet {
                 if (user.getRoleID() == 1) {
                     response.sendRedirect("dashboard.jsp");
                 } else if (user.getRoleID() == 2) {
-                    response.sendRedirect("homepage.jsp");
+                    response.sendRedirect("/MainPageController");
                 } else {
                     response.sendRedirect("dashboard.jsp");
                 }

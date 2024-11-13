@@ -95,7 +95,7 @@
                                 </div>
 
                                 <div class="m-2 row">
-                                    <small>Already have an account? <a href="/LoginController">Sign Up</a></small>
+                                    <small>Already have an account? <a href="/LoginController">Sign In</a></small>
                                 </div>
 
                             </div>
