@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    attachEditButtonListeners();
-    attachFormValidation();
+    fetchCategoriesAndUpdateSelects(function () {
+        fetchCategoriesAndUpdateRestoreProductTable();
+        attachEditButtonListeners();
+        attachFormValidation();
+    });
 });
 
 function attachEditButtonListeners() {
@@ -149,6 +152,130 @@ function searchProduct() {
             }
         }
     }
-
 }
 
+function updateProductTable(categoryData) {
+    const tableRows = document.querySelectorAll("#productTableBody tr");
+
+    tableRows.forEach(row => {
+        const categoryIdCell = row.querySelector(".category-id");
+        if (categoryIdCell) {
+            const categoryId = categoryIdCell.textContent;
+            const categoryName = findCategoryName(categoryData, categoryId);
+            categoryIdCell.textContent = categoryName;
+        }
+    });
+}
+
+function findCategoryName(categories, categoryId) {
+    const categoryIdNumber = parseInt(categoryId, 10);
+
+    for (let i = 0; i < categories.length; i++) {
+        if (categories[i].categoryId === categoryIdNumber) {
+            return categories[i].categoryName;
+        }
+    }
+
+    console.warn("Category ID not found:", categoryId);
+    return categoryId; // return the original ID if a name isn't found
+}
+
+
+function fetchCategoriesAndUpdateSelects(callback) {
+    console.log("Fetching categories using XHR for selects...");
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'ProductController?action=getCategories');
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+                const categoryData = JSON.parse(xhr.response);
+
+                //add modal
+                const addCategorySelect = document.getElementById('addProduct_categoryId');
+                if (addCategorySelect) {
+                    populateCategorySelect(addCategorySelect, categoryData);
+                }
+
+                //edit modal
+                const editCategorySelect = document.getElementById('editProduct_categoryId');
+                if (editCategorySelect) {
+                    populateCategorySelect(editCategorySelect, categoryData);
+                }
+
+
+                updateProductTable(categoryData);
+                updateRestoreProductTable(categoryData);
+                if (callback)
+                    callback();
+            } catch (e) {
+                console.error('Error parsing category data (XHR):', e.message, xhr.response);
+                alert("Error loading categories. Invalid data received from the server.");
+            }
+        } else {
+            console.error(`XHR error! Status: ${xhr.status}, Response: ${xhr.response}`);
+            alert("Error Loading Categories");
+        }
+    };
+    xhr.onerror = function () {
+        console.error("XHR request failed");
+        alert("Error Loading Categories. Network or server error.");
+    };
+    xhr.send();
+}
+
+
+
+function populateCategorySelect(selectElement, categories) {
+    selectElement.innerHTML = ''; // Clear existing options
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'Select Category';
+    selectElement.appendChild(defaultOption);
+
+
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.categoryId;
+        option.text = category.categoryName;
+        selectElement.appendChild(option);
+    });
+}
+
+
+
+function fetchCategoriesAndUpdateRestoreProductTable() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'ProductController?action=getCategories');
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+                const categoryData = JSON.parse(xhr.response);
+                updateRestoreProductTable(categoryData); 
+            } catch (e) {
+                console.error('Error parsing category data:', e.message, xhr.response);
+                alert("Error loading category names.");
+            }
+        } else {
+            console.error(`XHR error! Status: ${xhr.status}, Response: ${xhr.response}`);
+            alert("Error loading category names."); 
+        }
+    };
+    xhr.onerror = function () {
+        console.error("XHR request failed");
+        alert("Error loading category names.");
+    };
+    xhr.send();
+}
+
+function updateRestoreProductTable(categoryData) {
+    const tableRows = document.querySelectorAll("#productListTable tbody tr");
+    tableRows.forEach(row => {
+        const categoryIdCell = row.querySelector(".category-cell");
+        if (categoryIdCell) {
+            const categoryId = categoryIdCell.textContent;
+            const categoryName = findCategoryName(categoryData, categoryId);
+            categoryIdCell.textContent = categoryName;
+        }
+    });
+}

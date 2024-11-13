@@ -46,7 +46,59 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
                 integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+                crossorigin="anonymous">
+        </script>
+        <style>
+            /* Định dạng ảnh avatar */
+            .avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 2px solid #ddd;
+                transition: transform 0.2s ease;
+            }
 
+            .avatar:hover {
+                transform: scale(1.1);
+            }
+
+            .custom-dropdown {
+                position: absolute;
+                top: 60px; /* Khoảng cách từ avatar xuống */
+                right: 0px;
+                z-index: 9999; /* Đảm bảo menu luôn ở trên cùng */
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                display: none; /* Ẩn menu ban đầu */
+            }
+
+            .custom-dropdown a.dropdown-item {
+                padding: 10px 15px;
+                border-radius: 6px;
+                transition: background-color 0.2s ease, color 0.2s ease;
+            }
+
+            .custom-dropdown a.dropdown-item:hover {
+                background-color: #f0f0f5;
+                color: #333;
+            }
+
+            /* Text styling for "Hello, User" */
+            .custom-dropdown a.user-greeting {
+                text-decoration: none;
+                font-weight: bold;
+                color: #6c757d;
+                cursor: default;
+                padding: 8px 15px;
+                display: block;
+                text-transform: capitalize;
+            }
+        </style>
     </head>
 
     <body >
@@ -70,19 +122,27 @@
     String name = user.getUserName();
                 %>
                 <div class="d-flex align-items-center gap-3">
-                    <a class="nav-link" href="#">Hello, <%= name %></a>
-                    <form action="/CartController" method="POST" style="display: inline;">
-                        <button type="submit" style="border: none; background: none; padding: 0;">
-                            <img src="../img/icon/shopping-cart.svg" alt="Cart" class="cart-icon">
-                        </button>
-                    </form>
-                    <!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-<path
-                                                d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-5.5 0-9 2-9 6v2h18v-2c0-4-3.5-6-9-6z" />
-                                        </svg> -->
+                    <div class="avatar-container ms-auto d-flex align-items-center">
+
+                        <img src="https://i.pinimg.com/originals/01/bd/c8/01bdc83a37e5f1b9abab0dbe535fdeae.gif" alt="Avatar" class="avatar me-3" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
+
+                        <!-- Menu thả xuống -->
+                        <div class="dropdown-menu dropdown-menu-left custom-dropdown" aria-labelledby="avatarButton">
+                            <a class="user-greeting">Hello, <%= name %></a>
+                            <a class="dropdown-item" href="#">Profile</a>
+                            <a class="dropdown-item" href="#">Logout</a>
+                        </div>
+
+                        <form action="/CartController" method="POST" style="display: inline;">
+                            <button type="submit" style="border: none; background: none; padding: 0;">
+                                <img src="../img/icon/shopping-cart.svg" alt="Cart" class="cart-icon me-3">
+                            </button>
+                        </form>
+                    </div>
                 </div>
+
             </header>
+
             <!-- Hiển thị thông báo thành công -->
             <%-- Success Message Alert --%>
             <c:if test="${not empty successMessage}">
@@ -102,11 +162,11 @@
                 </script>
             </c:if>
             <div class="p-3">
-                <form class="d-flex align-items-center">
-                    <input type="search" class="form-control me-2" placeholder="Search products..." aria-label="Search">
+                <form class="d-flex align-items-center justify-content-center">
+                    <input type="search" class="form-control me-2 w-50 border-3 " placeholder="Search products..." aria-label="Search">
                     <button class="btn btn-outline-secondary" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-4">
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.3-4.3" />
                         </svg>
@@ -115,7 +175,10 @@
                 </form>
             </div>
 
-            <main class="d-flex  p-4">
+
+
+            <main class="d-flex p-4">
+
                 <aside class="col-md-2">
                     <h2 class="h6 mb-3">Filters</h2>
                     <div class="mb-4">
@@ -187,7 +250,7 @@ ArrayList<Models.Product> list = productDao.viewProductList();
                             <div class="card h-100">
                                 <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
-                                    <a href="#"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
+                                    <a href="productDetails.jsp"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
                                     <p class="text-muted">$<%= pro.getPrice()%></p>
                                     <!-- Form để thêm sản phẩm vào giỏ hàng -->
                                     <form action="/CartController" method="post">
@@ -207,5 +270,21 @@ ArrayList<Models.Product> list = productDao.viewProductList();
             </main>
         </div>
     </body>
+    <script>
+        document.getElementById('avatarButton').addEventListener('click', function (event) {
+            var dropdownMenu = document.querySelector('.dropdown-menu');
+            dropdownMenu.classList.toggle('show');
+        });
 
+        document.addEventListener('click', function (event) {
+            const dropdown = document.querySelector('.dropdown-menu');
+            const avatarButton = document.querySelector('#avatarButton');
+
+            // Kiểm tra nếu người dùng nhấn ra ngoài dropdown hoặc avatarButton
+            if (!avatarButton.contains(event.target) && !dropdown.contains(event.target)) {
+                const dropdownMenu = new bootstrap.Dropdown(avatarButton);
+                dropdownMenu.hide();
+            }
+        });
+    </script>
 </html>

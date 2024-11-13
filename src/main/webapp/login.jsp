@@ -90,7 +90,7 @@
                                 <button type="submit" class="btn btn-lg btn-custom w-100 fs-6">Login</button>
                             </div>    
                             <div class="input-group mb-3" style="border-radius: 12px;">
-                                <button type="button" class="btn btn-lg btn-custom w-100 fs-6"><img src="../img/google.png" style="width: 20px;" class="me-2">Sign In With Google</button>
+                                <a href="/LoginWithGoogleController" class="btn btn-lg btn-custom w-100 fs-6"><img src="../img/google.png" style="width: 20px;" class="me-2">Sign In With Google</a>
                             </div>
                         </div>
                     </form>

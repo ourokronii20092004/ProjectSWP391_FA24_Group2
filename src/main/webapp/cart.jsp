@@ -81,8 +81,10 @@
                         <a href="#" class="nav-link active">Contact</a>
                     </nav>
                     <div class="d-flex align-items-center gap-3">
+
                         <% int userID = (int) request.getSession().getAttribute("userID");
 UserDAO userDAO = new UserDAO();
+
                             
 User user = userDAO.getUserData(userID);
 String name = user.getUserName();
