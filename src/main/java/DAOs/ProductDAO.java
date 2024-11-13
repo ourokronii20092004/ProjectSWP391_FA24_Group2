@@ -301,7 +301,7 @@ public class ProductDAO {
         ArrayList<Product> results = new ArrayList<>();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE ProductName LIKE ?");
+            PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE ProductName LIKE ? and StockQuantity > -1");
             pre.setString(1, "%" + productName + "%");
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
@@ -323,15 +323,11 @@ public class ProductDAO {
         return results;
     }
 
-    /*
-    NAY SEARCH = ID, KHONG PHAI SEARCH TEN CATEGORY=))
-    LAM BEN CAI JSP ROI NAP ID QUA CONTROL
-     */
     public ArrayList<Product> searchProductsByCategory(int categoryId) throws SQLException {
         ArrayList<Product> results = new ArrayList<>();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE CategoryID = ?");
+            PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE CategoryID = ? and StockQuantity > -1");
             pre.setInt(1, categoryId);
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
@@ -357,7 +353,7 @@ public class ProductDAO {
         ArrayList<Product> searchResult = new ArrayList<>();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            String sql = "SELECT * FROM Product WHERE ProductName LIKE ?";
+            String sql = "SELECT * FROM Product WHERE ProductName LIKE ? StockQuantity > -1";
             try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                 pre.setString(1, "%" + keyword + "%");
                 try ( ResultSet rs = pre.executeQuery()) {
@@ -375,6 +371,38 @@ public class ProductDAO {
             DBConnection.Disconnect();
         }
         return searchResult;
+    }
+
+    public ArrayList<Product> searchProductsByNameAndCategory(String productName, int categoryId) throws SQLException {
+        ArrayList<Product> results = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try ( PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE ProductName LIKE ? AND CategoryID = ? AND StockQuantity > -1")) {
+                pre.setString(1, "%" + productName + "%");
+                pre.setInt(2, categoryId);
+                try ( ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        results.add(new Product(
+                                rs.getInt("ProductID"),
+                                rs.getString("ProductName"),
+                                rs.getString("Description"),
+                                rs.getFloat("Price"),
+                                rs.getString("ImageURL"),
+                                rs.getInt("CategoryID"),
+                                rs.getInt("StockQuantity"),
+                                rs.getDate("CreatedAt"),
+                                rs.getDate("UpdatedAt")
+                        ));
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error searching products", ex);
+                throw ex;
+            } finally {
+                DBConnection.Disconnect();
+            }
+        }
+        return results;
     }
 
     public boolean isValidCategoryId(int categoryId) {
@@ -397,6 +425,85 @@ public class ProductDAO {
         }
         System.out.println("Category: " + categoryId + " | " + isValid);
         return isValid;
+    }
+
+    public ArrayList<Product> searchDeletedProductsByName(String productName) throws SQLException {
+        ArrayList<Product> results = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try ( PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE ProductName LIKE ? AND StockQuantity = -1")) {
+                pre.setString(1, "%" + productName + "%");
+                try ( ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        results.add(new Product(
+                                rs.getInt("ProductID"),
+                                rs.getString("ProductName"),
+                                rs.getString("Description"),
+                                rs.getFloat("Price"),
+                                rs.getString("ImageURL"),
+                                rs.getInt("CategoryID"),
+                                rs.getInt("StockQuantity"),
+                                rs.getDate("CreatedAt"),
+                                rs.getDate("UpdatedAt")
+                        ));
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    public ArrayList<Product> searchDeletedProductsByCategory(int categoryId) throws SQLException {
+        ArrayList<Product> results = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try ( PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE CategoryID = ? AND StockQuantity = -1")) {
+                pre.setInt(1, categoryId);
+                try ( ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        results.add(new Product(
+                                rs.getInt("ProductID"),
+                                rs.getString("ProductName"),
+                                rs.getString("Description"),
+                                rs.getFloat("Price"),
+                                rs.getString("ImageURL"),
+                                rs.getInt("CategoryID"),
+                                rs.getInt("StockQuantity"),
+                                rs.getDate("CreatedAt"),
+                                rs.getDate("UpdatedAt")
+                        ));
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    public ArrayList<Product> searchDeletedProductsByNameAndCategory(String productName, int categoryId) throws SQLException {
+        ArrayList<Product> results = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try ( PreparedStatement pre = DBConnection.getPreparedStatement("SELECT * FROM Product WHERE ProductName LIKE ? AND CategoryID = ? AND StockQuantity = -1")) {
+                pre.setString(1, "%" + productName + "%");
+                pre.setInt(2, categoryId);
+                try ( ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        results.add(new Product(
+                                rs.getInt("ProductID"),
+                                rs.getString("ProductName"),
+                                rs.getString("Description"),
+                                rs.getFloat("Price"),
+                                rs.getString("ImageURL"),
+                                rs.getInt("CategoryID"),
+                                rs.getInt("StockQuantity"),
+                                rs.getDate("CreatedAt"),
+                                rs.getDate("UpdatedAt")
+                        ));
+                    }
+                }
+            }
+        }
+        return results;
     }
 
     ///////////////////////////////////////////////////

@@ -1,7 +1,10 @@
 package Controllers;
 
+import DAOs.CategoryDAO;
 import DAOs.ProductDAO;
+import Models.Category;
 import Models.Product;
+import com.google.gson.Gson;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,7 +52,6 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getQueryString();
-        System.out.println("doGet: " + path);
         try {
             String action = request.getParameter("action");
             if (action == null) {
@@ -57,35 +59,25 @@ public class ProductController extends HttpServlet {
             }
             ProductDAO productDAO = new ProductDAO();
             ArrayList<Product> productList = null;
+
+            CategoryDAO categoryDAO = new CategoryDAO();
+            ArrayList<Category> categoryList = null;
+            categoryList = categoryDAO.viewCategory();
+            request.setAttribute("categoryList", categoryList);
+
             switch (action) {
-                case "list":
+                case "list": {
                     productList = productDAO.viewProductList();
                     System.out.println("doGet: " + action);
                     break;
-                case "searchByName":
-                    String searchName = request.getParameter("searchName");
-                    if (searchName != null) {
-                        productList = productDAO.searchProductsByName(searchName);
-                    }
-                    System.out.println("doGet: " + action);
-                    break;
-                case "searchByCategory":
-                    String categoryIdStr = request.getParameter("categoryId");
-                    if (categoryIdStr != null) {
-                        try {
-                            int categoryId = Integer.parseInt(categoryIdStr);
-                            productList = productDAO.searchProductsByCategory(categoryId);
-                        } catch (NumberFormatException e) {
-                            request.setAttribute("errorMessage", "Invalid category ID.");
-                            productList = productDAO.viewProductList();
-                        }
-                    }
-                    System.out.println("doGet: " + action);
-                    break;
-                case "deleted":
+                }
+
+                case "deleted": {
                     productList = productDAO.viewDeletedProductList();
                     System.out.println("doGet: " + action);
                     break;
+                }
+
                 case "delete": {
                     int productID = Integer.parseInt(request.getParameter("productId"));
                     productDAO.removeProduct(productID);
@@ -93,6 +85,7 @@ public class ProductController extends HttpServlet {
                     response.sendRedirect("ProductController?action=list&page=Product");
                     return;
                 }
+
                 case "restore": {
                     int productID = Integer.parseInt(request.getParameter("productId"));
                     boolean restored = productDAO.restoreProduct(productID);
@@ -113,26 +106,131 @@ public class ProductController extends HttpServlet {
                     response.sendRedirect("ProductController?action=deleted&page=Product");
                     return;
                 }
+
                 case "listControl": {
                     productList = productDAO.viewProductListControl();
                     System.out.println("doGet: " + action);
                     break;
                 }
-                default:
+
+                case "getCategories": {
+                    System.out.println("doGet: " + action);
+                    Gson gson = new Gson();
+                    String categoryListJson = gson.toJson(categoryList);
+                    response.setContentType("application/json");
+                    response.getWriter().write(categoryListJson);
+
+                    return; //return de bo qua khuc sau, dung co sua no lai
+                }
+
+                case "search": {
+                    System.out.println("doGet: " + action);
+                    String searchName = request.getParameter("searchName");
+                    String categoryIdStr = request.getParameter("categoryId");
+
+                    try {
+                        if (categoryIdStr != null && !categoryIdStr.isEmpty() && searchName != null && !searchName.isEmpty()) {
+                            //search by both
+                            int categoryId = Integer.parseInt(categoryIdStr);
+                            productList = productDAO.searchProductsByNameAndCategory(searchName, categoryId);
+                        } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+                            //search by category only
+                            int categoryId = Integer.parseInt(categoryIdStr);
+                            productList = productDAO.searchProductsByCategory(categoryId);
+                        } else if (searchName != null && !searchName.isEmpty()) {
+                            //search by name only
+                            productList = productDAO.searchProductsByName(searchName);
+                        } else {
+                            //default
+                            productList = productDAO.viewProductList();
+                        }
+
+                        if (productList.isEmpty()) {
+                            request.setAttribute("noResultsMessage", "No products found matching your criteria.");
+                            productList = productDAO.viewProductList();
+                        }
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("errorMessage", "Invalid category ID.");
+                        productList = productDAO.viewProductList();// error = show all
+                    } catch (SQLException e) {
+                        Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, "SQL Exception during search", e);
+                        //request.setAttribute("errorMessage", "Database error: " + e.getMessage());
+                        //RequestDispatcher dispatcher = request.getRequestDispatcher("/error.jsp");
+                        //dispatcher.forward(request, response);
+                        //return; //stop
+                    }
+                    break;
+                }
+
+                case "searchDeleted": {
+                    System.out.println("doGet: " + action);
+                    String searchName = request.getParameter("searchName");
+                    String categoryIdStr = request.getParameter("categoryId");
+
+                    try {
+
+                        if (categoryIdStr != null && !categoryIdStr.isEmpty() && searchName != null && !searchName.isEmpty()) {
+
+                            int categoryId = Integer.parseInt(categoryIdStr);
+                            productList = productDAO.searchDeletedProductsByNameAndCategory(searchName, categoryId);
+
+                        } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+
+                            int categoryId = Integer.parseInt(categoryIdStr);
+                            productList = productDAO.searchDeletedProductsByCategory(categoryId);
+                        } else if (searchName != null && !searchName.isEmpty()) {
+
+                            productList = productDAO.searchDeletedProductsByName(searchName);
+                        } else {
+
+                            productList = productDAO.viewDeletedProductList();
+                        }
+
+                        if (productList.isEmpty()) {
+                            request.setAttribute("noResultsMessage", "No deleted products found matching your criteria.");
+                            productList = productDAO.viewDeletedProductList();
+                        }
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("errorMessage", "Invalid category ID.");
+
+                        return;
+                    } catch (SQLException e) {
+                        Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, "SQL Exception during deleted search", e);
+                        //request.setAttribute("errorMessage", "Database error: " + e.getMessage());
+                        //RequestDispatcher dispatcher = request.getRequestDispatcher("/error.jsp");
+                        //dispatcher.forward(request, response);
+                        //return;
+                    }
+
+                    request.setAttribute("productList", productList);
+                    break;
+                }
+
+                default: {
                     productList = productDAO.viewProductList();
                     System.out.println("doGet: " + action);
                     break;
+                }
             }
             request.setAttribute("productList", productList);
-            if ("listControl".equals(action)) {
-                RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
-                dispatcher.forward(request, response);
-            } else if ("deleted".equals(action)) {
-                RequestDispatcher dispatcher = request.getRequestDispatcher("restoreProduct.jsp");
-                dispatcher.forward(request, response);
-            } else {
-                RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
-                dispatcher.forward(request, response);
+            System.out.println("Navigation");
+            switch (action) {
+                case "listControl": {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
+                    dispatcher.forward(request, response);
+                    break;
+                }
+                case "deleted":
+                case "searchDeleted": {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("restoreProduct.jsp");
+                    dispatcher.forward(request, response);
+                    break;
+                }
+                default: {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
+                    dispatcher.forward(request, response);
+                    break;
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
@@ -299,4 +397,5 @@ public class ProductController extends HttpServlet {
                 && (contentType.equals("image/jpeg")
                 || contentType.equals("image/png"));
     }
+
 }
