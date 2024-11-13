@@ -95,8 +95,8 @@
                 </form>
             </div>
 
-            <main class="d-flex flex-column flex-lg-row gap-4 p-4">
-                <aside class="w-100 w-lg-25 filter-section">
+            <main class="d-flex p-4">
+                <aside class="col-md-2">
                     <h2 class="h6 mb-3">Filters</h2>
                     <div class="mb-4">
                         <h3 class="h6">Categories</h3>
@@ -112,7 +112,7 @@
                             <input class="form-check-input" type="checkbox" id="home">
                             <label class="form-check-label" for="home">Home</label>
                         </div>
-<div class="form-check">
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="beauty">
                             <label class="form-check-label" for="beauty">Beauty</label>
                         </div>
@@ -156,7 +156,7 @@
                         </div>
                     </div>
                 </aside>
-                <section class="product-section container" id="product-section">
+                <section class="col-md-10" id="product-section">
                     <div class="row">
                         <%
                             ProductDAO productDao = new ProductDAO();
