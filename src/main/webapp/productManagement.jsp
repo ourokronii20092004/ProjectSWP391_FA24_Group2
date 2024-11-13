@@ -158,14 +158,20 @@
                     </div>
                 </div>
 
+                <c:if test="${not empty noResultsMessage}">
+                    <div class="alert alert-warning" role="alert">
+                        ${noResultsMessage}
+                    </div>
+                </c:if>
+
                 <form action="ProductController" method="GET">
                     <input type="hidden" name="action" value="search">
                     <div class="search-and-filter">
                         <input type="text" name="searchName" placeholder="Search for products..." class="form-control">
                         <select name="categoryId" class="form-select">
                             <option value="">All Categories</option>
-                            <c:forEach items="${productList}" var="product">
-                                <option value="${product.categoryID}"></option>
+                            <c:forEach items="${categoryList}" var="category">
+                                <option value="${category.categoryId}">${category.categoryName}</option> 
                             </c:forEach>
                         </select>
                         <button type="submit" class="search-button">
@@ -180,12 +186,12 @@
                     <table class="table" id="productListTable">
                         <thead>
                             <tr>
-                                <th style="width: 5%;">Image</th>
+                                <th style="width: 10%;">Image</th>
                                 <th style="width: 5%;">ID</th>
                                 <th style="width: 10%;">Name</th>
-                                <th style="width: 40%;">Description</th>
+                                <th style="width: 35%;">Description</th>
                                 <th style="width: 10%;">Price</th>
-                                <th style="width: 10%;">Category ID</th>
+                                <th style="width: 10%;">Category</th>
                                 <th style="width: 10%;">Stock</th>
                                 <th style="width: 10%;">Actions</th>
                             </tr>
@@ -202,7 +208,7 @@
                                     <td>${product.productName}</td>
                                     <td>${product.description}</td>
                                     <td>${product.price}</td>
-                                    <td>${product.categoryID}</td>
+                                    <td class="category-id">${product.categoryID}</td>
                                     <td>${product.stockQuantity}</td>
                                     <td>
                                         <button class="btn btn-sm btn-warning editProductBtn"
@@ -251,8 +257,8 @@
                                     <input type="number" class="form-control" id="addProduct_price" name="price" step="0.01" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="addProduct_categoryId" class="form-label">Category ID:</label>
-                                    <input type="number" class="form-control" id="addProduct_categoryId" name="categoryId" required>
+                                    <label for="addProduct_categoryId" class="form-label">Category:</label>
+                                    <select class="form-select" id="addProduct_categoryId" name="categoryId" required></select> 
                                 </div>
                                 <div class="mb-3">
                                     <label for="addProduct_stockQuantity" class="form-label">Stock Quantity:</label>
@@ -294,8 +300,8 @@
                                     <input type="number" class="form-control" id="editProduct_price" name="price" step="0.01" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="editProduct_categoryId" class="form-label">Category ID:</label>
-                                    <input type="number" class="form-control" id="editProduct_categoryId" name="categoryId" required>
+                                    <label for="editProduct_categoryId" class="form-label">Category:</label>
+                                    <select class="form-select" id="editProduct_categoryId" name="categoryId" required></select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editProduct_stockQuantity" class="form-label">Stock Quantity:</label>
@@ -318,10 +324,7 @@
         <iframe src="adminFooter.jsp" height="70px"></iframe>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"></script>
-    <script src="js/ProductManagement.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="js/ProductManagement.js"></script>
 </body>
 </html>
