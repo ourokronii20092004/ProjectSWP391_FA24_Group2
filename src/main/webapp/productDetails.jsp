@@ -1,32 +1,55 @@
-<%-- 
-    Document   : productDetails
-    Created on : Nov 13, 2024, 9:14:49 AM
-    Author     : phanp
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Product Detail</title>
-         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
-                integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
-        crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
-                integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
-        crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <style>
+            .star-rating {
+                display: flex;
+                flex-direction: row-reverse;
+                font-size: 1.5rem; /* Slightly smaller stars */
+                justify-content: flex-end;
+            }
+            .star-rating input {
+                display: none;
+            }
+            .star {
+                cursor: pointer;
+                color: #ddd;
+                transition: color 0.2s;
+            }
+            .star:hover, .star:hover ~ .star,
+            .star-rating input:checked ~ .star {
+                color: gold;
+            }
+
+            .product-image {
+                max-width: 100%; /* Ensure image responsiveness */
+                height: auto;    /* Maintain aspect ratio */
+            }
+
+            /* Optional: Style the review section */
+            .review {
+                border: 1px solid #eee;
+                padding: 15px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+            }
+
+
+        </style>
     </head>
     <body>
-        <div class="d-flex flex-column min-vh-100">
-            <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <div class="d-flex flex-column min-vh-100"> <%-- Use a container for better layout --%>
+            <header class="d-flex justify-content-between align-items-center py-3 border-bottom">
                 <a href="homepage.jsp" class="d-flex align-items-center text-decoration-none">
-
                     <span class="h5 ms-2">PAMB</span>
                 </a>
-                <nav class="d-none d-lg-flex gap-4">
+                <nav class="d-none d-md-flex gap-4"> <%-- Show nav on medium screens and up --%>
                     <a href="#" class="text-decoration-none text-muted">Home</a>
                     <a href="#" class="text-decoration-none text-muted">Shop</a>
                     <a href="#" class="text-decoration-none text-muted">About</a>
@@ -36,16 +59,12 @@
                     <a class="nav-link" href="#">Hello, Nguyen Nhat Dang</a>
                     <form action="/CartController" method="POST" style="display: inline;">
                         <button type="submit" style="border: none; background: none; padding: 0;">
-                            <img src="../img/icon/shopping-cart.svg" alt="Cart" class="cart-icon">
+                            <i class="bi bi-cart fs-4"></i> <%-- Use Bootstrap icon --%>
                         </button>
                     </form>
-                    <!--                     <svg xmlns="" width="24" height="24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-                                            <path
-                                                d="M12 12c2.5 0 4.5-2 4.5-4.5S14.5 3 12 3 7.5 5 7.5 7.5 9.5 12 12 12zm0 2c-5.5 0-9 2-9 6v2h18v-2c0-4-3.5-6-9-6z" />
-                                        </svg> -->
                 </div>
             </header>
+
             <section class="bg-white py-5">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -103,10 +122,70 @@
                     </div>
                 </div>
             </section>
+            <!-- show list Rating -->
+            <section class="container my-5">
+                <h3>Customer Reviews</h3>
+                <c:forEach var="rating" items="${ratingList}">
+                    <div class="border p-3 mb-3 rounded shadow-sm">
+                        <p class="text-muted mb-1">Rating: ${rating.ratingValue} Stars</p>
+                        <p class="mb-0">${rating.comment}</p>
+                        <small class="text-muted">Posted on: ${rating.createdAt}</small>
+                    </div>
+                </c:forEach>
+            </section>
+            <!-- Add new rating -->
+            <style>
+                .star-rating {
+                    display: flex;
+                    flex-direction: row-reverse; /* Reverse the direction */
+                    font-size: 2rem;
+                    justify-content: flex-end; /* Align stars to the right */
+                }
+                .star-rating input[type="radio"] {
+                    display: none;
+                }
+                .star {
+                    cursor: pointer;
+                    color: #ddd;
+                    transition: color 0.2s;
+                }
+                .star:hover,
+                .star:hover ~ .star {
+                    color: #f5b301;
+                }
+                .star-rating input[type="radio"]:checked ~ .star {
+                    color: #f5b301; /* Directly apply gold to checked and subsequent stars */
+                }
+            </style>
+
+            <form action="RatingController" method="POST" class="mt-4 border p-4 rounded shadow-sm">
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="productID" value="${param.productID}">
+
+                <label for="ratingValue" class="form-label">Rating:</label>
+                <div class="star-rating mb-3">
+                    <input type="radio" id="star5" name="ratingValue" value="5">
+                    <label for="star5" class="star">★</label>
+                    <input type="radio" id="star4" name="ratingValue" value="4">
+                    <label for="star4" class="star">★</label>
+                    <input type="radio" id="star3" name="ratingValue" value="3">
+                    <label for="star3" class="star">★</label>
+                    <input type="radio" id="star2" name="ratingValue" value="2">
+                    <label for="star2" class="star">★</label>
+                    <input type="radio" id="star1" name="ratingValue" value="1">
+                    <label for="star1" class="star">★</label>
+                </div>
+
+                <label for="comment" class="form-label">Comment:</label>
+                <textarea name="comment" id="comment" rows="3" class="form-control" required></textarea>
+
+                <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
+            </form>
 
             <!-- Bootstrap Icons -->
             <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css" rel="stylesheet">
 
 
             </body>
+
             </html>

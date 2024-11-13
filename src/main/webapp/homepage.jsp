@@ -12,7 +12,27 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
+    <style>
+            .nav-link {
+                position: relative;
+                padding-bottom: 10px;
+            }
 
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                background-color: #00BFFF;
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+    </style>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,12 +56,12 @@
 
                     <span class="h5 ms-2">PAMB</span>
                 </a>
-                <nav class="d-none d-lg-flex gap-4">
-                    <a href="#" class="text-decoration-none text-muted">Home</a>
-                    <a href="#" class="text-decoration-none text-muted">Shop</a>
-                    <a href="#" class="text-decoration-none text-muted">About</a>
-                    <a href="#" class="text-decoration-none text-muted">Contact</a>
-                </nav>
+                    <nav class="d-none d-lg-flex gap-4">
+                        <a href="homepage.jsp" class="nav-link active">Home</a>
+                        <a href="#" class="nav-link active">Shop</a>
+                        <a href="#" class="nav-link active">About</a>
+                        <a href="#" class="nav-link active">Contact</a>
+                    </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");
     UserDAO userDAO = new UserDAO();
@@ -95,8 +115,8 @@
                 </form>
             </div>
 
-            <main class="d-flex flex-column flex-lg-row gap-4 p-4">
-                <aside class="w-100 w-lg-25 filter-section">
+            <main class="d-flex  p-4">
+                <aside class="col-md-2">
                     <h2 class="h6 mb-3">Filters</h2>
                     <div class="mb-4">
                         <h3 class="h6">Categories</h3>
@@ -112,7 +132,7 @@
                             <input class="form-check-input" type="checkbox" id="home">
                             <label class="form-check-label" for="home">Home</label>
                         </div>
-<div class="form-check">
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="beauty">
                             <label class="form-check-label" for="beauty">Beauty</label>
                         </div>
@@ -156,7 +176,7 @@
                         </div>
                     </div>
                 </aside>
-                <section class="product-section container" id="product-section">
+                <section class="col-md-10" id="product-section">
                     <div class="row">
                         <%
                             ProductDAO productDao = new ProductDAO();
