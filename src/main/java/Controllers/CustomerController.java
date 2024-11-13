@@ -23,7 +23,7 @@ import java.util.ArrayList;
  *
  * @author phanp
  */
-@WebServlet(name = "CustomerController", urlPatterns = {"/CustomerController"})
+@WebServlet("/CustomerController/*")
 public class CustomerController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -92,6 +92,7 @@ public class CustomerController extends HttpServlet {
                 DAO.updateCustomer(cus);
 
             } else if (path.contains("deactivate")) {
+                System.out.println(cus.getId());
                 DAO.removeCustomer(cus.getId());
             }
         }

@@ -44,7 +44,7 @@
         </div>
         <div class="d-flex flex-column min-vh-100">
             <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
-                <a href="dashboard.jsp" class="d-flex align-items-center text-decoration-none">
+                <a href="index.jsp" class="d-flex align-items-center text-decoration-none">
 
                     <span class="h5 ms-2">PAMB</span>
                 </a>
@@ -79,26 +79,26 @@
                 </form>
             </div>
 
-            <main class="d-flex flex-column flex-lg-row gap-4 p-4">
-                <aside class="w-100 w-lg-25 filter-section">
+            <main class="d-flex p-4">
+                <aside class="col-md-2">
                     <h2 class="h6 mb-3">Filters</h2>
                     <div class="mb-4">
                         <h3 class="h6">Categories</h3>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="clothing">
-                            <label class="form-check-label" for="clothing">Clothing</label>
+                            <label class="form-check-label" for="clothing">Flowers For The Occasion</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="electronics">
-                            <label class="form-check-label" for="electronics">Electronics</label>
+                            <label class="form-check-label" for="electronics">Flowers 11/20</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="home">
-                            <label class="form-check-label" for="home">Home</label>
+                            <label class="form-check-label" for="home">Flowers By Bouquet</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="beauty">
-                            <label class="form-check-label" for="beauty">Beauty</label>
+                            <label class="form-check-label" for="beauty">Flower Of Visitation</label>
                         </div>
                     </div>
                     <div class="mb-4">
@@ -140,7 +140,7 @@
                         </div>
                     </div>
                 </aside>
-                <section class="product-section container" id="product-section">
+                <section class="col-md-10" id="product-section">
                     <div class="row">
                         <%
                             ProductDAO productDao = new ProductDAO();
@@ -149,7 +149,7 @@
                         %>
                         <div class="col-md-4 col-sm-6 mb-4">
                             <div class="card h-100">
-                                <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
+                                <img src="https://i.pinimg.com/originals/aa/ed/6e/aaed6e46143374dfa4b1a894c2287957.gif" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
                                     <a href="#"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
                                     <p class="text-muted">$<%= pro.getPrice()%></p>

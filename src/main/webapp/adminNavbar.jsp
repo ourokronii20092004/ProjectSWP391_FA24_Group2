@@ -130,8 +130,8 @@
                                                 onclick="parent.location.href = this.href; return false;">Reports</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/OrderController"
                                                 onclick="parent.location.href = this.href; return false;">Handler</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/ProductController?action=listControl&page=Control"
-                                                onclick="parent.location.href = this.href; return false;">Control</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/ProductController?action=list&page=Product"
+                                                onclick="parent.location.href = this.href; return false;">Product</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/CustomerController"

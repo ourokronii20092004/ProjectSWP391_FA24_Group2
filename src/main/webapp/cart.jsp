@@ -22,7 +22,7 @@
         <div class="d-flex flex-column min-vh-100">
             <!-- Header -->
             <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
-                <a href="#" class="d-flex align-items-center text-decoration-none">
+                <a href="homepage.jsp" class="d-flex align-items-center text-decoration-none">
                     <span class="h5 ms-2">PAMB</span>
                 </a>
                 <nav class="d-none d-lg-flex gap-4">
