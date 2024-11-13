@@ -16,8 +16,8 @@ import java.io.OutputStream;
  * @author Le Trung Hau - CE180481
  */
 public class ImageHelper {
-    
-     private static final String DEFAULT_IMAGE = "default.jpg";
+
+    private static final String DEFAULT_IMAGE = "default.jpg";
 
     public static String saveImage(Part filePart, String folderName, String servletContextPath) {
         String originalFileName = getFileName(filePart);
@@ -35,16 +35,14 @@ public class ImageHelper {
 
             String relativeUploadPath = "img" + File.separator + folderName + File.separator + newFileName;
             String fullUploadPath = servletContextPath + relativeUploadPath; //use servlet context path
-            
+
             File targetFile = new File(fullUploadPath);
             File parentDir = targetFile.getParentFile();
             if (!parentDir.exists()) {
                 parentDir.mkdirs();
             }
 
-
-            try (InputStream imageStream = filePart.getInputStream();
-                 OutputStream out = new FileOutputStream(fullUploadPath)) {
+            try ( InputStream imageStream = filePart.getInputStream();  OutputStream out = new FileOutputStream(fullUploadPath)) {
                 byte[] buffer = new byte[1024];
                 int length;
                 while ((length = imageStream.read(buffer)) > 0) {
@@ -63,7 +61,6 @@ public class ImageHelper {
             return newFileName;
         }
     }
-
 
     private static String generateImageName() {
         return "image_" + System.currentTimeMillis();
@@ -89,9 +86,17 @@ public class ImageHelper {
     }
 
     private static boolean isValidImageType(String contentType) {
-        return contentType != null
-                && (contentType.equals("image/jpeg")
-                || contentType.equals("image/png"));
+        if (contentType == null) {
+            return false;
+        }
+        switch (contentType) {
+            case "image/jpeg":
+            case "image/png":
+            case "image/jpg":
+                return true;
+            default:
+                return false;
+        }
     }
 
 }
