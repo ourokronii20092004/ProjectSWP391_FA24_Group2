@@ -81,7 +81,7 @@
                         <a href="#" class="nav-link active">Contact</a>
                     </nav>
                     <div class="d-flex align-items-center gap-3">
-                                        <%/-strong/-heart:>:o:-((:-h int userID = (int) request.getSession().getAttribute("userID");
+                                        <% int userID = (int) request.getSession().getAttribute("userID");
     UserDAO userDAO = new UserDAO();
                             
     User user = userDAO.getUserData(userID);
@@ -129,7 +129,7 @@
                                     <td>
                                         <form action="/CartController" method="post" class="d-inline">
                                             <input type="hidden" name="action" value="update">
-                                            <input type="hidden" name="cartItemId" value="${item.cartItemID}">/-strong/-heart:>:o:-((:-h <input type="number" class="form-control quantity-input" name="quantity" value="${item.quantity}" min="1" max="${item.stockQuantity}">
+                                            <input type="hidden" name="cartItemId" value="${item.cartItemID}"> <input type="number" class="form-control quantity-input" name="quantity" value="${item.quantity}" min="1" max="${item.stockQuantity}">
                                             <button class="btn btn-sm btn-primary update-btn mt-2 ms-4" type="submit" style="display: none;">Update</button>
                                         </form>
                                     </td>
