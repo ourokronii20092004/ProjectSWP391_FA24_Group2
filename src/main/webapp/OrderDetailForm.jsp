@@ -103,16 +103,6 @@
                             <c:set var="totalPrice" value="${0}"></c:set>
                             <c:forEach items="${requestScope.order.orderItemList}" var="o">                                   
                                 <tr>
-                                    <td class="col-md-1">
-                                        <c:choose>
-                                            <c:when test="${o.product.imageURL != null}">
-                                                <img src="${o.product.imageURL}" alt="${o.product.imageURL}" height="50">
-                                            </c:when> 
-                                            <c:otherwise>
-                                                <img src="img/avt1.jpg" alt="${o.product.imageURL}" height="50">
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>                                       
                                     <td class="col-md-1">${o.product.productName}</td>                                       
                                     <td class="col-md-1">${o.quantity}</td>
                                     <td class="col-md-1">${o.priceAtPurchase}</td>  

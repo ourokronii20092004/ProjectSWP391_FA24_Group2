@@ -66,11 +66,11 @@
             </header>
 
             <div class="p-3">
-                <form class="d-flex align-items-center">
-                    <input type="search" class="form-control me-2" placeholder="Search products..." aria-label="Search">
+                <form class="d-flex align-items-center justify-content-center">
+                    <input type="search" class="form-control me-2 w-50" placeholder="Search products..." aria-label="Search">
                     <button class="btn btn-outline-secondary" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-4">
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.3-4.3" />
                         </svg>
