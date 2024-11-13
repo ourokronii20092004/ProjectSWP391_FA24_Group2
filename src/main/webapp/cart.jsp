@@ -47,12 +47,14 @@
     </head>
 
     <body>
-        <!-- Header -->
+
+
         <div class="container-fluid fullpagecontent">
             <div class="col-md-12">
                 <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
                     <a href="#" class="d-flex align-items-center text-decoration-none">
                         <span class="h5 ms-2">PAMB</span>
+
                     </a>
                     <nav class="d-none d-lg-flex gap-4">
                         <a href="homepage.jsp" class="text-decoration-none text-muted">Home</a>

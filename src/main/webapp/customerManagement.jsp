@@ -213,7 +213,7 @@
         }
 
 
-// edit employee modal 
+// edit customer modal 
         const editCustomer = document.getElementById('editCustomer');
         editCustomer.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;

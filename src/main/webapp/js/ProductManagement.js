@@ -116,7 +116,7 @@ function isValidProductName(productName) {
     }
 
     const combinedPercentage = (specialAndNumberCount / productName.length) * 100;
-    return combinedPercentage <= 20;
+    return combinedPercentage <= 40;
 }
 
 function isValidPrice(price) {
