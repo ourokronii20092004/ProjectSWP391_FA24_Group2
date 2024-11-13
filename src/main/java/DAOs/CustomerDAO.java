@@ -10,12 +10,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 /**
  *
  * @author phanp
  */
 public class CustomerDAO {
-    
+
     private int upCount;
 
     public ArrayList<User> viewCustomerList() {
@@ -38,9 +39,9 @@ public class CustomerDAO {
                             rs.getInt("RoleID"),
                             rs.getByte("IsActive") == 1,
                             rs.getDate("CreatedAt"),
-                            rs.getDate("UpdatedAt")));                  
+                            rs.getDate("UpdatedAt")));
                 }
-               
+
                 DBConnection.Disconnect();
             } catch (SQLException ex) {
                 return cusList;
@@ -82,8 +83,8 @@ public class CustomerDAO {
             PreparedStatement pre;
             try {
                 pre = DBConnection.getPreparedStatement("INSERT INTO [dbo].[User] "
-                        + "(Username, Salt, PasswordHash, Email, FirstName, LastName, PhoneNumber, ImageURL, ShippingAddress, RoleID) "
-                        + "VALUES(?,?,?,?,?,?,?,?,?,?)");
+                        + "(Username, Salt, PasswordHash, Email, FirstName, LastName, PhoneNumber, ImageURL, ShippingAddress, RoleID, IsActive) "
+                        + "VALUES(?,?,?,?,?,?,?,?,?,?,?)");
                 pre.setString(1, cus.getUserName());
                 pre.setString(2, cus.getSalt());
                 pre.setString(3, cus.getPassword());
@@ -93,7 +94,8 @@ public class CustomerDAO {
                 pre.setString(7, cus.getPhoneNumber());
                 pre.setString(8, cus.getImgURL());
                 pre.setString(9, cus.getAddress());
-                pre.setInt(10, 3);
+                pre.setInt(10, 2);
+                pre.setInt(11, cus.isIsActive() ? 1 : 0);
                 pre.execute();
                 pre.close();
                 DBConnection.Disconnect();
@@ -121,7 +123,7 @@ public class CustomerDAO {
                 pre.setString(2, cus.getLastName());
                 pre.setString(3, cus.getPhoneNumber());
                 pre.setString(4, cus.getImgURL());
-                pre.setString(5, cus.getAddress()); 
+                pre.setString(5, cus.getAddress());
                 pre.setInt(6, cus.getId());
                 pre.execute();
                 pre.close();
