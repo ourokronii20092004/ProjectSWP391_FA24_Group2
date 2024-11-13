@@ -358,7 +358,6 @@ public class ProductController extends HttpServlet {
         System.out.println("doPost: " + bulkAction);
         if (selectedProducts != null && bulkAction != null) {
             for (String productIdStr : selectedProducts) {
-                System.out.println("Product ID: " + productIdStr);
                 try {
                     int productId = Integer.parseInt(productIdStr);
                     if ("restore".equals(bulkAction)) {
@@ -373,7 +372,6 @@ public class ProductController extends HttpServlet {
                 }
             }
         }
-        System.out.println("IF NO PRODUCT ID HAS BEEN SHOWN, THE LOGIC CODE WAS NOT RAN");
         response.sendRedirect("ProductController?action=deleted&page=Product"); // Redirect after bulk action
     }
 
