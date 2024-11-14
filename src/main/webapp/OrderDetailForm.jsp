@@ -118,25 +118,44 @@
                                 <td class="col-md-1"> ${totalPrice} VND</td>   
                             </tr>
                             <tr>
-                                <c:set var="vouvher" value="${requestScope.order.voucher}"></c:set>
+                                <c:set var="vouvher" value="${order.voucher}"></c:set>
                                     <th class="col-md-1"></th> 
                                     <th class="col-md-1">Voucher code</th>  
 
                                 <c:choose> 
                                     <c:when test="${voucher != null}">
-                                        <th class="col-md-1">${voucher.voucherCode}</th>   
+                                        <th class="col-md-1">${voucher.voucherCode}</th>  
+                                            <c:choose> 
+                                                <c:when test="${voucher.type == 1}">
+                                                <th class="col-md-1">${voucher.value}% off</th>   
+                                                </c:when>
+                                                <c:when test="${voucher.type == 0}">
+                                                <th class="col-md-1">- ${voucher.value} VND</th>   
+                                                </c:when>                                              
+                                            </c:choose> 
                                         </c:when>
                                         <c:otherwise>
                                         <td class="col-md-1"></td>   
+                                        <td class="col-md-1">- 0 VND</td>   
                                     </c:otherwise>
                                 </c:choose>
-                                <td class="col-md-1">- ${voucher.value + 0} VND</td>   
+
                             </tr>
                             <tr>
                                 <th class="col-md-1"></th> 
                                 <th class="col-md-1"></th>  
                                 <th class="col-md-1">Actual price</th>   
-                                <td class="col-md-1">${totalPrice - voucher.value} VND</td>   
+                                    <c:choose> 
+                                        <c:when test="${voucher.type == 1}">
+                                        <th class="col-md-1">${totalPrice - (voucher.value * totalPrice / 100)}</th>   
+                                        </c:when>
+                                        <c:when test="${voucher.type == 0}">
+                                        <th class="col-md-1">${totalPrice - voucher.value} VND</th>   
+                                        </c:when> 
+                                        <c:otherwise>
+                                        <td class="col-md-1">${totalPrice} VND</td>  
+                                    </c:otherwise>
+                                </c:choose>                              
                             </tr>
                         </table>                      
                     </div>                       
