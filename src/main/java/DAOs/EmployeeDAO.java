@@ -152,4 +152,19 @@ public class EmployeeDAO {
         }
         return false;
     }
+    public boolean restoreEmployee(int id) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
+                    + "SET isActive = 1"
+                    + " WHERE UserID = " + id
+            );
+            DBConnection.Disconnect();
+            if (upCount > 0) {
+                upCount = 0;
+                return true;
+            }
+        }
+        return false;
+    }
 }

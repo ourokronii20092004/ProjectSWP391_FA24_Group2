@@ -72,60 +72,91 @@
                     <div class="row">
                         <div>
                             <div class="row">
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary mb-3 col-md-2" data-bs-toggle="modal" data-bs-target="#addEmployee">
-                                    Add User
-                                </button>                               
+                                <!-- Button trigger modal -->                                
+                                <div class="col-md-1 alert">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployee">
+                                        Add User
+                                    </button> 
+                                </div>
+                                <c:if test="${sessionScope.action != null}">
+                                    <div class="col-md-5 alert alert-success">
+                                        <c:choose>
+                                            <c:when test="${sessionScope.action == 'add'}">Added successful!</c:when>
+                                            <c:when test="${sessionScope.action == 'notAdd'}">Added unsuccessful!</c:when>
+                                            <c:when test="${sessionScope.action == 'edit'}">Edit successful!</c:when>
+                                            <c:when test="${sessionScope.action == 'notEdit'}">Edit unsuccessful!</c:when>
+                                            <c:when test="${sessionScope.action == 'remove'}">Remove successful!</c:when>
+                                            <c:when test="${sessionScope.action == 'notRemove'}">Remove unsuccessful!</c:when>   
+                                            <c:when test="${sessionScope.action == 'restore'}">Restore successful!</c:when>   
+                                            <c:when test="${sessionScope.action == 'notRestore'}">Restore unsuccessful!</c:when>   
+                                        </c:choose>
+                                    </div>
+                                </c:if>
+                                <%request.getSession().removeAttribute("action");%>
+
                                 <input type="text" id="input" onkeyup="searchFunction()" placeholder="Search for names..">
                             </div>
                             <table class="table table-striped" id="empList">                             
                                 <tr>
-                                    <th class="col-md-1">Picture</th>
-                                    <th class="col-md-1">ID</th>
-                                    <th class="col-md-1">Username</th>
-                                    <th class="col-md-2">Full name</th>                              
-                                    <th class="col-md-3">Email</th>
-                                    <th class="col-md-1">Created date</th>
-                                    <th class="col-md-1">Updated date</th>
-                                    <th class="col-md-2">Actions</th>
+                                    <th class="col-md-1 text-center">Picture</th>
+                                    <th class="col-md-1 text-center">ID</th>
+                                    <th class="col-md-1 text-center">Username</th>
+                                    <th class="col-md-2 text-center">Full name</th>                              
+                                    <th class="col-md-2 text-center">Email</th>
+                                    <th class="col-md-1 text-center">Created date</th>
+                                    <th class="col-md-1 text-center">Updated date</th>
+                                    <th class="col-md-1 text-center">Status</th>
+                                    <th class="col-md-2 text-center">Actions</th>
                                 </tr>                       
                                 <!-- User data will be loaded here -->      
-
                                 <c:forEach items="${empList}" var="e">  
-                                    <c:if test="${e.isActive == true}">
-                                        <tr>
-                                            <td class="col-md-1">
-                                                <c:choose>
-                                                    <c:when test="${e.imgURL != null}">
-                                                        <img src="${e.imgURL}" alt="${e.userName}" height="50">
-                                                    </c:when> 
-                                                    <c:otherwise>
-                                                        <img src="img/avt1.jpg" alt="${e.userName}" height="50">
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td class="col-md-1">${e.id}</td>
-                                            <td class="col-md-1">${e.userName}</td>
-                                            <td class="col-md-2">${e.firstName} ${e.lastName}</td>
-                                            <td class="col-md-3">${e.email}</td>                                       
-                                            <td class="col-md-1">${e.createdAt}</td>
-                                            <td class="col-md-1">${e.updatedAt}</td>                                   
-                                            <td class="col-md-2">
-                                                <button data-bs-toggle="modal" 
-                                                        data-bs-target="#editEmployee"
-                                                        data-user-id ="${e.id}"
-                                                        data-user-username="${e.userName}"
-                                                        data-user-firstName="${e.firstName}"
-                                                        data-user-lastName="${e.lastName}"
-                                                        data-user-email="${e.email}"
-                                                        data-user-address="${e.address}"
-                                                        data-user-phoneNumber="${e.phoneNumber}"
-                                                        data-user-imgURL="${e.imgURL}"
-                                                        class="btn btn-secondary">Details</button>
-                                                <a onclick="return confirm('Are you sure you want to delete User: ${e.userName} | ID: ${e.id}?')" href="/EmployeeController/deactivate?userID=${e.id}" class="btn btn-danger">Remove</a>   
-                                            </td>
-                                        </tr>
-                                    </c:if>
+                                    <tr>
+                                        <td class="col-md-1">
+                                            <c:choose>
+                                                <c:when test="${e.imgURL != null}">
+                                                    <img src="${e.imgURL}" alt="${e.userName}" height="50">
+                                                </c:when> 
+                                                <c:otherwise>
+                                                    <img src="img/avt1.jpg" alt="${e.userName}" height="50">
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td class="col-md-1 text-center">${e.id}</td>
+                                        <td class="col-md-1">${e.userName}</td>
+                                        <td class="col-md-2">${e.firstName} ${e.lastName}</td>
+                                        <td class="col-md-2">${e.email}</td>    
+                                        <td class="col-md-1">${e.createdAt}</td>
+                                        <td class="col-md-1">${e.updatedAt}</td>  
+                                        <c:choose>
+                                            <c:when test="${e.isActive == true}">
+                                                <td class="col-md-1 text-center">Active</td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td class="col-md-1 text-center">Inactive</td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <td class="col-md-3">
+                                            <c:choose>
+                                                <c:when test="${e.isActive == true}">
+                                                    <button data-bs-toggle="modal" 
+                                                            data-bs-target="#editEmployee"
+                                                            data-user-id ="${e.id}"
+                                                            data-user-username="${e.userName}"
+                                                            data-user-firstName="${e.firstName}"
+                                                            data-user-lastName="${e.lastName}"
+                                                            data-user-email="${e.email}"
+                                                            data-user-address="${e.address}"
+                                                            data-user-phoneNumber="${e.phoneNumber}"
+                                                            data-user-imgURL="${e.imgURL}"
+                                                            class="btn btn-secondary">Details</button>
+                                                    <a onclick="return confirm('Are you sure you want to disable User: ${e.userName} | ID: ${e.id}?')" href="/EmployeeController/deactivate?userID=${e.id}" class="btn btn-danger">Deactivate</a>   
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a onclick="return confirm('Are you sure you want to restore User: ${e.userName} | ID: ${e.id}?')" href="/EmployeeController/restore?userID=${e.id}" class="btn btn-success">Restore</a>   
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
                                 </c:forEach>
                             </table>
                         </div>                       
@@ -144,14 +175,14 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="employeeForm" action="EmployeeController/add" method="post">
+                        <form id="employeeForm" action="EmployeeController/add" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control" id="username" placeholder="Username">
+                                <input type="text" name="username" class="form-control" placeholder="Username">
                             </div>
                             <div class="form-group">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="text" class="form-control" name="password"  placeholder="Password" required>
+                                <input type="password" class="form-control" name="password"  placeholder="Password" required>
                             </div>
                             <div class="form-group">
                                 <label for="address" class="form-label">Address</label>
@@ -159,7 +190,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="text" name="email" id="email" class="form-control" placeholder="Email" required>
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
                             </div>
                             <div class="form-group">
                                 <label for="firstName" class="form-label">First name</label>
@@ -171,20 +202,18 @@
                             </div>
                             <div class="form-group">
                                 <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Phone Number" required>
+                                <input type="number" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Phone Number" required>
                             </div>
                             <div class="form-group">
                                 <label for="pic" class="form-label">Profile Picture</label>
-                                <input type="file" class="form-control" id="pic" name="pic" accept="image/*" disabled="">
+                                <input type="file" class="form-control" id="pic" name="pic" accept="image/*">
                             </div>
-                            <div class=" form-group d-flex justify-content-center">
+                            <div class="modal-footer">         
                                 <input type="submit" class="btn btn-primary me-3 p-2" value="Add employee"/>
                                 <button type="button" class="btn btn-secondary me-3 p-2" data-bs-dismiss="modal">Close</button>   
                             </div>
                         </form>
-                    </div>
-                    <div class="modal-footer">                                         
-                    </div>
+                    </div>                                     
                 </div>
             </div>
         </div>
@@ -197,11 +226,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="employeeForm" action="EmployeeController/edit" method="post">
+                        <form id="employeeForm" action="EmployeeController/edit" method="post" enctype="multipart/form-data">
                             <div class="row mb-2">
                                 <div class="col-md-3 form-group">
                                     <label for="editId" class="form-label">ID</label>
-                                    <input type="text" name="userID" id="editID" class="form-control"  readonly="" >
+                                    <input type="number" name="userID" id="editID" class="form-control"  readonly="" >
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <label for="editUsername" class="form-label">Username</label>
@@ -214,7 +243,7 @@
                             </div>
                             <div class="form-group mb-2">
                                 <label for="editEmail" class="form-label">Email</label>
-                                <input type="text" name="email" id="editEmail" class="form-control" placeholder="Email"  readonly="" disabled="">
+                                <input type="email" name="email" id="editEmail" class="form-control" placeholder="Email"  readonly="" disabled="">
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-6 form-group">
@@ -228,20 +257,19 @@
                             </div>
                             <div class="form-group mb-2">
                                 <label for="editPhoneNumber" class="form-label">Phone Number</label>
-                                <input type="text" name="phoneNumber" id="editPhoneNumber" class="form-control" placeholder="Phone Number" required>
+                                <input type="number" name="phoneNumber" id="editPhoneNumber" class="form-control" placeholder="Phone Number" required>
                             </div>
                             <div class=" form-group mb-2">
                                 <label for="editImgURL" class="form-label">Profile Picture</label>
-                                <input type="file" class="form-control" id="editImgURL" name="pic" accept="image/*" disabled="">
+                                <input type="file" class="form-control" id="editImgURL" name="pic" accept="image/*">
                             </div>
-                            <div class=" form-group d-flex justify-content-center">
+                            <div class="modal-footer form-group d-flex justify-content-center">
                                 <input type="submit" class="btn btn-primary me-3 p-2" value="Update"/>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>   
                             </div>
                         </form>
                     </div>
-                    <div class="modal-footer">                                         
-                    </div>
+
                 </div>
             </div>
         </div>
