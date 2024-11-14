@@ -4,6 +4,7 @@
  */
 package Controllers;
 
+import Helper.ImageHelper;
 import Models.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,13 +15,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.File;
+import jakarta.servlet.http.Part;
+import jakarta.servlet.annotation.MultipartConfig;
 
 /**
  *
  * @author CE181515 - Phan Viet Phat
  */
 @WebServlet("/EmployeeController/*")
+@MultipartConfig
 public class EmployeeController extends HttpServlet {
 
     /**
@@ -70,6 +73,9 @@ public class EmployeeController extends HttpServlet {
             if (path.contains("deactivate")) {
                 System.out.println("deactivate");
                 doPost(request, response);
+            } else if (path.contains("restore")) {
+                System.out.println("restore");
+                doPost(request, response);
             } else {
                 System.out.println("list");
                 ArrayList<User> empList = new DAOs.EmployeeDAO().viewEmployeeList();
@@ -97,6 +103,7 @@ public class EmployeeController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
+
         String userID = request.getParameter("userID") == null ? "-1" : request.getParameter("userID"),
                 username = request.getParameter("username"),
                 password = request.getParameter("password"),
@@ -113,9 +120,8 @@ public class EmployeeController extends HttpServlet {
         System.out.println(lastName);
         System.out.println(phoneNumber);
         System.out.println(email);
-        File pic = null;
+
         User emp = new User(Integer.parseInt(userID), username, null, null, email, firstName, lastName, phoneNumber, address, null, 3, true, null, null);
-        String action = (String) request.getSession().getAttribute("action");
         if (path.startsWith("/EmployeeController")) {
             DAOs.EmployeeDAO DAO = new DAOs.EmployeeDAO();
             if (path.contains("add")) {
@@ -123,15 +129,41 @@ public class EmployeeController extends HttpServlet {
                 password = Hash.HashFunction.hashPassword(password, salt);
                 emp.setSalt(Hash.HashFunction.getSaltStringType(salt));
                 emp.setPassword(password);
-                DAO.addEmployee(emp);
+                Part img = request.getPart("pic");
+                String imageUrl = ImageHelper.saveImage(img, "pro", getServletContext().getRealPath("/"));
+                emp.setImgURL(imageUrl);
+                if (DAO.addEmployee(emp)) {
+                    request.getSession().setAttribute("action", "add");
+                } else {
+                    request.getSession().setAttribute("action", "notAdd");
+                }
+
             } else if (path.contains("edit")) {
-                DAO.updateEmployee(emp);
+                Part img = request.getPart("pic") == null ? null : request.getPart("pic");
+                if (img == null) {
+                    String imageUrl = ImageHelper.saveImage(img, "pro", getServletContext().getRealPath("/"));
+                    emp.setImgURL(imageUrl);
+                }
+                if (DAO.updateEmployee(emp)) {
+                    request.getSession().setAttribute("action", "edit");
+                } else {
+                    request.getSession().setAttribute("action", "notEdit");
+                }
 
             } else if (path.contains("deactivate")) {
-                DAO.removeEmployee(emp.getId());
+                if (DAO.removeEmployee(emp.getId())) {
+                    request.getSession().setAttribute("action", "remove");
+                } else {
+                    request.getSession().setAttribute("action", "notRemove");
+                }
+            } else if (path.contains("restore")) {
+                if (DAO.restoreEmployee(emp.getId())) {
+                    request.getSession().setAttribute("action", "restore");
+                } else {
+                    request.getSession().setAttribute("action", "notRestore");
+                }
             }
         }
         response.sendRedirect("/EmployeeController");
     }
-
 }
