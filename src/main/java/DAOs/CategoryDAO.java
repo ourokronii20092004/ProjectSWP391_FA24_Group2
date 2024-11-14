@@ -20,7 +20,7 @@ public class CategoryDAO {
         categoryList.clear();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Category");
+            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Category where IsActive = 1");
             try {
                 while (rs.next()) {
                     categoryList.add(new Category(rs.getInt("CategoryID"),
@@ -62,7 +62,14 @@ public class CategoryDAO {
             try {
                 pre = DBConnection.getPreparedStatement("INSERT INTO Category (CategoryName, ParentCategoryID) VALUES (?, ?)");
                 pre.setString(1, cate.getCategoryName());
-                pre.setInt(2, cate.getParentCategoryID());                
+                if (cate.getParentCategoryID() == null) {
+                    pre.setNull(2, java.sql.Types.INTEGER);
+                } else if (cate.getParentCategoryID() == 0) {
+                    cate.setParentCategoryID(null);
+                    pre.setNull(2, java.sql.Types.INTEGER);
+                } else {
+                    pre.setInt(2, cate.getParentCategoryID());
+                };
                 pre.execute();
                 pre.close();
                 DBConnection.Disconnect();
@@ -81,7 +88,14 @@ public class CategoryDAO {
             try {
                 pre = DBConnection.getPreparedStatement("UPDATE Category SET CategoryName = ?, ParentCategoryID = ? WHERE CategoryID = ?");
                 pre.setString(1, cate.getCategoryName());
-                pre.setInt(2, cate.getParentCategoryID());
+                if (cate.getParentCategoryID() == null) {
+                    pre.setNull(2, java.sql.Types.INTEGER);
+                } else if (cate.getParentCategoryID() == 0) {
+                    cate.setParentCategoryID(null);
+                    pre.setNull(2, java.sql.Types.INTEGER);
+                } else {
+                    pre.setInt(2, cate.getParentCategoryID());
+                };
                 pre.setInt(3, cate.getCategoryId());
                 pre.execute();
                 pre.close();
@@ -114,21 +128,58 @@ public class CategoryDAO {
         }
     }
 
-    public boolean removeCategory(int id) throws SQLException {
+    public String removeCategory(int id) throws SQLException {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             if (hasChildCategory(id)) {
-                return false;
+                return "Không thể xóa category này vì nó có các category con.";
+            } else {
+                // Tiến hành SOFT DELETE
+                upCount = DBConnection.ExecuteUpdate("UPDATE Category SET IsActive = 0 WHERE CategoryID =" + id);
+                if (upCount > 0) {
+                    upCount = 0;
+                    return "Xóa category thành công.";
+                }
             }
-            updateChildCategory(id);
+            DBConnection.Disconnect();
+        }
+        return "Xóa category thất bại";
+    }
+
+    public boolean removeCategoryFinal(int id) throws SQLException {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            // HARD DELETE
             upCount = DBConnection.ExecuteUpdate("DELETE FROM Category WHERE CategoryID = " + id);
             DBConnection.Disconnect();
             if (upCount > 0) {
-                viewCategory(); // Cập nhật lại danh sách category
                 upCount = 0;
                 return true;
             }
         }
         return false;
+    }
+
+    public ArrayList<Category> getSubCategories(int categoryId) {
+        ArrayList<Category> subCategories = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try {
+                ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM Category WHERE ParentCategoryID = " + categoryId + " and IsActive = 1"); // and IsActive = 1
+                while (rs.next()) {
+                    subCategories.add(new Category(rs.getInt("CategoryID"),
+                            rs.getString("CategoryName"),
+                            rs.getInt("ParentCategoryID")));
+                }
+
+                DBConnection.Disconnect();
+            } catch (SQLException ex) {
+                // Handle exceptions appropriately, e.g., log the error
+                ex.printStackTrace(); // or use a logger
+                return new ArrayList<>(); // Return empty list in case of error
+
+            }
+        }
+        return subCategories;
     }
 }
