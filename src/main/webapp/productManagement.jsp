@@ -146,16 +146,18 @@
             .modal-body {
                 display: flex;
                 flex-direction: column;
+                
             }
             
             .col-md-6 textarea {
                 height: border-box;
-                resize: vertical;
+                resize: none;
                 max-height: inherit;
             }
 
             .modal-body label{
                 align-self: flex-start;
+                font-weight: bold;
             }
             .modal-body .row {
                 align-items: flex-start;

@@ -3,21 +3,46 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchCategoriesAndUpdateRestoreProductTable();
         attachEditButtonListeners();
         attachFormValidation();
+        modalTextareaHeightListener();
     });
-
-    
 
 });
 
+function modalTextareaHeightListener() {
+    const editModal = document.getElementById('editProductModal');
+    const addModal = document.getElementById('addProductModal');
 
-function resizeTextarea(event) {
-    const textarea = event.target.closest('.modal-body').querySelector('textarea');
-    const modalBody = event.target.closest('.modal-body');
-    if (textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = modalBody.clientHeight + 'px';
+    if (editModal) {
+        editModal.addEventListener('shown.bs.modal', resizeTextarea);
+        editModal.querySelector('input[name="image"]').addEventListener('change', resizeTextarea);
+        document.getElementById('editProduct_imagePreview').addEventListener('load', resizeTextarea);
+    }
+
+    if (addModal) {
+        addModal.addEventListener('shown.bs.modal', resizeTextarea);
+        addModal.querySelector('input[name="image"]').addEventListener('change', resizeTextarea);
+        document.getElementById('addProduct_imagePreview').addEventListener('load', resizeTextarea);
     }
 }
+
+function resizeTextarea(event) {
+    const modal = event.target ? event.target.closest('.modal') : event.currentTarget.closest('.modal');
+
+    if (modal) {
+        const textarea = modal.querySelector('textarea[name="description"]');
+        if (textarea) {
+            const modalBody = textarea.closest('.modal-body');
+
+            //
+            window.requestAnimationFrame(() => {
+                textarea.style.height = 'auto';
+                textarea.style.height = (modalBody.clientHeight - 135) + 'px';
+            });
+        }
+    }
+}
+
+
 
 
 function attachEditButtonListeners() {
@@ -47,7 +72,7 @@ function attachEditButtonListeners() {
                 preview.src = imageURL;
                 preview.classList.remove("d-none");
             } else {
-                preview.src = "#"; //place holder
+                preview.src = "/img/pro/default.jpg"; //place holder
                 preview.classList.add("d-none"); //hide -> no img
             }
 
@@ -61,17 +86,23 @@ function previewImage(input, previewId) {
     const file = input.files[0];
     const reader = new FileReader();
 
+    
+
     reader.onloadend = function () {
         preview.src = reader.result;
         preview.classList.remove("d-none"); //show preview
-    }
+    };
 
     if (file) {
         reader.readAsDataURL(file);
     } else {
-        preview.src = "#"; //place holder
+        preview.src = "/img/pro/default.jpg"; //place holder
         preview.classList.add("d-none"); //hide -> no img
     }
+    
+    preview.addEventListener('load', function (event) {
+        resizeTextarea(event);
+    });
 }
 
 
@@ -164,7 +195,7 @@ function isValidProductName(productName) {
     }
 
     const combinedPercentage = (specialAndNumberCount / productName.length) * 100;
-    return combinedPercentage <= 40;
+    return combinedPercentage <= 20;
 }
 
 function isValidPrice(price) {
@@ -176,7 +207,7 @@ function isValidStockQuantity(stockQuantity) {
 }
 
 function isValidImageType(contentType) {
-    const allowedTypes = ["image/jpeg", "image/png"];
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     return allowedTypes.includes(contentType);
 }
 
@@ -254,16 +285,16 @@ function fetchCategoriesAndUpdateSelects(callback) {
                     callback();
             } catch (e) {
                 console.error('Error parsing category data (XHR):', e.message, xhr.response);
-                alert("Error loading categories. Invalid data received from the server.");
+                alert("Error loading categories: Invalid data received.");
             }
         } else {
             console.error(`XHR error! Status: ${xhr.status}, Response: ${xhr.response}`);
-            alert("Error Loading Categories");
+            alert("Error loading Categories. Bad status: " + xhr.status);
         }
     };
     xhr.onerror = function () {
         console.error("XHR request failed");
-        alert("Error Loading Categories. Network or server error.");
+        alert("Error loading Categories: Network or server error.");
     };
     xhr.send();
 }
@@ -271,7 +302,7 @@ function fetchCategoriesAndUpdateSelects(callback) {
 
 
 function populateCategorySelect(selectElement, categories) {
-    selectElement.innerHTML = ''; // Clear existing options
+    selectElement.innerHTML = ''; //clear existing options
 
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
@@ -299,16 +330,17 @@ function fetchCategoriesAndUpdateRestoreProductTable() {
                 updateRestoreProductTable(categoryData);
             } catch (e) {
                 console.error('Error parsing category data:', e.message, xhr.response);
-                alert("Error loading category names.");
+                alert("Error loading category names: JSON parse failed. Please refresh the page.");
             }
+
         } else {
             console.error(`XHR error! Status: ${xhr.status}, Response: ${xhr.response}`);
-            alert("Error loading category names.");
+            alert("Error loading category names. Bad status: " + xhr.status);
         }
     };
     xhr.onerror = function () {
         console.error("XHR request failed");
-        alert("Error loading category names.");
+        alert("Error loading category names: Unknown.");
     };
     xhr.send();
 }
