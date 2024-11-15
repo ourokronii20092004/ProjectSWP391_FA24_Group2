@@ -13,25 +13,25 @@
 <!DOCTYPE html>
 <html lang="en">
     <style>
-            .nav-link {
-                position: relative;
-                padding-bottom: 10px;
-            }
+        .nav-link {
+            position: relative;
+            padding-bottom: 10px;
+        }
 
-            .nav-link::after {
-                content: '';
-                position: absolute;
-                left: 0;
-                bottom: 0;
-                width: 0;
-                height: 2px;
-                background-color: #00BFFF;
-                transition: width 0.3s ease;
-            }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: #00BFFF;
+            transition: width 0.3s ease;
+        }
 
-            .nav-link:hover::after {
-                width: 100%;
-            }
+        .nav-link:hover::after {
+            width: 100%;
+        }
     </style>
     <head>
         <meta charset="UTF-8">
@@ -108,12 +108,12 @@
 
                     <span class="h5 ms-2">PAMB</span>
                 </a>
-                    <nav class="d-none d-lg-flex gap-4">
-                        <a href="homepage.jsp" class="nav-link active">Home</a>
-                        <a href="#" class="nav-link active">Shop</a>
-                        <a href="#" class="nav-link active">About</a>
-                        <a href="#" class="nav-link active">Contact</a>
-                    </nav>
+                <nav class="d-none d-lg-flex gap-4">
+                    <a href="homepage.jsp" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link active">Shop</a>
+                    <a href="#" class="nav-link active">About</a>
+                    <a href="#" class="nav-link active">Contact</a>
+                </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");
     UserDAO userDAO = new UserDAO();
@@ -250,7 +250,12 @@ ArrayList<Models.Product> list = productDao.viewProductList();
                             <div class="card h-100">
                                 <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
-                                    <a href="productDetails.jsp"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
+                                    <form action="/RatingController" method="post" class="d-inline">
+                                        <input type="hidden" name="action" value="list">
+                                        <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
+                                            <h3 class="h5 card-title"><%= pro.getProductName() %></h3>
+                                        </button>
+                                    </form>
                                     <p class="text-muted">$<%= pro.getPrice()%></p>
                                     <!-- Form để thêm sản phẩm vào giỏ hàng -->
                                     <form action="/CartController" method="post">
