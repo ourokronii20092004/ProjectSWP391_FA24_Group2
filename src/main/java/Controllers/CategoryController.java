@@ -52,9 +52,10 @@ public class CategoryController extends HttpServlet {
                 System.out.println("delete");
                 doPost(request, response);
             } else {
-                System.out.println("list");
+               // System.out.println("list");
                 ArrayList<Category> categoryList = new DAOs.CategoryDAO().viewCategory();
                 request.setAttribute("categoryList", categoryList);
+                
                 RequestDispatcher ds = request.getRequestDispatcher("categoryManagement.jsp");
                 ds.forward(request, response);
                 return;
@@ -62,7 +63,7 @@ public class CategoryController extends HttpServlet {
         }
 
     }
-
+    
     /**
      * Handles the HTTP <code>POST</code> method.
      *

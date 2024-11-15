@@ -2,6 +2,7 @@ package Controllers;
 
 import DAOs.CategoryDAO;
 import DAOs.ProductDAO;
+import Helper.ImageHelper;
 import Models.Category;
 import Models.Product;
 import com.google.gson.Gson;
@@ -18,12 +19,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.servlet.annotation.MultipartConfig;
-import java.io.File;
 import jakarta.servlet.http.Part;
-import java.awt.BorderLayout;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.File;
 
 /**
  *
@@ -52,7 +49,6 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getQueryString();
         try {
             String action = request.getParameter("action");
             if (action == null) {
@@ -62,8 +58,7 @@ public class ProductController extends HttpServlet {
             ArrayList<Product> productList = null;
 
             CategoryDAO categoryDAO = new CategoryDAO();
-            ArrayList<Category> categoryList = null;
-            categoryList = categoryDAO.viewCategory();
+            ArrayList<Category> categoryList = categoryDAO.viewCategory();
             request.setAttribute("categoryList", categoryList);
 
             switch (action) {
@@ -245,159 +240,102 @@ public class ProductController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) {
-            action = "listControl";
-        }
+        action = (action == null) ? "listControl" : action;
         ProductDAO productDAO = new ProductDAO();
-        if ("bulkAction".equals(action)) {
-            handleBulkAction(request, response, productDAO);
-            return;
-        }
-        Part filePart = request.getPart("image");
-        String originalFileName = getFileName(filePart);
+
+        System.out.println("doPost: " + action);
         switch (action) {
-            case "add":
-                System.out.println("doPost: add");
-                String newFileName = "";
-                if (filePart != null && filePart.getSize() > 0) {
-                    String contentType = filePart.getContentType();
-                    if (!isValidImageType(contentType)) {
-                        System.out.println("Product image of the wrong type.");
-                    }
-                    String fileExtension = getFileExtension(originalFileName);
-                    newFileName = "product_" + System.currentTimeMillis() + fileExtension;
-                    InputStream imageStream = filePart.getInputStream();
-                    String relativeUploadPath = "/img/pro/" + newFileName;
-                    String fullUploadPath = getServletContext().getRealPath(relativeUploadPath);
-                    File targetFile = new File(fullUploadPath);
-                    File parentDir = targetFile.getParentFile();
-                    if (!parentDir.exists()) {
-                        parentDir.mkdirs();
-                    }
-                    try ( OutputStream out = new FileOutputStream(fullUploadPath)) {
-                        byte[] buffer = new byte[1024];
-                        int length;
-                        while ((length = imageStream.read(buffer)) > 0) {
-                            out.write(buffer, 0, length);
-                        }
-                    } catch (IOException e) {
-                        System.err.println("Error saving image: " + e.getMessage());
-                    }
-                    System.out.println("Product image saved at: " + fullUploadPath);
+            case "add": {
+
+                String imageUrl = ImageHelper.saveImage(request.getPart("image"), "pro", getServletContext().getRealPath("/"));
+                if (imageUrl != null) {
+
+                    String productName = request.getParameter("productName");
+                    String description = request.getParameter("description");
+                    float price = Float.parseFloat(request.getParameter("price"));
+                    int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+                    int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+
+                    Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
+                    productDAO.addProduct(newProduct);
+
+                    response.sendRedirect("ProductController?action=list&page=Product");
                 } else {
-                    newFileName = "default.jpg";
-                    System.out.println("Product image not uploaded. Using deafult.jpg");
+                    request.setAttribute("errorMessage", "Image upload failed.");
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
+                    dispatcher.forward(request, response);
                 }
-                String imageUrl = "img/pro/" + newFileName;
-                System.out.println("Product image saved at: " + imageUrl);
-                String productName = request.getParameter("productName");
-                String description = request.getParameter("description");
-                float price = Float.parseFloat(request.getParameter("price"));
-                int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-                int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-                Product newProduct = new Product(0, productName, description, price, imageUrl,
-                        categoryId, stockQuantity, null, null);
-                productDAO.addProduct(newProduct);
-                response.sendRedirect("ProductController?action=list&page=Product");
-                break;
-            case "update":
-                System.out.println("doPost: update");
+                return;
+            }
+            case "update": {
+
                 int productId = Integer.parseInt(request.getParameter("productId"));
                 String updatedProductName = request.getParameter("productName");
                 String updatedDescription = request.getParameter("description");
                 float updatedPrice = Float.parseFloat(request.getParameter("price"));
                 int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
                 int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+
+                Part imagePart = request.getPart("image");
                 String updatedImageUrl;
-                String fileName = getFileName(filePart);
-                if (fileName == null || fileName.isEmpty()) {
-                    System.out.println("Product image not uploaded");
-                    Product existingProduct = productDAO.readProduct(productId);
-                    if (existingProduct != null) {
-                        updatedImageUrl = existingProduct.getImageURL();
-                        System.out.println("Product image not changed");
-                    } else {
-                        System.err.println("Error: Product with ID " + productId + " not found in the database.");
-                        updatedImageUrl = "img/pro/default.jpg";
+
+                if (imagePart != null && imagePart.getSize() > 0) {
+                    updatedImageUrl = ImageHelper.saveImage(imagePart, "pro", getServletContext().getRealPath("/"));
+
+                    if (updatedImageUrl == null) {
+                        request.setAttribute("errorMessage", "Image upload failed.");
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
+                        dispatcher.forward(request, response);
+                        return;
                     }
                 } else {
-                    System.out.println("Product image uploaded");
-                    fileName = new File(fileName).getName();
-                    updatedImageUrl = "img/pro/" + fileName;
-                    System.out.println("Product image saved at: " + updatedImageUrl);
-                    if (filePart != null && filePart.getSize() > 0) {
-                        String fullImagePath = getServletContext().getRealPath("/") + updatedImageUrl;
-                        try ( OutputStream out = new FileOutputStream(fullImagePath)) {
-                            byte[] buffer = new byte[1024];
-                            int length;
-                            try ( InputStream imageStream = filePart.getInputStream()) {
-                                while ((length = imageStream.read(buffer)) > 0) {
-                                    out.write(buffer, 0, length);
-                                }
+                    String path = "img" + File.separator + "pro" + File.separator + "default.jpg";
+                    Product existingProduct = productDAO.readProduct(productId);
+                    updatedImageUrl = (existingProduct != null) ? existingProduct.getImageURL() : path;
+                }
+
+                Product updatedProduct = new Product(productId, updatedProductName, updatedDescription, updatedPrice, updatedImageUrl, updatedCategoryId, updatedStockQuantity, null, null);
+                productDAO.updateProduct(updatedProduct);
+                response.sendRedirect("ProductController?action=list&page=Product");
+                return;
+            }
+            case "bulkAction": {
+
+                String[] selectedProducts = request.getParameterValues("selectedProducts");
+                String bulkAction = request.getParameter("bulkRestore") != null ? "restore" : (request.getParameter("bulkDelete") != null ? "deleteFinal" : null);
+                if (selectedProducts != null && bulkAction != null) {
+
+                    System.out.println("doPost: " + bulkAction);
+
+                    for (String productIdStr : selectedProducts) {
+                        try {
+                            int productId = Integer.parseInt(productIdStr);
+                            if ("restore".equals(bulkAction)) {
+                                productDAO.restoreProduct(productId);
+                            } else {
+                                productDAO.removeProductFinal(productId);
+
                             }
+                        } catch (NumberFormatException e) {
+                            System.err.println("Error parsing product ID: " + e.getMessage());
+
                         }
                     }
                 }
-                Product updatedProduct = new Product(productId, updatedProductName, updatedDescription,
-                        updatedPrice, updatedImageUrl, updatedCategoryId,
-                        updatedStockQuantity, null, null);
-                productDAO.updateProduct(updatedProduct);
-                response.sendRedirect("ProductController?action=list&page=Product");
-                break;
+                response.sendRedirect("ProductController?action=deleted&page=Product");
+                return;
+            }
+            default: {
+                System.out.println("doPost: " + action);
+                response.sendRedirect("ProductController?action=deleted&page=Product");
+            }
+
         }
+
     }
 
     @Override
     public String getServletInfo() {
         return "Product controller thingy";
     }
-
-    private void handleBulkAction(HttpServletRequest request, HttpServletResponse response, ProductDAO productDAO) throws IOException {
-        String[] selectedProducts = request.getParameterValues("selectedProducts");
-        String bulkAction = request.getParameter("bulkRestore") != null ? "restore" : (request.getParameter("bulkDelete") != null ? "deleteFinal" : null);
-        System.out.println("doPost: " + bulkAction);
-        if (selectedProducts != null && bulkAction != null) {
-            for (String productIdStr : selectedProducts) {
-                try {
-                    int productId = Integer.parseInt(productIdStr);
-                    if ("restore".equals(bulkAction)) {
-                        productDAO.restoreProduct(productId);
-                    } else {
-                        productDAO.removeProductFinal(productId);
-                        
-                    }
-                } catch (NumberFormatException e) {
-                    System.err.println("Error parsing product ID: " + e.getMessage());
-
-                }
-            }
-        }
-        response.sendRedirect("ProductController?action=deleted&page=Product"); // Redirect after bulk action
-    }
-
-    private String getFileExtension(String fileName) {
-        if (fileName == null) {
-            return "";
-        }
-        int dotIndex = fileName.lastIndexOf('.');
-        return (dotIndex > 0) ? fileName.substring(dotIndex) : "";
-    }
-
-    private String getFileName(Part part) {
-        if (part != null && part.getHeader("content-disposition") != null) {
-            for (String content : part.getHeader("content-disposition").split(";")) {
-                if (content.trim().startsWith("filename")) {
-                    return content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isValidImageType(String contentType) {
-        return contentType != null
-                && (contentType.equals("image/jpeg")
-                || contentType.equals("image/png"));
-    }
-
 }

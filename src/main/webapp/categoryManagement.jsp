@@ -68,7 +68,7 @@
         <!-- User Management -->
         <div class="container-fluid fullpagecontent">
             <div class="col-md-12">
-                <h6 class="card-title">Category Management</h6>
+                <h6 class="card-title">Category Management</h6>              
                 <div class="card">
                     <div class="row">
                         <div>
@@ -101,9 +101,9 @@
                                                     data-category-name="${c.categoryName}"
                                                     data-parent-category-id="${c.parentCategoryID}"
                                                     class="btn btn-secondary">Update</button>
-                                            <a onclick="return confirm('Are you sure you want to delete this category: ${c.categoryName} | ID: ${c.categoryId}?')" href="/CategoryController/delete?categoryID=${c.categoryId}" class="btn btn-danger">Remove</a>   
+                                            <a onclick="return confirm('Are you sure you want to delete this category: ${c.categoryName} | ID: ${c.categoryId}?')" href="/CategoryController/delete?categoryID=${c.categoryId}" class="btn btn-danger">Remove</a>
                                         </td>
-                                    </tr>
+                                    </tr>                                  
                                 </c:forEach>
                             </table>
                         </div>                       
@@ -129,7 +129,15 @@
                             </div>
                             <div class="form-group">
                                 <label for="parentCategoryID" class="form-label">Parent Category ID</label>
-                                <input type="text" class="form-control" name="parentCategoryID"  placeholder="Parent Category ID">
+                                <select class="form-control" name="parentCategoryID" id="ParentCategoryID">
+                                    <option value="">None</option> 
+                                    <c:forEach items="${categoryList}" var="category"> 
+                                        <c:if test="${category.parentCategoryID == null || category.parentCategoryID == 0}"> <%-- Kiểm tra Category cha --%>
+                                            <option value="${category.categoryId}" ${category.categoryId == c.parentCategoryID ? 'selected' : ''}>ID = ${category.categoryId} : ${category.categoryName}</option>
+                                        </c:if>
+
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class=" form-group d-flex justify-content-center">
                                 <input type="submit" class="btn btn-primary me-3 p-2" value="Add Category"/>
@@ -152,17 +160,25 @@
                     </div>
                     <div class="modal-body">
                         <form id="categoryForm" action="CategoryController/edit" method="post">
+                            <input type="hidden" name="editingCategoryID" id="editingCategoryID" value="${editingCategoryID}">
                             <div class="form-group">
                                 <label for="categoryId" class="form-label">ID:</label>
-                                <input type="text" name="categoryID" id="categoryID" class="form-control"  readonly="" >
+                                <input type="text" name="categoryID" id="editCategoryID" class="form-control"  readonly="" >
                             </div>
                             <div class="form-group">
                                 <label for="categoryName" class="form-label">Category Name</label>
-                                <input type="text" name="categoryName" id="categoryName" class="form-control">
+                                <input type="text" name="categoryName" id="editCategoryName" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="parentCategoryID" class="form-label">Parent Category ID</label>
-                                <input type="text" name="parentCategoryID" id="parentCategoryID" class="form-control">
+                                <select class="form-control" name="parentCategoryID" id="editParentCategoryID">
+                                    <option value="">None</option>   
+                                    <c:forEach items="${categoryList}" var="category">                    
+                                        <c:if test="${category.categoryId != editParentCategoryID && (category.parentCategoryID == null || category.parentCategoryID == 0)}"> <%-- Kiểm tra Category cha --%>
+                                            <option value="${category.categoryId}" ${category.categoryId == c.parentCategoryID ? 'selected' : ''}> ${category.categoryName}</option>
+                                        </c:if>
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class=" form-group d-flex justify-content-center">
                                 <input type="submit" class="btn btn-primary me-3 p-2" value="Update"/>
@@ -213,9 +229,9 @@
             const id = button.getAttribute('data-category-id');
             const categoryName = button.getAttribute('data-category-name');
             const parentCategoryID = button.getAttribute('data-parent-category-id');
-            document.getElementById('categoryID').value = id;
-            document.getElementById('categoryName').value = categoryName;
-            document.getElementById('parentCategoryID').value = parentCategoryID;
+            document.getElementById('editCategoryID').value = id;
+            document.getElementById('editCategoryName').value = categoryName;
+            document.getElementById('editParentCategoryID').value = parentCategoryID;
             // them data cho may cai modal
         });
 
