@@ -130,7 +130,7 @@ public class EmployeeController extends HttpServlet {
                 emp.setSalt(Hash.HashFunction.getSaltStringType(salt));
                 emp.setPassword(password);
                 Part img = request.getPart("pic");
-                String imageUrl = ImageHelper.saveImage(img, "pro", getServletContext().getRealPath("/"));
+                String imageUrl = ImageHelper.saveImage(img, "emp", getServletContext().getRealPath("/"));
                 emp.setImgURL(imageUrl);
                 if (DAO.addEmployee(emp)) {
                     request.getSession().setAttribute("action", "add");
@@ -140,8 +140,9 @@ public class EmployeeController extends HttpServlet {
 
             } else if (path.contains("edit")) {
                 Part img = request.getPart("pic") == null ? null : request.getPart("pic");
-                if (img == null) {
-                    String imageUrl = ImageHelper.saveImage(img, "pro", getServletContext().getRealPath("/"));
+                System.out.println(img);
+                if (img != null) {
+                    String imageUrl = ImageHelper.saveImage(img, "emp", getServletContext().getRealPath("/"));
                     emp.setImgURL(imageUrl);
                 }
                 if (DAO.updateEmployee(emp)) {
