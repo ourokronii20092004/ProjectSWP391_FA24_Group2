@@ -41,7 +41,10 @@
                 border-radius: 5px;
             }
 
+            .float-end {
+                float: right;
 
+            }
         </style>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -135,71 +138,131 @@
             </section>
 
             <!-- show list Rating -->
-            <section class="container my-5">
-                <h3>Customer Reviews</h3>
-                <c:forEach var="rating" items="${ratingList}">
-                    <div class="border p-3 mb-3 rounded shadow-sm">
-                        <p class="text-muted mb-1">Rating: ${rating.ratingValue} Stars</p>
-                        <p class="mb-0">${rating.comment}</p>
-                        <small class="text-muted">Posted on: ${rating.createdAt}</small>
-                    </div>
-                </c:forEach>
-            </section>
-            <!-- Add new rating -->
-            <style>
-                .star-rating {
-                    display: flex;
-                    flex-direction: row-reverse; /* Reverse the direction */
-                    font-size: 2rem;
-                    justify-content: flex-end; /* Align stars to the right */
-                }
-                .star-rating input[type="radio"] {
-                    display: none;
-                }
-                .star {
-                    cursor: pointer;
-                    color: #ddd;
-                    transition: color 0.2s;
-                }
-                .star:hover,
-                .star:hover ~ .star {
-                    color: #f5b301;
-                }
-                .star-rating input[type="radio"]:checked ~ .star {
-                    color: #f5b301; /* Directly apply gold to checked and subsequent stars */
-                }
-            </style>
-
-            <form action="RatingController" method="POST" class="mt-4 border p-4 rounded shadow-sm">
-                <input type="hidden" name="action" value="add">
-                <input type="hidden" name="productID" value="${param.productID}">
-
-                <label for="ratingValue" class="form-label">Rating:</label>
-                <div class="star-rating mb-3">
-                    <input type="radio" id="star5" name="ratingValue" value="5">
-                    <label for="star5" class="star">★</label>
-                    <input type="radio" id="star4" name="ratingValue" value="4">
-                    <label for="star4" class="star">★</label>
-                    <input type="radio" id="star3" name="ratingValue" value="3">
-                    <label for="star3" class="star">★</label>
-                    <input type="radio" id="star2" name="ratingValue" value="2">
-                    <label for="star2" class="star">★</label>
-                    <input type="radio" id="star1" name="ratingValue" value="1">
-                    <label for="star1" class="star">★</label>
+            <section class="my-5">
+                <div class="d-flex justify-content-center"> <%-- Center the button --%>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComments" aria-expanded="false" aria-controls="collapseComments">
+                        View Comments
+                    </button>
                 </div>
+                <div class="collapse mt-3" id="collapseComments">  <%-- Added collapse div --%>
+                    <div class="card card-body"> <%-- Optional: Add card styling --%>
 
-                <label for="comment" class="form-label">Comment:</label>
-                <textarea name="comment" id="comment" rows="3" class="form-control" required></textarea>
+                        <section class="my-5">
+                            <h3>Comments</h3>
+                            <c:forEach var="rating" items="${ratingList}">
+                                <div class="border p-3 mb-3 rounded shadow-sm" style="margin-top:15px;">
+                                    <p class="mb-0">${rating.user}: </p>
+                                    <p class="mb-0">${rating.comment}</p>
+                                    <div class="star-rating mb-1" style="margin-top:20px;">
+                                        <!-- Render the filled and empty stars -->
+                                        <c:forEach var="j" begin="${rating.ratingValue + 1}" end="5">
+                                            <i class="bi bi-star"></i>
+                                        </c:forEach>
+                                        <c:forEach var="i" begin="1" end="${rating.ratingValue}">
+                                            <i class="bi bi-star-fill"></i>
+                                        </c:forEach>
+                                    </div>
+                                    <small class="text-muted">Posted on: ${rating.createdAt}</small>
 
-                <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
-            </form>
+                                    <!-- Check if the logged-in user is the owner of the rating -->
+                                    <c:if test="${sessionScope.userID == rating.userID}">
+                                        <form action="/RatingController" method="POST" onsubmit="return confirmRemoveSingle()">
+                                            <input type="hidden" name="action" value="deleteRating">
+                                            <input type="hidden" name="ratingID" value="${rating.ratingID}">
+                                            <div style="margin-top:10px;">
+                                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                            </div>
+                                        </form>
 
+                                    </c:if>
+                                </div>
+                            </c:forEach>
+
+                        </section>
+                        <%-- Add new rating form INSIDE the collapsible section --%>
+                        <form action="/RatingController" method="POST" class="mt-4 border p-4 rounded shadow-sm" onsubmit="return validateForm()">
+                            <input type="hidden" name="action" value="add">
+                            <input type="hidden" name="productID" value="${param.productID}">
+
+                            <label for="ratingValue" class="form-label">Rating:</label>
+                            <div class="star-rating mb-3">
+                                <input type="radio" id="star5" name="ratingValue" value="5">
+                                <label for="star5" class="star">★</label>
+                                <input type="radio" id="star4" name="ratingValue" value="4">
+                                <label for="star4" class="star">★</label>
+                                <input type="radio" id="star3" name="ratingValue" value="3">
+                                <label for="star3" class="star">★</label>
+                                <input type="radio" id="star2" name="ratingValue" value="2">
+                                <label for="star2" class="star">★</label>
+                                <input type="radio" id="star1" name="ratingValue" value="1">
+                                <label for="star1" class="star">★</label>
+                            </div>
+
+                            <label for="comment" class="form-label">Comment:</label>
+                            <textarea name="comment" id="comment" rows="3" class="form-control" required></textarea>
+
+                            <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
+                        </form>
+
+                        <c:if test="${not empty errorMessage}">
+                            <div class="alert alert-danger" role="alert">
+                                ${errorMessage}
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+            </section>
         </div>
+        <style>
+            .star-rating {
+                display: flex;
+                flex-direction: row-reverse; /* Đảo ngược hướng */
+                font-size: 2rem; /* Kích thước lớn hơn cho các ngôi sao */
+                justify-content: flex-end; /* Căn chỉnh các ngôi sao về bên phải */
+            }
+            .star-rating input[type="radio"] {
+                display: none;
+            }
+            .star {
+                cursor: pointer;
+                color: #ddd;
+                transition: color 0.2s;
+            }
+            .star:hover,
+            .star:hover ~ .star {
+                color: #f5b301;
+            }
+            .star-rating i {
+                color: #ddd; /* Màu sắc ngôi sao rỗng */
+                transition: color 0.2s;
+                font-size: 1rem;
+            }
+
+            .star-rating i.bi-star-fill {
+                color: gold; /* Màu sắc ngôi sao đầy */
+            }
+        </style>
+        <script>
+
+            function confirmRemoveSingle() {
+                return confirm("Are you sure you want to remove this comment?");
+            }
+            function validateForm() {
+                // Check if a star rating is selected
+                const ratingSelected = document.querySelector('input[name="ratingValue"]:checked');
+                // Check if the comment textarea is filled
+                const comment = document.getElementById("comment").value.trim();
+
+                // If either rating or comment is missing, show an alert and prevent submission
+                if (!ratingSelected || comment === "") {
+                    alert("Please enter both a rating and a comment before submitting.");
+                    return false; // Prevent form submission
+                }
+                return true; // Allow form submission if validation passes
+            }
+        </script>
         <!-- Bootstrap Icons -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css" rel="stylesheet">
-
-
-
 
     </body>
 </html>

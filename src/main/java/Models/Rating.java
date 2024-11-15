@@ -16,6 +16,7 @@ public class Rating {
      private int productID,ratingValue;
      String comment;
      private Date createdAt;
+     private String user;
 
     public Rating() {
         this.userID = 0;
@@ -30,6 +31,26 @@ public class Rating {
         this.comment = comment;
         this.createdAt = createdAt;
     }
+
+    public Rating(int ratingID, int userID, int productID, int ratingValue, String comment, Date createdAt, String user) {
+        this.ratingID = ratingID;
+        this.userID = userID;
+        this.productID = productID;
+        this.ratingValue = ratingValue;
+        this.comment = comment;
+        this.createdAt = createdAt;
+        this.user = user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+
 
     public int getRatingID() {
         return ratingID;
