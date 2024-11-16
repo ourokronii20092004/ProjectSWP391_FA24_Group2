@@ -90,14 +90,18 @@
                                 <h2 class="text-secondary text-uppercase">Brand Name</h2>
                                 <h1 class="text-dark display-6 mb-3">The Catcher in the Rye</h1>
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-star-fill text-danger"></i>
-                                        <i class="bi bi-star-fill text-danger"></i>
-                                        <i class="bi bi-star-fill text-danger"></i>
-                                        <i class="bi bi-star-fill text-danger"></i>
-                                        <i class="bi bi-star text-danger"></i>
-                                        <span class="text-muted ms-2">4 Reviews</span>
+
+                                    <!-- Display aggregate rating -->
+                                    <div class="mb-3">
+                                        <span class="text-dark fs-5">Average Rating:</span>
+                                        <span class="text-warning fs-5">${averageRating}</span> 
+                                        <i class="bi bi-star-fill text-warning"></i> <!-- Hiển thị biểu tượng sao -->
                                     </div>
+                                    <div class="mb-3">
+                                        <span class="text-dark fs-5">Total Reviews:</span>
+                                        <span class="text-secondary fs-5">${totalRatings}</span>
+                                    </div>
+
                                     <div class="d-flex ms-3 border-start ps-3">
                                         <a href="https://www.facebook.com/binh.phanphuc.1/" class="text-muted me-2"><i class="bi bi-facebook"></i></a>
                                         <a href="#" class="text-muted me-2"><i class="bi bi-twitter"></i></a>
@@ -126,10 +130,13 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <span class="h3 text-dark">$58.00</span>
-                                    <button class="btn btn-danger ms-auto text-white px-4">Add to Cart</button>
-                                    <button class="btn btn-outline-secondary ms-3 rounded-circle p-0">
-                                        <i class="bi bi-heart fs-4"></i>
-                                    </button>
+                                    <form action="/CartController" method="post">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="productID" value="${param.productID}">
+                                        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px;
+                                               margin: 0 auto;">
+                                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -161,14 +168,15 @@
                                         <c:forEach var="i" begin="1" end="${rating.ratingValue}">
                                             <i class="bi bi-star-fill"></i>
                                         </c:forEach>
-                                    </div>
+                                    </div>a
                                     <small class="text-muted">Posted on: ${rating.createdAt}</small>
 
                                     <!-- Check if the logged-in user is the owner of the rating -->
-                                    <c:if test="${sessionScope.userID == rating.userID}">
+                                    <c:if test="${sessionScope.userID == rating.userID || role == 3}">
                                         <form action="/RatingController" method="POST" onsubmit="return confirmRemoveSingle()">
                                             <input type="hidden" name="action" value="deleteRating">
                                             <input type="hidden" name="ratingID" value="${rating.ratingID}">
+                                            <input type="hidden" name="productID" value="${productID}">
                                             <div style="margin-top:10px;">
                                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                             </div>

@@ -31,6 +31,7 @@ public class CustomerProfileController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getRequestURI();
+
         if (path.equals("/CustomerProfileController")) {
             try {
                 String userID = String.valueOf(request.getSession().getAttribute("userID"));
@@ -41,6 +42,7 @@ public class CustomerProfileController extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(CustomerProfileController.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
     }
 
