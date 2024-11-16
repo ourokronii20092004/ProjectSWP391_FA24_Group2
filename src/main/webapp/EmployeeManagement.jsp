@@ -117,7 +117,7 @@
                                                     <img src="${e.imgURL}" alt="${e.userName}" height="50">
                                                 </c:when> 
                                                 <c:otherwise>
-                                                    <img src="img/avt1.jpg" alt="${e.userName}" height="50">
+                                                    <img src="img/avt.jpg" alt="${e.userName}" height="50">
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>

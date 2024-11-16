@@ -77,6 +77,20 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public User(int id, String email, String firstName, String lastName, String phoneNumber, String imgURL ,String address, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.imgURL = imgURL;
+        this.address = address;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+    
+    
+
     public User(int aInt, String string, String string0, String string1, String string2, String string3, String string4, String string5, int aInt0, boolean b, Date date, Date date0) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }

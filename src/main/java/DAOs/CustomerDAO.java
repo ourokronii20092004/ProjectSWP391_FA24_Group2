@@ -136,11 +136,48 @@ public class CustomerDAO {
         return false;
     }
 
+    public boolean updateIMG(User cus) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            PreparedStatement pre;
+            try {
+                pre = DBConnection.getPreparedStatement("UPDATE [dbo].[User] SET "
+                        + "[ImageURL] = ?"
+                        + " WHERE UserID = ?");
+                pre.setString(1, cus.getImgURL());
+                pre.setInt(2, cus.getId());
+                pre.execute();
+                pre.close();
+                DBConnection.Disconnect();
+                return true;
+            } catch (SQLException ex) {
+                return false;
+            }
+        }
+        return false;
+    }
+
     public boolean removeCustomer(int id) {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
                     + "SET isActive = 0"
+                    + " WHERE UserID = " + id
+            );
+            DBConnection.Disconnect();
+            if (upCount > 0) {
+                upCount = 0;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean unbanCustomer(int id) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            upCount = DBConnection.ExecuteUpdate("UPDATE [dbo].[User] "
+                    + "SET isActive = 1"
                     + " WHERE UserID = " + id
             );
             DBConnection.Disconnect();
