@@ -167,7 +167,7 @@
                     <a href="#" class="nav-link active">Contact</a>
                     <a href="#" class="nav-link active">Vouchers</a>
                 </nav>
-                
+
                 <div class="d-flex align-items-center gap-3">
                     <a href="/LoginController" class="btn btn-outline-primary">Login</a>
                     <a href="/RegisterController" class="btn btn-primary">Sign Up</a>
@@ -262,7 +262,13 @@
                             <div class="card h-100">
                                 <img src="https://i.pinimg.com/originals/aa/ed/6e/aaed6e46143374dfa4b1a894c2287957.gif" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
-                                    <a href="#"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
+                                    <form action="/RatingController" method="post" class="d-inline">
+                                        <input type="hidden" name="action" value="list">
+                                        <input type="hidden" name="productID" value="<%= pro.getProductID() %>">
+                                        <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
+                                            <h3 class="h5 card-title"><%= pro.getProductName() %></h3>
+                                        </button>
+                                    </form>
                                     <p class="text-muted">$<%= pro.getPrice()%></p>
                                     <!-- Form để thêm sản phẩm vào giỏ hàng -->
                                     <form action="" method="post">
@@ -270,7 +276,7 @@
                                         <input type="hidden" name="action" value="add">
                                         <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
                                         <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px; margin: 0 auto;">                                        
-                                        <a href="/LoginController" class="btn btn-primary">Add to Cart</a>
+                                        <a href="/RegisterController" class="btn btn-primary">Add to Cart</a>
                                     </form>
                                 </div>
                             </div>

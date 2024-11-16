@@ -66,6 +66,9 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (request.getSession().getAttribute("userID") == null) {
+            response.sendRedirect("RegisterController");
+        }else{
         int userID = (int) request.getSession().getAttribute("userID");
         CartDAO cartDAO = new CartDAO();
         //check session
@@ -89,6 +92,7 @@ public class CartController extends HttpServlet {
             ArrayList<CartItem> listCart;
             switch (action) {
                 case "add":
+                    
                     int productID = Integer.parseInt(request.getParameter("productID"));
                     int quantity = Integer.parseInt(request.getParameter("quantity"));
                     cartDAO.addCartItem(userID, productID, quantity);
@@ -99,7 +103,6 @@ public class CartController extends HttpServlet {
                    // Forward to the JSP to display the message
                     request.getRequestDispatcher("homepage.jsp").forward(request, response);
                     return;
-
                 case "list":
                     listCart = cartDAO.viewCartItemList(userID);
                     request.setAttribute("cartList", listCart);
@@ -142,6 +145,7 @@ public class CartController extends HttpServlet {
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
 RequestDispatcher dispatcher = request.getRequestDispatcher("error.jsp");
             dispatcher.forward(request, response);
+        }
         }
     }
 

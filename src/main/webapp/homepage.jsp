@@ -12,6 +12,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -156,10 +157,12 @@
                     <span class="h5 ms-2">PAMB</span>
                 </a>
                 <nav class="d-none d-lg-flex gap-4">
+
                     <a href="/MainPageController" class="nav-link active">Home</a>
                     <a href="#" class="nav-link active">About</a>
                     <a href="#" class="nav-link active">Contact</a>
                     <a href="#" class="nav-link active">Vouchers</a>
+
                 </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");
@@ -308,7 +311,15 @@ ArrayList<Models.Product> list = productDao.viewProductList();
                             <div class="card h-100">
                                 <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
-                                    <a href="productDetails.jsp" style="text-decoration: none;"><h3 class="h5 card-title"><%= pro.getProductName()%></h3></a>
+
+                                    <form action="/RatingController" method="post" class="d-inline">
+                                        <input type="hidden" name="action" value="list">
+                                         <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
+                                        <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
+                                            <h3 class="h5 card-title"><%= pro.getProductName() %></h3>
+                                        </button>
+                                    </form>
+
                                     <p class="text-muted">$<%= pro.getPrice()%></p>
                                     <!-- Form để thêm sản phẩm vào giỏ hàng -->
                                     <form action="/CartController" method="post">
