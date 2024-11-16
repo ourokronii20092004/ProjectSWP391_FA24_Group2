@@ -151,7 +151,7 @@
 
     <body >
         <div class="d-flex flex-column min-vh-100">
-            <header class="d-flex justify-content-between align-items-center p-3 border-bottom" style="background-color: #FFCCCC;">
+            <header class="d-flex justify-content-between align-items-center p-3" style="background-color: #D3FFA3; border-bottom: 2px solid black;">
                 <a href="/MainPageController" class="d-flex align-items-center justify-content-center text-decoration-none">
 
                     <span class="h5 ms-2">PAMB</span>
@@ -189,7 +189,7 @@
                             </button>
                         </form>
 
-                        <img src="https://i.pinimg.com/originals/01/bd/c8/01bdc83a37e5f1b9abab0dbe535fdeae.gif" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
+                        <img src="<%= user.getImgURL() %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
 
                         <!-- Menu thả xuống -->
                         <div class="dropdown-menu dropdown-menu-left custom-dropdown" aria-labelledby="avatarButton">
@@ -287,7 +287,7 @@
                     <div class="mb-4">
                         <h3 class="h6">Sort By</h3>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sort" id="featured" value="featured" checked>
+                            <input class="form-check-input" type="radio" name="sort" id="featured" value="featured">
                             <label class="form-check-label" for="featured">Featured</label>
                         </div>
                         <div class="form-check">

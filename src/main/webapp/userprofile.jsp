@@ -29,6 +29,11 @@
                 integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
                 crossorigin="anonymous">
         </script>
+
+        <!--        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+                <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>-->
+
         <style>
             /* Định dạng ảnh avatar */
             .avatar {
@@ -145,52 +150,22 @@
                     transform: rotate(0deg);
                 }
             }
-            .avatar-profile-container {
-                position: relative;
-                width: 150px;
-                height: 150px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
 
-            .avatar-profile-container img {
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                object-fit: cover;
-            }
 
-            .overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.6); /* Độ mờ cho lớp phủ */
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border-radius: 50%;
-                opacity: 0;
-                transition: opacity 0.3s;
-            }
 
-            .avatar-profile-container:hover .overlay {
-                opacity: 1; /* Hiện overlay khi di chuột */
-            }
 
-            .overlay button {
-                color: white;
-                border-color: white;
-            }
+
+
+
+
+
         </style>
     </head>
 
     <body>
         <!-- Navigation Bar -->
         <div class="d-flex flex-column min-vh-100">
-            <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <header class="d-flex justify-content-between align-items-center p-3" style="background-color: #D3FFA3; border-bottom: 2px solid black;">
                 <a href="/MainPageController" class="d-flex align-items-center text-decoration-none">
 
                     <span class="h5 ms-2">PAMB</span>
@@ -226,7 +201,7 @@
                             </button>
                         </form>
 
-                        <img src="https://i.pinimg.com/originals/01/bd/c8/01bdc83a37e5f1b9abab0dbe535fdeae.gif" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 15px;"> <!-- me-3 tạo margin-right cho avatar -->
+                        <img src="<%= user.getImgURL() %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 15px;"> <!-- me-3 tạo margin-right cho avatar -->
 
                         <!-- Menu thả xuống -->
                         <div class="dropdown-menu dropdown-menu-left custom-dropdown" aria-labelledby="avatarButton">
@@ -244,12 +219,16 @@
                     <!-- Sidebar -->
                     <div class="col-md-4 mb-4">
                         <!-- Avatar Section -->
-                        <div class="text-center mb-4 avatar-profile-container" style="margin-left:140px;">
-                            <img id="avatarPreview" src="https://i.pinimg.com/originals/01/bd/c8/01bdc83a37e5f1b9abab0dbe535fdeae.gif" alt="Avatar" class="rounded-circle border border-primary" width="150" height="150">
-                            <div class="overlay">
-                                <button type="button" class="btn btn-outline-secondary" id="changeAvatarButton">Change Avatar</button>
-                                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
-                            </div>
+                        <div class="text-center mb-4" >
+                            <form id="avtForm" action="/CustomerProfileController" method="post" enctype="multipart/form-data">
+                                <input hidden="" name="userID" value="<%= user.getId() %>">
+                                <img id="avatarPreview" src="<%= (user.getImgURL() != null && !user.getImgURL().isEmpty()) ? user.getImgURL() : "/img/avt/user.png" %>" alt="Avatar" class="rounded-circle border border-primary" width="150" height="150">
+                                <div class="text-center">
+                                    <label for="avatarInput" class="btn btn-outline-secondary mt-3 mb-2" id="changeAvatarLabel">Change Avatar</label>
+                                    <input type="file" id="avatarInput" name="changeAvatarButton" accept="image/*" style="display: none;">
+                                    <button type="submit" class="btn btn-success mt-3 mb-2" id="saveAvatarButton" name="saveAvatarButton" style="display: none;">Save Avatar</button>
+                                </div>
+                            </form>
                         </div>
 
                         <div class="card shadow-sm">
@@ -264,34 +243,37 @@
                     </div>
 
                     <!-- Profile Form -->
-                    <div class="col-md-8">
+                    <div class="col-md-8" >
                         <h3 class="mb-4 text-center">Account Information</h3>
-                        <form id="profileForm" class="p-4 bg-white rounded shadow-lg">
+
+                        <form id="profileForm" class="p-4 bg-white rounded shadow-lg" action="/CustomerProfileController" method="post">
+
                             <div class ="row">
+                                <input hidden="" name="userID" value="<%= user.getId() %>">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label">First Name:</label>
-                                    <input type="text" class="form-control" id="firstname" value="<%=user.getFirstName()%>" readonly>
+                                    <input type="text" class="form-control" name="editFirstName" id="editFirstName" placeholder="Your First Name" value="<%= user.getFirstName() %>" required="" readonly>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label for="surname" class="form-label">Last Name:</label>
-                                    <input type="text" class="form-control" id="lastname" value="<%=user.getLastName()%>" readonly>
+                                    <input type="text" class="form-control" name="editLastName" id="editLastName" placeholder="Your Last Name" value="<%= user.getLastName() %>" required="" readonly>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email:</label>
-                                <input type="email" class="form-control" id="email" value="<%=user.getEmail()%>" readonly>
+                                <input type="email" class="form-control" name="editEmail" id="editEmail" value="<%= user.getEmail() %>" readonly>
                             </div>
 
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone Number:</label>
-                                <input type="tel" class="form-control" id="phone" value="<%=user.getPhoneNumber()%>" readonly>
+                                <input type="tel" class="form-control" name="editPhoneNumber" id="editPhoneNumber" placeholder="Your Phone Number" value="<%= user.getPhoneNumber() %>"  required="" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address:</label>
-                                <input type="text" class="form-control" id="address" value="<%=user.getAddress()%>" readonly>
+                                <input type="text" class="form-control" name="editAddress" id="editAddress" name="" placeholder="Your Address" value="<%= user.getAddress() %>" required="" readonly>
                             </div>
 
-                            <button type="button" class="btn btn-primary w-100" id="editButton">Edit</button>
+                            <button type="button" class="btn btn-primary w-100" id="editButton" name="editButton">Edit</button>
                             <button type="submit" class="btn btn-success w-100 mt-3" id="saveButton"  name="saveButton" style="display:none;">Save</button>
                         </form>
                     </div>
@@ -339,8 +321,8 @@
                     const editButton = document.getElementById("editButton");
                     const saveButton = document.getElementById("saveButton");
                     const formFields = document.querySelectorAll("input[readonly]");
-                    const changeAvatarButton = document.getElementById("changeAvatarButton");
                     const avatarInput = document.getElementById("avatarInput");
+                    const saveAvatarButton = document.getElementById("saveAvatarButton");
                     const avatarPreview = document.getElementById("avatarPreview");
                     // Enable editing on clicking "Edit"
                     editButton.addEventListener("click", function () {
@@ -352,29 +334,22 @@
                         editButton.style.display = "none";
                         saveButton.style.display = "block";
                     });
-                    // Change Avatar Button
-                    changeAvatarButton.addEventListener("click", function () {
-                        avatarInput.click(); // Trigger file input when button is clicked
-                    });
-                    // Preview the new avatar when user selects an image
-                    avatarInput.addEventListener("change", function () {
-                        const file = avatarInput.files[0];
-                        if (file) {
+
+
+                    avatarInput.addEventListener("change", function (event) {
+                        if (avatarInput.files && avatarInput.files[0]) {
+
                             const reader = new FileReader();
                             reader.onload = function (e) {
-                                avatarPreview.src = e.target.result; // Set the preview image source
-                            }
-                            reader.readAsDataURL(file); // Read the image file as a data URL
+                                avatarPreview.src = e.target.result; // Cập nhật hình ảnh xem trước
+                            };
+                            reader.readAsDataURL(avatarInput.files[0]);
+                            saveAvatarButton.style.display = "inline-block"; // Hiển thị nút Save Avatar
                         }
                     });
-                    // Show confirmation message on submitting the form
-                    const form = document.getElementById("profileForm");
-                    form.addEventListener("submit", function (e) {
-                        e.preventDefault(); // Prevent the form from submitting immediately
-                        alert("Profile updated successfully!");
-                        // Optionally submit the form here using AJAX
-                    });
+
                 });
+
                 document.getElementById('avatarButton').addEventListener('click', function (event) {
                     var dropdownMenu = document.querySelector('.dropdown-menu');
                     dropdownMenu.classList.toggle('show');
@@ -388,6 +363,10 @@
                         dropdownMenu.hide();
                     }
                 });
+
+
+
+
                 function showBoughtHistory() {
                     if (document.getElementById("BoughtHistory").hasAttribute("hidden")) {
                         document.getElementById("BoughtHistory").removeAttribute("hidden");
@@ -395,6 +374,7 @@
                         document.getElementById("BoughtHistory").setAttribute("hidden","");
                     }
                 }
+
             </script>
     </body>
 
