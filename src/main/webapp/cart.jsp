@@ -110,22 +110,93 @@
                 display: block;
                 text-transform: capitalize;
             }
+            .nav-link {
+                color: #261d6a;
+            }
+
+            .navbar-brand {
+                font-weight: bold;
+            }
+
+            .nav-link {
+                position: relative;
+                padding-bottom: 10px;
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                background-color: #43C197;
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            .nav-link.bell-link {
+                padding-bottom: 0;
+            }
+
+            .nav-link.bell-link::after {
+                display: none;
+            }
+
+            .nav-link.bell-link:hover .bell-icon {
+                animation: swing 0.8s ease-in-out;
+            }
+            @keyframes swing {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                25% {
+                    transform: rotate(20deg);
+                }
+
+                50% {
+                    transform: rotate(-20deg);
+                }
+
+                75% {
+                    transform: rotate(5deg);
+                }
+
+                88% {
+                    transform: rotate(-7deg);
+                }
+
+                97% {
+                    transform: rotate(1deg);
+                }
+
+                100% {
+                    transform: rotate(0deg);
+                }
+            }
         </style>
     </head>
 
     <body>
         <!-- Header -->
-        <div class="container-fluid fullpagecontent">
+        <div class="d-flex flex-column min-vh-100">
             <div class="col-md-12">
-                <header class="d-flex justify-content-between align-items-center p-3 border-bottom">
-                    <a href="#" class="d-flex align-items-center text-decoration-none">
+                <header class="d-flex justify-content-between align-items-center p-3 border-bottom" style="background-color: #FFCCCC;">
+                    <a href="/MainPageController" class="d-flex align-items-center justify-content-center text-decoration-none">
+
                         <span class="h5 ms-2">PAMB</span>
                     </a>
                     <nav class="d-none d-lg-flex gap-4">
-                        <a href="homepage.jsp" class="nav-link active">Home</a>
-                        <a href="#" class="nav-link active">Shop</a>
+
+                        <a href="/MainPageController" class="nav-link active">Home</a>
                         <a href="#" class="nav-link active">About</a>
                         <a href="#" class="nav-link active">Contact</a>
+                        <a href="#" class="nav-link active">Vouchers</a>
+
                     </nav>
 
 
@@ -139,6 +210,12 @@ String name = user.getUserName();
                     <div class="d-flex align-items-center gap-3">
                         <div class="avatar-container ms-auto d-flex align-items-center">
 
+                            <div class="nav-item">
+                                <a class="nav-link bell-link position-relative me-2" style="padding-bottom: 5px;" href="#"
+                                   onclick="parent.location.href = this.href; return false;">
+                                    <img src="img/icon/bell.svg" alt="Notification" class="bell-icon">
+                                </a>
+                            </div>
                             <img src="https://i.pinimg.com/originals/01/bd/c8/01bdc83a37e5f1b9abab0dbe535fdeae.gif" alt="Avatar" class="avatar me-3" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
 
                             <!-- Menu thả xuống -->
@@ -150,7 +227,7 @@ String name = user.getUserName();
 
                         </div>
                     </div>
-
+                </header>
             </div>
         </header>
         <h6 class="card-title">Your Shopping Cart</h6>

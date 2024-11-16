@@ -67,7 +67,7 @@ public class CartController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getSession().getAttribute("userID") == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("RegisterController");
         }else{
         int userID = (int) request.getSession().getAttribute("userID");
         CartDAO cartDAO = new CartDAO();
