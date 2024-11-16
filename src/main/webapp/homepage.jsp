@@ -314,6 +314,7 @@ ArrayList<Models.Product> list = productDao.viewProductList();
 
                                     <form action="/RatingController" method="post" class="d-inline">
                                         <input type="hidden" name="action" value="list">
+                                         <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
                                         <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
                                             <h3 class="h5 card-title"><%= pro.getProductName() %></h3>
                                         </button>

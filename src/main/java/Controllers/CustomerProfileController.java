@@ -30,7 +30,7 @@ public class CustomerProfileController extends HttpServlet {
     throws ServletException, IOException {
         String path = request.getRequestURI();
         if(path.equals("/CustomerProfileController")){
-            request.getRequestDispatcher("userProfile.jsp").forward(request, response);
+            request.getRequestDispatcher("userprofile.jsp").forward(request, response);
         }
     } 
 
