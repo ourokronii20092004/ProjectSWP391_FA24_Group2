@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="java.util.ArrayList"%>
 <%@page import="DAOs.UserDAO"%>
 <%@page import="Models.User"%>
@@ -15,7 +16,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>User Profile</title>
-       
+
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
@@ -257,7 +258,7 @@
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item"><a href="#" style="text-decoration: none;" class="text-dark">Change Password</a></li>
-                                <li class="list-group-item"><a href="#" style="text-decoration: none;" class="text-dark">History Bought</a></li>
+                                <li onclick="showBoughtHistory()" class="list-group-item"><a href="#" style="text-decoration: none;" class="text-dark">History Bought</a></li>
                             </ul>
                         </div>
                     </div>
@@ -265,9 +266,6 @@
                     <!-- Profile Form -->
                     <div class="col-md-8">
                         <h3 class="mb-4 text-center">Account Information</h3>
-
-
-
                         <form id="profileForm" class="p-4 bg-white rounded shadow-lg">
                             <div class ="row">
                                 <div class="col-md-6 mb-3">
@@ -298,6 +296,41 @@
                         </form>
                     </div>
                 </div>
+            </div> 
+
+            <!-- Order History Management Section -->
+            <div  id="BoughtHistory" hidden="" class="row container my-5">
+                <div class="col-md-3"></div>
+                <div class=" col-md-8">
+                    <div class="row">
+
+                        <table class="table table-striped">                            
+                            <tr>                            
+                                <th class="col-md-2">Order Items</th>
+                                <th class="col-md-2">Price</th>
+                                <th class="col-md-1">Status</th>
+                                <th class="col-md-2">Order date</th>
+                                <th class="col-md-2">Action</th>
+                            </tr>
+                            <c:forEach items="${boughtHistory}" var="o">                               
+                                <tr>
+                                    <td class="col-md-2">
+                                        <c:forEach items="${o.orderItemList}" var="ot">                                            
+                                            ${ot.product.productName} x${ot.quantity}<br>
+                                        </c:forEach>
+                                    </td>
+                                    <td class="col-md-2">${o.totalAmount}</td>
+                                    <td class="col-md-1">${o.orderStatus}</td>
+                                    <td class="col-md-2">${o.orderDate}</td>
+                                    <td class="col-md-2"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
+                                </tr>  
+                            </c:forEach>                               
+
+                        </table>
+
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
             </div>
 
 
@@ -309,7 +342,6 @@
                     const changeAvatarButton = document.getElementById("changeAvatarButton");
                     const avatarInput = document.getElementById("avatarInput");
                     const avatarPreview = document.getElementById("avatarPreview");
-
                     // Enable editing on clicking "Edit"
                     editButton.addEventListener("click", function () {
                         formFields.forEach(field => {
@@ -320,12 +352,10 @@
                         editButton.style.display = "none";
                         saveButton.style.display = "block";
                     });
-
                     // Change Avatar Button
                     changeAvatarButton.addEventListener("click", function () {
                         avatarInput.click(); // Trigger file input when button is clicked
                     });
-
                     // Preview the new avatar when user selects an image
                     avatarInput.addEventListener("change", function () {
                         const file = avatarInput.files[0];
@@ -337,7 +367,6 @@
                             reader.readAsDataURL(file); // Read the image file as a data URL
                         }
                     });
-
                     // Show confirmation message on submitting the form
                     const form = document.getElementById("profileForm");
                     form.addEventListener("submit", function (e) {
@@ -350,17 +379,22 @@
                     var dropdownMenu = document.querySelector('.dropdown-menu');
                     dropdownMenu.classList.toggle('show');
                 });
-
                 document.addEventListener('click', function (event) {
                     const dropdown = document.querySelector('.dropdown-menu');
                     const avatarButton = document.querySelector('#avatarButton');
-
                     // Kiểm tra nếu người dùng nhấn ra ngoài dropdown hoặc avatarButton
                     if (!avatarButton.contains(event.target) && !dropdown.contains(event.target)) {
                         const dropdownMenu = new bootstrap.Dropdown(avatarButton);
                         dropdownMenu.hide();
                     }
                 });
+                function showBoughtHistory() {
+                    if (document.getElementById("BoughtHistory").hasAttribute("hidden")) {
+                        document.getElementById("BoughtHistory").removeAttribute("hidden");
+                    } else {
+                        document.getElementById("BoughtHistory").setAttribute("hidden","");
+                    }
+                }
             </script>
     </body>
 
