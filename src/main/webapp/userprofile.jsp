@@ -294,7 +294,8 @@
                                 <th class="col-md-2">Order date</th>
                                 <th class="col-md-2">Action</th>
                             </tr>
-                            <c:forEach items="${boughtHistory}" var="o">                               
+                            <c:forEach items="${boughtHistory}" var="o">  
+                                <c:if test="${o.orderStatus != 'Pending'}">
                                 <tr>
                                     <td class="col-md-2">
                                         <c:forEach items="${o.orderItemList}" var="ot">                                            
@@ -306,6 +307,7 @@
                                     <td class="col-md-2">${o.orderDate}</td>
                                     <td class="col-md-2"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
                                 </tr>  
+                                </c:if>
                             </c:forEach>                               
 
                         </table>
