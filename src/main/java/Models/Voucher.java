@@ -12,8 +12,8 @@ import java.sql.Date;
  */
 public class Voucher {
 
-    private final int voucherID;
-    private int voucherCode;
+    private int voucherID;
+    private String voucherCode;
     private boolean type;
     private float value;
     private Date startDate;
@@ -23,7 +23,10 @@ public class Voucher {
     private Date createAt;
     private Date updateAt;
 
-    public Voucher(int voucherID, int voucherCode, boolean type, float value, Date startDate, Date endDate, String voucherName, boolean isActive, Date createAt, Date updateAt) {
+    public Voucher() {
+    }
+    
+    public Voucher(int voucherID, String voucherCode, boolean type, float value, Date startDate, Date endDate, String voucherName, boolean isActive, Date createAt, Date updateAt) {
         this.voucherID = voucherID;
         this.voucherCode = voucherCode;
         this.type = type;
@@ -36,11 +39,11 @@ public class Voucher {
         this.updateAt = updateAt;
     }
 
-    public int getVoucherCode() {
+    public String getVoucherCode() {
         return voucherCode;
     }
 
-    public void setVoucherCode(int voucherCode) {
+    public void setVoucherCode(String voucherCode) {
         this.voucherCode = voucherCode;
     }
 

@@ -56,7 +56,7 @@ public class ProductController extends HttpServlet {
             }
             ProductDAO productDAO = new ProductDAO();
             ArrayList<Product> productList = null;
-
+            System.out.println("--- ProductController doGet --- ");
             CategoryDAO categoryDAO = new CategoryDAO();
             ArrayList<Category> categoryList = categoryDAO.viewCategory();
             request.setAttribute("categoryList", categoryList);
@@ -209,7 +209,7 @@ public class ProductController extends HttpServlet {
                 }
             }
             request.setAttribute("productList", productList);
-            System.out.println("Navigation");
+            System.out.println("Navigation doGet.");
             switch (action) {
                 case "listControl": {
                     RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
@@ -242,7 +242,8 @@ public class ProductController extends HttpServlet {
         String action = request.getParameter("action");
         action = (action == null) ? "listControl" : action;
         ProductDAO productDAO = new ProductDAO();
-
+        System.out.println("--- ProductController doPost --- ");
+        
         System.out.println("doPost: " + action);
         switch (action) {
             case "add": {
@@ -327,7 +328,7 @@ public class ProductController extends HttpServlet {
             }
             default: {
                 System.out.println("doPost: " + action);
-                response.sendRedirect("ProductController?action=deleted&page=Product");
+                response.sendRedirect("ProductController?action=list&page=Product");
             }
 
         }
