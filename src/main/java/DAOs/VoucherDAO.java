@@ -7,7 +7,6 @@ package DAOs;
 import DB.DBConnection;
 
 import Models.Voucher;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +23,6 @@ import java.util.logging.Logger;
  * @author CE181515 - Phan Viet Phat
  */
 public class VoucherDAO {
-
 
     //Phat
     public Voucher getVoucherByOrderID(int voucherID) {
@@ -54,7 +52,7 @@ public class VoucherDAO {
         }
         return null;
     }
-=======
+
     private int upCount;
 
     public ArrayList<Voucher> getAllVouchers() {

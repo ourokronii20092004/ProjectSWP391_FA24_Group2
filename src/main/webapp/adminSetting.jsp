@@ -86,11 +86,11 @@
                                         <th class="col-md-1">ID</th>
                                         <th class="col-md-1">Username</th>
                                         <th class="col-md-1">Full name</th>
-                                        <th class="col-md-1">Order Items</th>
+                                        <th class="col-md-3">Order Items</th>
                                         <th class="col-md-1">Price</th>
                                         <th class="col-md-1">Status</th>
                                         <th class="col-md-1">Order date</th>
-                                        <th class="col-md-3">Action</th>
+                                        <th class="col-md-1">Action</th>
                                     </tr>
                                     <c:forEach items="${orderList}" var="o">                               
                                         <tr>
