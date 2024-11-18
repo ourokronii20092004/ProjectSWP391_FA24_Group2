@@ -18,7 +18,29 @@ document.addEventListener('DOMContentLoaded', function () {
             populateEditVoucherModal(button.dataset.voucherId, button.dataset.voucherCode, button.dataset.voucherName, button.dataset.voucherType === 'true', button.dataset.voucherValue, button.dataset.voucherStartdate, button.dataset.voucherEnddate);
         });
     });
+
+    const discountTypeSelect = document.getElementById('discountType');
+    if (discountTypeSelect) {
+        discountTypeSelect.addEventListener('change', updateDiscountValueFormat);
+    }
+
 });
+
+function formatDateForDatetimeLocal(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    if (isNaN(date.getTime())) {
+        console.error("Invalid date provided to formatDateForDatetimeLocal");
+        return "";
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
 
 function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, value, startDate, endDate) {
     const modal = document.getElementById('editVoucherModal');
@@ -34,34 +56,16 @@ function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, val
         }
     }
 
+    modal.querySelector('#discountValue').value = value;
+    modal.querySelector('#startDate').value = formatDateForDatetimeLocal(startDate);
+    modal.querySelector('#endDate').value = formatDateForDatetimeLocal(endDate);
+
+    const discountTypeSelectEdit = document.getElementById('discountType');
+    if (discountTypeSelectEdit) {
+        discountTypeSelectEdit.addEventListener('change', updateDiscountValueFormat);
+    }
+
     const discountValueInput = modal.querySelector('#discountValue');
-    discountValueInput.value = value;
-
-    const formatDateTime = (dateString) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
-    };
-
-    modal.querySelector('#startDate').value = formatDateTime(startDate);
-    modal.querySelector('#endDate').value = formatDateTime(endDate);
-
-    discountTypeSelect.addEventListener('change', function () {
-        discountValueInput.value = "";
-
-        if (this.value === '1') {
-            discountValueInput.setAttribute('max', '1');
-            discountValueInput.step = "0.01";
-        } else {
-            discountValueInput.removeAttribute('max');
-            discountValueInput.step = "any";
-        }
-    });
-
     if (type) {
         discountValueInput.setAttribute('max', '1');
         discountValueInput.step = "0.01";
@@ -69,7 +73,6 @@ function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, val
         discountValueInput.removeAttribute('max');
         discountValueInput.step = "any";
     }
-
 
     const editForm = document.getElementById('editVoucherForm');
     const errorDiv = modal.querySelector('.errorMessage');
@@ -125,17 +128,13 @@ function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, val
     });
 }
 
-
 function hideEditVoucherModal() {
     const modal = document.getElementById('editVoucherModal');
+    modal.style.display = 'none';
+
+    document.body.classList.remove('modal-open');
     modal.classList.remove('show');
     modal.setAttribute('aria-hidden', 'true');
-    modal.style.display = 'none';
-    const backdrop = document.querySelector('.modal-backdrop');
-    if (backdrop) {
-        backdrop.remove();
-    }
-    document.body.classList.remove('modal-open');
 }
 
 function validateForm(form) {
@@ -181,7 +180,6 @@ function validateForm(form) {
     } else {
         clearError(valueInput, valueError);
     }
-
 
     const startDate = new Date(startDateInput.value);
     const endDate = new Date(endDateInput.value);

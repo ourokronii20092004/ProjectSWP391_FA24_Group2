@@ -14,8 +14,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -146,28 +146,26 @@ public class VoucherController extends HttpServlet {
             switch (action) {
                 case "add":
                     if (!validateVoucherAdd(request, response, voucherDAO)) {
-                        dispatchToJSP(request, response);
+                        response.sendRedirect("VoucherController?action=list");
                         return;
                     }
                     String voucherCode = request.getParameter("voucherCode");
                     boolean discountType = Boolean.parseBoolean(request.getParameter("discountType"));
                     float discountValue = Float.parseFloat(request.getParameter("discountValue"));
-                    LocalDate startDate = LocalDate.parse(request.getParameter("startDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                    LocalDate endDate = LocalDate.parse(request.getParameter("endDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime startDate = LocalDateTime.parse(request.getParameter("startDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime endDate = LocalDateTime.parse(request.getParameter("endDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime createdAt = LocalDateTime.now();
+                    LocalDateTime updatedAt = LocalDateTime.now();
                     String voucherName = request.getParameter("voucherName");
 
-                    Date createdAt = new Date(System.currentTimeMillis());
-                    Date updatedAt = createdAt;
-                    Date sqlStartDate = Date.valueOf(startDate);
-                    Date sqlEndDate = Date.valueOf(endDate);
-                    Voucher newVoucher = new Voucher(0, voucherCode, discountType, discountValue, sqlStartDate, sqlEndDate, voucherName, true, createdAt, updatedAt);
+                    Voucher newVoucher = new Voucher(0, voucherCode, discountType, discountValue, startDate, endDate, voucherName, true, createdAt, updatedAt);
                     voucherDAO.addVoucher(newVoucher);
                     success = true;
                     break;
 
                 case "edit":
                     if (!validateVoucherEdit(request, response, voucherDAO)) {
-                        dispatchToJSP(request, response);
+                        response.sendRedirect("VoucherController?action=list");
                         return;
                     }
                     int voucherId = Integer.parseInt(request.getParameter("voucherId"));
@@ -175,27 +173,26 @@ public class VoucherController extends HttpServlet {
                     String voucherCodeEdit = request.getParameter("voucherCode");
                     boolean discountTypeEdit = Boolean.parseBoolean(request.getParameter("discountType"));
                     float discountValueEdit = Float.parseFloat(request.getParameter("discountValue"));
-                    LocalDate startDateEdit = LocalDate.parse(request.getParameter("startDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                    LocalDate endDateEdit = LocalDate.parse(request.getParameter("endDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
+                    LocalDateTime startDateEdit = LocalDateTime.parse(request.getParameter("startDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime endDateEdit = LocalDateTime.parse(request.getParameter("endDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                     String voucherNameEdit = request.getParameter("voucherName");
-                    Date updatedAtEdit = new Date(System.currentTimeMillis());
+                    LocalDateTime updatedAtEdit = LocalDateTime.now();
 
                     Voucher existingVoucher = voucherDAO.getVoucherById(voucherId);
                     if (existingVoucher != null) {
-                        Date sqlStartDateEdit = Date.valueOf(startDateEdit);
-                        Date sqlEndDateEdit = Date.valueOf(endDateEdit);
                         existingVoucher.setVoucherCode(voucherCodeEdit);
                         existingVoucher.setType(discountTypeEdit);
                         existingVoucher.setValue(discountValueEdit);
-                        existingVoucher.setStartDate(sqlStartDateEdit);
-                        existingVoucher.setEndDate(sqlEndDateEdit);
+                        existingVoucher.setStartDate(startDateEdit);
+                        existingVoucher.setEndDate(endDateEdit);
                         existingVoucher.setVoucherName(voucherNameEdit);
                         existingVoucher.setUpdateAt(updatedAtEdit);
                         voucherDAO.updateVoucher(existingVoucher);
                         success = true;
                     } else {
                         request.setAttribute("errorMessage", "Voucher not found.");
-                        response.sendRedirect("VoucherController?action=list"); // Or forward, depending on your desired behavior
+                        response.sendRedirect("VoucherController?action=list");
                         return;
                     }
                     break;
@@ -207,14 +204,14 @@ public class VoucherController extends HttpServlet {
                         success = true;
                     } else {
                         request.setAttribute("errorMessage", "Failed to delete voucher.");
-                        dispatchToJSP(request, response);
+                        response.sendRedirect("VoucherController?action=list");
                         return;
                     }
                     break;
 
                 default:
                     request.setAttribute("errorMessage", "Invalid action.");
-                    dispatchToJSP(request, response);
+                    response.sendRedirect("VoucherController?action=list");
                     return;
             }
 
@@ -239,11 +236,6 @@ public class VoucherController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void dispatchToJSP(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("voucherManagement.jsp");
-        dispatcher.forward(request, response);
-    }
-
     private boolean validateVoucherAdd(HttpServletRequest request, HttpServletResponse response, VoucherDAO voucherDAO) throws ServletException, IOException {
         String voucherCode = request.getParameter("voucherCode");
         String voucherName = request.getParameter("voucherName");
@@ -252,17 +244,17 @@ public class VoucherController extends HttpServlet {
         String endDateStr = request.getParameter("endDate");
 
         if (voucherCode == null || voucherCode.trim().isEmpty() || voucherName == null || voucherName.trim().isEmpty() || valueStr == null || valueStr.trim().isEmpty() || startDateStr == null || startDateStr.trim().isEmpty() || endDateStr == null || endDateStr.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "All fields are required.");
+            request.getSession().setAttribute("errorMessage", "All fields are required.");
             return false;
         }
 
         if (voucherDAO.isVoucherCodeExists(voucherCode)) {
-            request.setAttribute("errorMessage", "Voucher code already exists.");
+            request.getSession().setAttribute("errorMessage", "Voucher code already exists.");
             return false;
         }
 
         if (voucherDAO.isVoucherNameExists(voucherName)) {
-            request.setAttribute("errorMessage", "Voucher name already exists.");
+            request.getSession().setAttribute("errorMessage", "Voucher name already exists.");
             return false;
         }
 
@@ -271,17 +263,17 @@ public class VoucherController extends HttpServlet {
             boolean discountType = Boolean.parseBoolean(request.getParameter("discountType"));
 
             if (discountType && value > 1) {
-                request.setAttribute("errorMessage", "Percentage value cannot exceed 1 (100%).");
+                request.getSession().setAttribute("errorMessage", "Percentage value cannot exceed 1 (100%).");
                 return false;
             }
 
             if (value <= 0) {
-                request.setAttribute("errorMessage", "Discount value must be positive.");
+                request.getSession().setAttribute("errorMessage", "Discount value must be positive.");
                 return false;
             }
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Invalid discount value format.");
+            request.getSession().setAttribute("errorMessage", "Invalid discount value format.");
             return false;
         }
 
@@ -289,11 +281,11 @@ public class VoucherController extends HttpServlet {
             LocalDate startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             LocalDate endDate = LocalDate.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             if (startDate.isAfter(endDate)) {
-                request.setAttribute("errorMessage", "Start date cannot be after end date.");
+                request.getSession().setAttribute("errorMessage", "Start date cannot be after end date.");
                 return false;
             }
         } catch (DateTimeParseException e) {
-            request.setAttribute("errorMessage", "Invalid date format (YYYY-MM-DDTHH:mm).");
+            request.getSession().setAttribute("errorMessage", "Invalid date format (YYYY-MM-DDTHH:mm).");
             return false;
         }
 
@@ -308,7 +300,7 @@ public class VoucherController extends HttpServlet {
         String endDateStr = request.getParameter("endDate");
 
         if (voucherCode == null || voucherCode.trim().isEmpty() || voucherName == null || voucherName.trim().isEmpty() || valueStr == null || valueStr.trim().isEmpty() || startDateStr == null || startDateStr.trim().isEmpty() || endDateStr == null || endDateStr.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "All fields are required.");
+            request.getSession().setAttribute("errorMessage", "All fields are required.");
             return false;
         }
 
@@ -317,17 +309,17 @@ public class VoucherController extends HttpServlet {
             boolean discountType = Boolean.parseBoolean(request.getParameter("discountType"));
 
             if (discountType && value > 1) {
-                request.setAttribute("errorMessage", "Percentage value cannot exceed 1 (100%).");
+                request.getSession().setAttribute("errorMessage", "Percentage value cannot exceed 1 (100%).");
                 return false;
             }
 
             if (value <= 0) {
-                request.setAttribute("errorMessage", "Discount value must be positive.");
+                request.getSession().setAttribute("errorMessage", "Discount value must be positive.");
                 return false;
             }
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Invalid discount value format.");
+            request.getSession().setAttribute("errorMessage", "Invalid discount value format.");
             return false;
         }
 
@@ -335,11 +327,11 @@ public class VoucherController extends HttpServlet {
             LocalDate startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             LocalDate endDate = LocalDate.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             if (startDate.isAfter(endDate)) {
-                request.setAttribute("errorMessage", "Start date cannot be after end date.");
+                request.getSession().setAttribute("errorMessage", "Start date cannot be after end date.");
                 return false;
             }
         } catch (DateTimeParseException e) {
-            request.setAttribute("errorMessage", "Invalid date format (YYYY-MM-DDTHH:mm).");
+            request.getSession().setAttribute("errorMessage", "Invalid date format (YYYY-MM-DDTHH:mm).");
             return false;
         }
 

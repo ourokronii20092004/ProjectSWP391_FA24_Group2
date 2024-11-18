@@ -7,20 +7,21 @@ package Helper;
 import DAOs.VoucherDAO;
 import Models.Voucher;
 import java.security.SecureRandom;
-import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Le Trung Hau - CE180481
- */
 public class VoucherHelper {
 
-    private final VoucherDAO voucherDAO = new VoucherDAO();
+    private final VoucherDAO voucherDAO;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private final Random random = new SecureRandom();
+
+    public VoucherHelper(VoucherDAO voucherDAO) {
+        this.voucherDAO = voucherDAO;
+    }
 
     public String generateUniqueVoucherCode() {
         String voucherCode;
@@ -31,58 +32,30 @@ public class VoucherHelper {
     }
 
     private String generateVoucherCode(int length) {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            sb.append(characters.charAt(random.nextInt(characters.length())));
+            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
         }
         return sb.toString();
     }
 
     public boolean isVoucherNameUnique(String voucherName) throws SQLException {
-
         return !voucherDAO.isVoucherNameExists(voucherName);
     }
 
     public void updateVoucherStatusBasedOnDate(int voucherId) {
-
         try {
-
             Voucher voucher = voucherDAO.getVoucherById(voucherId);
-
             if (voucher != null) {
-
-                long currentTime = System.currentTimeMillis();
-
-                if (voucher.getEndDate().getTime() < currentTime && voucher.isIsActive()) {
-
+                LocalDateTime now = LocalDateTime.now();
+                if (voucher.getEndDate().isBefore(now) && voucher.isIsActive()) {
                     voucherDAO.deactivateVoucher(voucherId);
-                } else if (voucher.getStartDate().getTime() < currentTime && !voucher.isIsActive()) {
+                } else if (voucher.getStartDate().isBefore(now) && !voucher.isIsActive()) {
                     voucherDAO.activateVoucher(voucherId);
                 }
             }
-
         } catch (Exception e) {
-
-            Logger.getLogger(VoucherHelper.class.getName()).log(Level.SEVERE, "General error updating voucher based on date for voucherId:" + voucherId, e);
-
-        }
-    }
-
-    public void updateVoucherDates(int voucherId, Date startDate, Date endDate) {
-        try {
-            Voucher voucher = voucherDAO.getVoucherById(voucherId);
-
-            if (voucher != null) {
-
-                voucher.setStartDate(startDate);
-                voucher.setEndDate(endDate);
-                voucherDAO.updateVoucher(voucher);
-            }
-
-        } catch (Exception e) {
-
-            Logger.getLogger(VoucherHelper.class.getName()).log(Level.SEVERE, "Error updateing voucher date", e);
+            Logger.getLogger(VoucherHelper.class.getName()).log(Level.SEVERE, "Error updating voucher status for ID: " + voucherId, e);
         }
     }
 }
