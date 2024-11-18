@@ -41,7 +41,6 @@ public class OrderDetailController extends HttpServlet {
             int orderID = Integer.parseInt(request.getParameter("orderID"));
             Models.Order order = new DAOs.OrderDAO().readOrder(orderID);
             if (order != null) {
-                System.out.println(order.getVoucher().getVoucherCode());
                 request.setAttribute("order", order);
                 RequestDispatcher ds = request.getRequestDispatcher("OrderDetailForm.jsp");
                 ds.forward(request, response);

@@ -14,7 +14,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +51,7 @@ public class VoucherController extends HttpServlet {
         String action = request.getParameter("action");
         VoucherDAO voucherDAO = new VoucherDAO();
         if (action == null) {
-            action = "activated";
+            action = "list";
         }
         System.out.println("--- Voucher Controller doGet --- ");
         try {
@@ -56,49 +59,12 @@ public class VoucherController extends HttpServlet {
             System.out.println("doGet: " + action);
             switch (action) {
                 case "list":
-                    String isActiveParam = request.getParameter("isActive");
-
-                    if (isActiveParam == null) {
-                        System.out.println("isActive is null");
-                        voucherList = voucherDAO.getAllVouchers();
-                        break;
-                    } else {
-                        System.out.println("isActive is not null");
-                        try {
-                            int isActiveValue = Integer.parseInt(isActiveParam);
-                            System.out.println("isActive is: " + isActiveValue);
-                            System.out.println("isActive param is: " + isActiveParam);
-                            switch (isActiveValue) {
-                                case 1:
-                                    voucherList = voucherDAO.getVoucherList(true);
-                                    System.out.println("isActive is 1");
-                                    break;
-                                case 0:
-                                    voucherList = voucherDAO.getVoucherList(false);
-                                    System.out.println("isActive is 0");
-                                    break;
-                                case -1:
-                                    voucherList = voucherDAO.getAllVouchers();
-                                    System.out.println("isActive is -1");
-                                    break;
-                                default:
-                                    voucherList = voucherDAO.getAllVouchers();
-                                    System.out.println("isActive is something else");
-                                    break;
-                            }
-                        } catch (NumberFormatException e) {
-                            voucherList = voucherDAO.getAllVouchers();
-                            System.out.println("isActive is not number");
-                        }
-                    }
-                    break;
-                case "expired":
-                    voucherList = voucherDAO.getExpiredVouchers();
+                    voucherList = voucherDAO.getAllVouchers();
                     break;
                 case "activate":
                     int voucherIdToActivate = Integer.parseInt(request.getParameter("voucherId"));
                     voucherDAO.activateVoucher(voucherIdToActivate);
-                    response.sendRedirect("VoucherController?action=expired");
+                    response.sendRedirect("VoucherController?action=list");
                     return;
                 case "deactivate":
                     int voucherIdToDeactivate = Integer.parseInt(request.getParameter("voucherId"));
@@ -149,19 +115,12 @@ public class VoucherController extends HttpServlet {
                     break;
                 }
                 default:
-                    System.out.println("DEFAULT");
+                    System.out.println("DEFAULT ACTION");
                     voucherList = voucherDAO.getAllVouchers();
                     break;
             }
-
             request.setAttribute("voucherList", voucherList);
-
-            String destination = "voucherManagement.jsp";
-            if ("expired".equals(action) || "searchExpired".equals(action)) {
-                destination = "restoreVoucher.jsp";
-            }
-
-            RequestDispatcher dispatcher = request.getRequestDispatcher(destination);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("voucherManagement.jsp");
             dispatcher.forward(request, response);
 
         } catch (NumberFormatException ex) {
@@ -173,71 +132,97 @@ public class VoucherController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         VoucherDAO voucherDAO = new VoucherDAO();
+
         if (action == null) {
-            action = "activated";
+            action = "list";
         }
-        System.out.println("--- Voucher Controller doPost --- ");
+
+        System.out.println("--- Voucher Controller doPost ---");
         System.out.println("doPost: " + action);
+
         try {
+            boolean success = false;
+
             switch (action) {
                 case "add":
-                    String voucherCode = request.getParameter("voucherCode");
-
-                    if (voucherDAO.isVoucherCodeExists(voucherCode)) {
-                        request.setAttribute("errorMessage", "Voucher code already exists.");
-                        RequestDispatcher dispatcher = request.getRequestDispatcher("voucherManagement.jsp");
-                        dispatcher.forward(request, response);
+                    if (!validateVoucherAdd(request, response, voucherDAO)) {
+                        response.sendRedirect("VoucherController?action=list");
                         return;
                     }
-
+                    String voucherCode = request.getParameter("voucherCode");
                     boolean discountType = Boolean.parseBoolean(request.getParameter("discountType"));
                     float discountValue = Float.parseFloat(request.getParameter("discountValue"));
-                    Date startDate = Date.valueOf(request.getParameter("startDate"));
-                    Date endDate = Date.valueOf(request.getParameter("endDate"));
+                    LocalDateTime startDate = LocalDateTime.parse(request.getParameter("startDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime endDate = LocalDateTime.parse(request.getParameter("endDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime createdAt = LocalDateTime.now();
+                    LocalDateTime updatedAt = LocalDateTime.now();
                     String voucherName = request.getParameter("voucherName");
-                    boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
-                    Date createdAt = new Date(System.currentTimeMillis());
-                    Date updatedAt = createdAt;
 
-                    Voucher newVoucher = new Voucher(0, voucherCode, discountType, discountValue, startDate, endDate, voucherName, isActive, createdAt, updatedAt);
+                    Voucher newVoucher = new Voucher(0, voucherCode, discountType, discountValue, startDate, endDate, voucherName, true, createdAt, updatedAt);
                     voucherDAO.addVoucher(newVoucher);
+                    success = true;
                     break;
+
                 case "edit":
-                    break;
-                case "bulkAction": {
-                    String[] selectedVouchers = request.getParameterValues("selectedVouchers");
-                    String bulkAction = request.getParameter("bulkActivate") != null ? "activate"
-                            : (request.getParameter("bulkDeactivate") != null ? "deactivate"
-                            : (request.getParameter("bulkDelete") != null ? "delete" : null));
-
-                    if (selectedVouchers != null && bulkAction != null) {
-                        for (String voucherIdStr : selectedVouchers) {
-                            try {
-                                int voucherId = Integer.parseInt(voucherIdStr);
-                                switch (bulkAction) {
-                                    case "activate":
-                                        voucherDAO.activateVoucher(voucherId);
-                                        break;
-                                    case "deactivate":
-                                        voucherDAO.deactivateVoucher(voucherId);
-                                        break;
-                                    case "delete":
-                                        voucherDAO.deleteVoucher(voucherId);
-                                        break;
-                                }
-                            } catch (NumberFormatException e) {
-                                Logger.getLogger(VoucherController.class.getName()).log(Level.SEVERE, null, e);
-                            }
-                        }
+                    if (!validateVoucherEdit(request, response, voucherDAO)) {
+                        response.sendRedirect("VoucherController?action=list");
+                        return;
                     }
-                    response.sendRedirect("VoucherController?action=expired");
-                    return;
-                }
-            }
-            response.sendRedirect("VoucherController");
+                    int voucherId = Integer.parseInt(request.getParameter("voucherId"));
+                    System.out.println("doPost got id of: " + voucherId);
+                    String voucherCodeEdit = request.getParameter("voucherCode");
+                    boolean discountTypeEdit = Boolean.parseBoolean(request.getParameter("discountType"));
+                    float discountValueEdit = Float.parseFloat(request.getParameter("discountValue"));
 
-        } catch (NumberFormatException ex) {
-            Logger.getLogger(VoucherController.class.getName()).log(Level.SEVERE, null, ex);
+                    LocalDateTime startDateEdit = LocalDateTime.parse(request.getParameter("startDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    LocalDateTime endDateEdit = LocalDateTime.parse(request.getParameter("endDate"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                    String voucherNameEdit = request.getParameter("voucherName");
+                    LocalDateTime updatedAtEdit = LocalDateTime.now();
+
+                    Voucher existingVoucher = voucherDAO.getVoucherById(voucherId);
+                    if (existingVoucher != null) {
+                        existingVoucher.setVoucherCode(voucherCodeEdit);
+                        existingVoucher.setType(discountTypeEdit);
+                        existingVoucher.setValue(discountValueEdit);
+                        existingVoucher.setStartDate(startDateEdit);
+                        existingVoucher.setEndDate(endDateEdit);
+                        existingVoucher.setVoucherName(voucherNameEdit);
+                        existingVoucher.setUpdateAt(updatedAtEdit);
+                        voucherDAO.updateVoucher(existingVoucher);
+                        success = true;
+                    } else {
+                        request.setAttribute("errorMessage", "Voucher not found.");
+                        response.sendRedirect("VoucherController?action=list");
+                        return;
+                    }
+                    break;
+
+                case "delete":
+                    int voucherIdToDelete = Integer.parseInt(request.getParameter("voucherId"));
+                    if (voucherDAO.deleteVoucher(voucherIdToDelete)) {
+                        request.setAttribute("successMessage", "Voucher deleted successfully.");
+                        success = true;
+                    } else {
+                        request.setAttribute("errorMessage", "Failed to delete voucher.");
+                        response.sendRedirect("VoucherController?action=list");
+                        return;
+                    }
+                    break;
+
+                default:
+                    request.setAttribute("errorMessage", "Invalid action.");
+                    response.sendRedirect("VoucherController?action=list");
+                    return;
+            }
+
+            if (success) {
+                response.sendRedirect("VoucherController?action=list");
+            }
+
+        } catch (NumberFormatException | DateTimeParseException | ServletException | IOException ex) {
+            Logger.getLogger(VoucherController.class.getName()).log(Level.SEVERE, "Error in doPost", ex);
+            request.setAttribute("errorMessage", "An unexpected error occurred.");
+            response.sendRedirect("VoucherController?action=list");
         }
     }
 
@@ -251,4 +236,105 @@ public class VoucherController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private boolean validateVoucherAdd(HttpServletRequest request, HttpServletResponse response, VoucherDAO voucherDAO) throws ServletException, IOException {
+        String voucherCode = request.getParameter("voucherCode");
+        String voucherName = request.getParameter("voucherName");
+        String valueStr = request.getParameter("discountValue");
+        String startDateStr = request.getParameter("startDate");
+        String endDateStr = request.getParameter("endDate");
+
+        if (voucherCode == null || voucherCode.trim().isEmpty() || voucherName == null || voucherName.trim().isEmpty() || valueStr == null || valueStr.trim().isEmpty() || startDateStr == null || startDateStr.trim().isEmpty() || endDateStr == null || endDateStr.trim().isEmpty()) {
+            request.getSession().setAttribute("errorMessage", "All fields are required.");
+            return false;
+        }
+
+        if (voucherDAO.isVoucherCodeExists(voucherCode)) {
+            request.getSession().setAttribute("errorMessage", "Voucher code already exists.");
+            return false;
+        }
+
+        if (voucherDAO.isVoucherNameExists(voucherName)) {
+            request.getSession().setAttribute("errorMessage", "Voucher name already exists.");
+            return false;
+        }
+
+        try {
+            float value = Float.parseFloat(valueStr);
+            boolean discountType = Boolean.parseBoolean(request.getParameter("discountType"));
+
+            if (discountType && value > 1) {
+                request.getSession().setAttribute("errorMessage", "Percentage value cannot exceed 1 (100%).");
+                return false;
+            }
+
+            if (value <= 0) {
+                request.getSession().setAttribute("errorMessage", "Discount value must be positive.");
+                return false;
+            }
+
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("errorMessage", "Invalid discount value format.");
+            return false;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LocalDate endDate = LocalDate.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            if (startDate.isAfter(endDate)) {
+                request.getSession().setAttribute("errorMessage", "Start date cannot be after end date.");
+                return false;
+            }
+        } catch (DateTimeParseException e) {
+            request.getSession().setAttribute("errorMessage", "Invalid date format (YYYY-MM-DDTHH:mm).");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateVoucherEdit(HttpServletRequest request, HttpServletResponse response, VoucherDAO voucherDAO) throws ServletException, IOException {
+        String voucherCode = request.getParameter("voucherCode");
+        String voucherName = request.getParameter("voucherName");
+        String valueStr = request.getParameter("discountValue");
+        String startDateStr = request.getParameter("startDate");
+        String endDateStr = request.getParameter("endDate");
+
+        if (voucherCode == null || voucherCode.trim().isEmpty() || voucherName == null || voucherName.trim().isEmpty() || valueStr == null || valueStr.trim().isEmpty() || startDateStr == null || startDateStr.trim().isEmpty() || endDateStr == null || endDateStr.trim().isEmpty()) {
+            request.getSession().setAttribute("errorMessage", "All fields are required.");
+            return false;
+        }
+
+        try {
+            float value = Float.parseFloat(valueStr);
+            boolean discountType = Boolean.parseBoolean(request.getParameter("discountType"));
+
+            if (discountType && value > 1) {
+                request.getSession().setAttribute("errorMessage", "Percentage value cannot exceed 1 (100%).");
+                return false;
+            }
+
+            if (value <= 0) {
+                request.getSession().setAttribute("errorMessage", "Discount value must be positive.");
+                return false;
+            }
+
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("errorMessage", "Invalid discount value format.");
+            return false;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LocalDate endDate = LocalDate.parse(endDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            if (startDate.isAfter(endDate)) {
+                request.getSession().setAttribute("errorMessage", "Start date cannot be after end date.");
+                return false;
+            }
+        } catch (DateTimeParseException e) {
+            request.getSession().setAttribute("errorMessage", "Invalid date format (YYYY-MM-DDTHH:mm).");
+            return false;
+        }
+
+        return true;
+    }
 }

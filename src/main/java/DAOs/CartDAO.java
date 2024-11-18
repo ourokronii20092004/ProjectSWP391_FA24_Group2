@@ -6,6 +6,7 @@ package DAOs;
 
 import DB.DBConnection;
 import Models.CartItem;
+import java.sql.Connection;
 import java.util.List;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
@@ -149,4 +150,41 @@ public class CartDAO {
             DBConnection.Disconnect();
         }
     }
+
+    public CartItem getCartItemByUserID(int userId, int cartItemId) {
+    DBConnection.Connect(); // Manually connect
+    if (DBConnection.isConnected()) {
+        try (PreparedStatement ps = DBConnection.getPreparedStatement( // Use DBConnection's method
+                "SELECT ci.CartItemID, ci.UserID, ci.Quantity, ci.ProductID, p.ProductName, p.Description, p.Price, p.ImageURL, p.StockQuantity "
+                + "FROM CartItem ci INNER JOIN Product p ON ci.ProductID = p.ProductID "
+                + "WHERE ci.UserID = ? AND ci.CartItemID = ?")) {
+
+            ps.setInt(1, userId);
+            ps.setInt(2, cartItemId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    CartItem cartItem = new CartItem(
+                            rs.getInt("CartItemID"),
+                            rs.getInt("UserID"),
+                            rs.getInt("Quantity"),
+                            rs.getInt("ProductID"),
+                            rs.getString("ProductName"),
+                            rs.getString("Description"),
+                            rs.getFloat("Price"),
+                            rs.getString("ImageURL"),
+                            rs.getInt("StockQuantity")
+                    );
+                    DBConnection.Disconnect();  // Disconnect after use within the if block
+                    return cartItem;
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(CartDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            DBConnection.Disconnect(); // Ensure disconnect even if an exception occurs inside the outer try block
+        }
+    }
+    return null;
+}
 }

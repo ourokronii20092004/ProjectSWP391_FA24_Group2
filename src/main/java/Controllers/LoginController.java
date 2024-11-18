@@ -84,6 +84,7 @@ public class LoginController extends HttpServlet {
 
                 // Redirect based on user role
                 if (user.getRoleID() == 1) {
+
                     response.sendRedirect("/DashboardController");
                 } else if (user.getRoleID() == 2) {
                     response.sendRedirect("/MainPageController");

@@ -6,6 +6,7 @@ package DAOs;
 
 import DB.DBConnection;
 
+
 import Models.Voucher;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,9 +15,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
@@ -24,40 +25,11 @@ import java.util.logging.Logger;
  */
 public class VoucherDAO {
 
-    //Phat
-    public Voucher getVoucherByOrderID(int voucherID) {
-        System.out.println("VoucherID = " + voucherID);
-        DBConnection.Connect();
-        if (DBConnection.isConnected()) {
-            try {
-            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [Vouchers] WHERE VoucherID = " + voucherID);
-                System.out.println("Voucher found!");
-                rs.next();
-                return new Voucher(
-                        rs.getInt("VoucherID"),
-                        rs.getString("VoucherCode"),
-                        (rs.getByte("DiscountType") == 1),
-                        rs.getFloat("DiscountValue"),
-                        rs.getDate("StartDate"),
-                        rs.getDate("EndDate"),
-                        rs.getString("VoucherName"),
-                        rs.getByte("isActive") == 1,
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"));
-            } catch (SQLException ex) {
-                System.out.println("No voucher found!");
-                System.out.println(ex);
-                return null;
-            }
-        }
-        return null;
-    }
-
     private int upCount;
 
     public ArrayList<Voucher> getAllVouchers() {
         ArrayList<Voucher> voucherList = new ArrayList<>();
-        String sql = "SELECT * FROM Vouchers";
+        String sql = "SELECT * FROM Vouchers where isActive is not null";
 
         try {
             DBConnection.Connect();
@@ -78,18 +50,21 @@ public class VoucherDAO {
             DBConnection.Disconnect();
         }
         return voucherList;
-        
+
     }
 
     public Voucher getVoucherById(int voucherId) {
-        String sql = "SELECT * FROM Vouchers WHERE VoucherID = ?";
+        String sql = "SELECT * FROM Vouchers WHERE VoucherID = ? and isActive is not null";
         Voucher voucher = null;
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
-                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql);  ResultSet rs = pre.executeQuery()) {
-                    if (rs.next()) {
-                        voucher = createVoucherFromResultSet(rs);
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, voucherId);
+                    try ( ResultSet rs = pre.executeQuery()) {
+                        if (rs.next()) {
+                            voucher = createVoucherFromResultSet(rs);
+                        }
                     }
                 }
             }
@@ -110,12 +85,12 @@ public class VoucherDAO {
                     pre.setString(1, voucher.getVoucherCode());
                     pre.setBoolean(2, voucher.isType());
                     pre.setFloat(3, voucher.getValue());
-                    pre.setDate(4, voucher.getStartDate());
-                    pre.setDate(5, voucher.getEndDate());
+                    pre.setTimestamp(4, Timestamp.valueOf(voucher.getStartDate()));
+                    pre.setTimestamp(5, Timestamp.valueOf(voucher.getEndDate()));
                     pre.setString(6, voucher.getVoucherName());
                     pre.setBoolean(7, voucher.isIsActive());
-                    pre.setDate(8, voucher.getCreateAt());
-                    pre.setDate(9, voucher.getUpdateAt());
+                    pre.setTimestamp(8, Timestamp.valueOf(voucher.getCreateAt()));
+                    pre.setTimestamp(9, Timestamp.valueOf(voucher.getUpdateAt()));
                     upCount = pre.executeUpdate();
                 }
             }
@@ -135,11 +110,11 @@ public class VoucherDAO {
                     pre.setString(1, voucher.getVoucherCode());
                     pre.setBoolean(2, voucher.isType());
                     pre.setFloat(3, voucher.getValue());
-                    pre.setDate(4, voucher.getStartDate());
-                    pre.setDate(5, voucher.getEndDate());
+                    pre.setTimestamp(4, Timestamp.valueOf(voucher.getStartDate()));
+                    pre.setTimestamp(5, Timestamp.valueOf(voucher.getEndDate()));
                     pre.setString(6, voucher.getVoucherName());
                     pre.setBoolean(7, voucher.isIsActive());
-                    pre.setDate(8, voucher.getUpdateAt());
+                    pre.setTimestamp(8, Timestamp.valueOf(voucher.getUpdateAt()));
                     pre.setInt(9, voucher.getVoucherID());
 
                     upCount = pre.executeUpdate();
@@ -154,7 +129,8 @@ public class VoucherDAO {
     }
 
     public boolean deleteVoucher(int voucherId) {
-        String sql = "DELETE FROM Vouchers WHERE VoucherID = ?";
+        System.out.println("Deleting Voucher: " + voucherId);
+        String sql = "UPDATE Vouchers SET IsActive = NULL WHERE VoucherID = ?";
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
@@ -173,7 +149,7 @@ public class VoucherDAO {
     }
 
     public boolean isVoucherCodeExists(String voucherCode) {
-        String sql = "SELECT 1 FROM Vouchers WHERE VoucherCode = ?";
+        String sql = "SELECT 1 FROM Vouchers WHERE VoucherCode = ? and isActive is not null";
 
         try {
             DBConnection.Connect();
@@ -227,7 +203,7 @@ public class VoucherDAO {
 
     public ArrayList<Voucher> getExpiredVouchers() {
         ArrayList<Voucher> expiredVouchers = new ArrayList<>();
-        String sql = "SELECT * FROM Vouchers WHERE EndDate < ?";
+        String sql = "SELECT * FROM Vouchers WHERE EndDate < ? and isActive is not null";
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
@@ -257,7 +233,7 @@ public class VoucherDAO {
     }
 
     private void updateVoucherStatus(int voucherId, boolean isActive) {
-        String sql = "UPDATE Vouchers SET IsActive = ? WHERE VoucherID = ?";
+        String sql = "UPDATE Vouchers SET IsActive = ? WHERE VoucherID = ? and isActive is not null";
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
@@ -280,12 +256,12 @@ public class VoucherDAO {
                 rs.getString("VoucherCode"),
                 rs.getBoolean("DiscountType"),
                 rs.getFloat("DiscountValue"),
-                rs.getDate("StartDate"),
-                rs.getDate("EndDate"),
+                rs.getTimestamp("StartDate").toLocalDateTime(),
+                rs.getTimestamp("EndDate").toLocalDateTime(),
                 rs.getString("VoucherName"),
                 rs.getBoolean("IsActive"),
-                rs.getDate("CreatedAt"),
-                rs.getDate("UpdatedAt")
+                rs.getTimestamp("CreatedAt").toLocalDateTime(),
+                rs.getTimestamp("UpdatedAt").toLocalDateTime()
         );
     }
 
@@ -319,8 +295,8 @@ public class VoucherDAO {
         }
         return searchResult;
     }
-    
-     public ArrayList<Voucher> searchVouchersAllDiscount(String keyword, boolean isActive) {
+
+    public ArrayList<Voucher> searchVouchersAllDiscount(String keyword, boolean isActive) {
         ArrayList<Voucher> searchResult = new ArrayList<>();
         String sql = "SELECT * FROM Vouchers WHERE VoucherName LIKE ? AND IsActive = ?";
 
@@ -351,7 +327,7 @@ public class VoucherDAO {
     }
 
     public boolean isVoucherNameExists(String voucherName) {
-        String sql = "SELECT 1 FROM Vouchers WHERE VoucherName = ?";
+        String sql = "SELECT 1 FROM Vouchers WHERE VoucherName = ? and isActive is not null";
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
@@ -375,8 +351,7 @@ public class VoucherDAO {
 
     public ArrayList<Voucher> getVouchersNearExpirationOrActivation() {
         ArrayList<Voucher> vouchers = new ArrayList<>();
-        String sql = "SELECT * FROM Vouchers WHERE "
-                + "(EndDate BETWEEN ? AND ?) OR (StartDate BETWEEN ? AND ?)";
+        String sql = "SELECT * FROM Vouchers WHERE (EndDate BETWEEN ? AND ?) OR (StartDate BETWEEN ? AND ?) and isActive is not null ";
 
         LocalDateTime now = LocalDateTime.now();
         Timestamp oneMinuteFromNow = Timestamp.valueOf(now.plusMinutes(1));
@@ -410,6 +385,7 @@ public class VoucherDAO {
         }
         return vouchers;
     }
+
 
 
 }
