@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
  */
 public class Voucher {
 
+
     private int voucherID;
     private String voucherCode;
     private boolean type;
@@ -22,6 +23,7 @@ public class Voucher {
     private boolean isActive;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
 
     public Voucher() {
     }

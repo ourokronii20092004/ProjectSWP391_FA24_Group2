@@ -146,9 +146,9 @@
             .modal-body {
                 display: flex;
                 flex-direction: column;
-                
+
             }
-            
+
             .col-md-6 textarea {
                 height: border-box;
                 resize: none;
@@ -240,7 +240,14 @@
                                         </c:if>
                                     </td>
                                     <td>${product.productID}</td>
-                                    <td>${product.productName}</td>
+                                    <td>
+                                        <form action="ManageRatingController" method="POST" class="d-inline">
+                                            <input type="hidden" name="action" value="list">
+                                            <input type="hidden" name="productID" value="${product.productID}">
+                                            <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">${product.productName}</button>
+                                        </form>
+                                    </td>
+                                    </form>
                                     <td>${product.description}</td>
                                     <td>${product.price}</td>
                                     <td class="category-id">${product.categoryID}</td>
@@ -260,6 +267,7 @@
                                         <a href="ProductController?action=delete&productId=${product.productID}"
                                            class="btn btn-sm btn-danger"
                                            onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+
                                     </td>
                                 </tr>
                             </c:forEach> 
