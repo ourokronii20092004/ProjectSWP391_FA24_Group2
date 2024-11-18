@@ -116,15 +116,13 @@ public class CustomerDAO {
                         + " [FirstName] = ?"
                         + ",[LastName] = ?"
                         + ",[PhoneNumber] = ?"
-                        + ",[ImageURL] = ?"
                         + ",[ShippingAddress] = ?"
                         + " WHERE UserID = ?");
                 pre.setString(1, cus.getFirstName());
                 pre.setString(2, cus.getLastName());
                 pre.setString(3, cus.getPhoneNumber());
-                pre.setString(4, cus.getImgURL());
-                pre.setString(5, cus.getAddress());
-                pre.setInt(6, cus.getId());
+                pre.setString(4, cus.getAddress());
+                pre.setInt(5, cus.getId());
                 pre.execute();
                 pre.close();
                 DBConnection.Disconnect();

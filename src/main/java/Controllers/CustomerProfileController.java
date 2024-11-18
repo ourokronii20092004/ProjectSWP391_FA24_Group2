@@ -74,7 +74,7 @@ public class CustomerProfileController extends HttpServlet {
         System.out.println(EditAddress);
 
         CustomerDAO dao = new CustomerDAO();
-        User obj = new User(Integer.parseInt(userID), EditEmail, EditFirstName, EditLastName, EditPhonenumber, null, EditAddress, null, null);
+        User obj = new User(Integer.parseInt(userID), EditEmail, EditFirstName, EditLastName, EditPhonenumber, EditAddress, null, null);
         System.out.println(userID);
 
         if (request.getParameter("saveButton") != null) {

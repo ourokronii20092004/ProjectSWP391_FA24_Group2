@@ -77,7 +77,7 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public User(int id, String email, String firstName, String lastName, String phoneNumber, String imgURL ,String address, Date createdAt, Date updatedAt) {
+    public User(int id, String email, String firstName, String lastName, String phoneNumber ,String address, Date createdAt, Date updatedAt) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;

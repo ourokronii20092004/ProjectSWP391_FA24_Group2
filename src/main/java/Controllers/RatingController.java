@@ -1,8 +1,10 @@
 package Controllers;
 
 import DAOs.AccountDAO;
+import DAOs.ProductDAO;
 import DAOs.RatingDAO;
 import DAOs.UserDAO;
+import Models.Product;
 import Models.Rating;
 import Models.User;
 import jakarta.servlet.RequestDispatcher;
@@ -97,7 +99,7 @@ public class RatingController extends HttpServlet {
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("productID", productID);
             // Forward to productDetails.jsp with updated data
-            RequestDispatcher dispatcher = request.getRequestDispatcher("productDetails.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/RatingController");
             dispatcher.forward(request, response);
         }
     }
@@ -194,6 +196,7 @@ public class RatingController extends HttpServlet {
             String productID = request.getParameter("productID");
             System.out.println("handleListRatings: " + productID);
             if (productID != null) {
+                Product pro = new DAOs.ProductDAO().readProduct(Integer.parseInt(productID));
                 ArrayList<Rating> listRating = ratingDAO.viewAllRating(Integer.parseInt(productID));
                 int totalRatings = listRating.size();
                 double averageRating = listRating.stream()
@@ -202,6 +205,7 @@ public class RatingController extends HttpServlet {
                         .orElse(0.0); // Tính trung bình số sao
 
                 // Đặt các giá trị này vào request
+                request.setAttribute("product", pro);
                 request.setAttribute("ratingList", listRating);
                 request.setAttribute("totalRatings", totalRatings);
                 request.setAttribute("averageRating", averageRating);

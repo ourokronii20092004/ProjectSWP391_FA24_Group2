@@ -178,8 +178,8 @@
 
             <div class="p-3">
                 <form class="d-flex align-items-center justify-content-center">
-                    <input type="search" class="form-control me-2 w-50 border-3" placeholder="Search products..." aria-label="Search">
-                    <button class="btn btn-outline-secondary" type="submit">
+                    <input type="text" id="search-input" onkeyup="searchFunction()" class="form-control me-2 w-50 border-3" placeholder="Search products..." aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="button" onclick="searchFunction()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-4">
                         <circle cx="11" cy="11" r="8" />
@@ -258,25 +258,27 @@
                             ArrayList<Models.Product> list = productDao.viewProductList();
                             for (Models.Product pro : list) {
                         %>
-                        <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="col-md-4 col-sm-6 mb-4 product-item" data-name="<%= pro.getProductName().toLowerCase() %>" >
                             <div class="card h-100">
-                                <img src="https://i.pinimg.com/originals/aa/ed/6e/aaed6e46143374dfa4b1a894c2287957.gif" alt="Product Image" class="card-img-top">
+                                <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
+
                                     <form action="/RatingController" method="post" class="d-inline">
                                         <input type="hidden" name="action" value="list">
-                                        <input type="hidden" name="productID" value="<%= pro.getProductID() %>">
+                                        <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
                                         <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
                                             <h3 class="h5 card-title"><%= pro.getProductName() %></h3>
                                         </button>
                                     </form>
+
                                     <p class="text-muted">$<%= pro.getPrice()%></p>
                                     <!-- Form để thêm sản phẩm vào giỏ hàng -->
-                                    <form action="" method="post">
-                                        <a href="#" class="text-decoration-none text-muted">Home</a>
+                                    <form action="/CartController" method="post">
                                         <input type="hidden" name="action" value="add">
                                         <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
-                                        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px; margin: 0 auto;">                                        
-                                        <a href="/RegisterController" class="btn btn-primary">Add to Cart</a>
+                                        <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px;
+                                               margin: 0 auto;">
+                                        <button type="submit" class="btn btn-primary">Add to Cart</button>
                                     </form>
                                 </div>
                             </div>
@@ -289,5 +291,20 @@
             </main>
         </div>
     </body>
+    <script>
+        function searchFunction() {
+            const input = document.getElementById('search-input').value.toLowerCase();
+            const productItems = document.querySelectorAll('.product-item');
+
+            productItems.forEach(item => {
+                const productName = item.getAttribute('data-name');
+                if (productName.includes(input)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </html>
 
