@@ -12,6 +12,7 @@ import java.sql.Date;
  */
 public class Voucher {
 
+
     private int voucherID;
     private String voucherCode;
     private boolean type;
@@ -22,6 +23,7 @@ public class Voucher {
     private boolean isActive;
     private Date createAt;
     private Date updateAt;
+
 
     public Voucher() {
     }

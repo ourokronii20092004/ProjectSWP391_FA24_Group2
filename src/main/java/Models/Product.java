@@ -5,6 +5,7 @@
 package Models;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Product {
     private int stockQuantity;
     private Date createdAt;
     private Date updatedAt;
+    private ArrayList<Rating> ratingList;
 
     public Product(int productID, String productName, String description, float price, String imageURL, int categoryID, int stockQuantity, Date createdAt, Date updatedAt) {
         this.productID = productID;
@@ -31,6 +33,19 @@ public class Product {
         this.stockQuantity = stockQuantity;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public Product(int productID, String productName, String description, float price, String imageURL, int categoryID, int stockQuantity, Date createdAt, Date updatedAt, ArrayList<Rating> ratingList) {
+        this.productID = productID;
+        this.productName = productName;
+        this.description = description;
+        this.price = price;
+        this.imageURL = imageURL;
+        this.categoryID = categoryID;
+        this.stockQuantity = stockQuantity;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.ratingList = ratingList;
     }
 
     public Product(int productID, String productName, String description, float price, String imageURL, int categoryID) {
@@ -50,6 +65,14 @@ public class Product {
         this.imageURL = imageURL;
         this.categoryID = categoryID;
         this.stockQuantity = stockQuantity;
+    }
+
+    public ArrayList<Rating> getRatingList() {
+        return ratingList;
+    }
+
+    public void setRatingList(ArrayList<Rating> ratingList) {
+        this.ratingList = ratingList;
     }
 
     
