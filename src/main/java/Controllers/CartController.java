@@ -71,6 +71,7 @@ public class CartController extends HttpServlet {
         }else{
         int userID = (int) request.getSession().getAttribute("userID");
         CartDAO cartDAO = new CartDAO();
+        
         //check session
 //       if (userID != 1 || userID != 2 || userID != 3 ) {
 //            // Nếu userID không có, chuyển về trang đăng nhập
@@ -104,6 +105,8 @@ public class CartController extends HttpServlet {
                     request.getRequestDispatcher("homepage.jsp").forward(request, response);
                     return;
                 case "list":
+                    String selectedItemsDetails = request.getParameter("selectedItemsDetails");
+                    System.out.println(selectedItemsDetails);
                     listCart = cartDAO.viewCartItemList(userID);
                     request.setAttribute("cartList", listCart);
                     break;
@@ -116,6 +119,7 @@ public class CartController extends HttpServlet {
 
                 case "deleteSelected":
                     String selectedItems = request.getParameter("selectedItems");
+                    System.out.println(selectedItems);
                     if (selectedItems != null && !selectedItems.isEmpty()) {
                         String[] cartItemIDs = selectedItems.split(",");
                         for (String id : cartItemIDs) {

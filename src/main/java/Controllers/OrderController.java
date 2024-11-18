@@ -4,7 +4,16 @@
  */
 package Controllers;
 
+import DAOs.CartDAO;
+import DAOs.OrderDAO;
+import DAOs.OrderItemDAO;
+import DAOs.ProductDAO;
+import DAOs.UserDAO;
+import DAOs.VoucherDAO;
+import Models.CartItem;
 import Models.Order;
+import Models.OrderItem;
+import Models.Voucher;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +22,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import Models.Product; // Import Product
+import Models.User;    // Import User
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -38,15 +54,21 @@ public class OrderController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
-
-        if (path.equals(contextPath + "/OrderController")) {
-            System.out.println("list");
-            ArrayList<Order> orderList = new DAOs.OrderDAO().viewAllOrders();
-            request.setAttribute("orderList", orderList);
-            RequestDispatcher ds = request.getRequestDispatcher("adminSetting.jsp");
-            ds.forward(request, response);
+        OrderItemDAO orderItemDAO = new OrderItemDAO();
+        if (path.contains("/OrderController")) {
+            try {
+                int orderID = Integer.parseInt(request.getParameter("orderID")); // Assuming orderID is passed as a parameter
+                ArrayList<OrderItem> orderItemList = orderItemDAO.getOrderItemByOrderID(orderID);
+                request.setAttribute("orderItemList", orderItemList);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("OrderController.jsp");
+                dispatcher.forward(request, response);
+            } catch (NumberFormatException ex) {
+                Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, null, ex);
+                request.setAttribute("errorMessage", "Invalid Order ID");
+                response.sendRedirect("error.jsp");
+            }
         } else {
-            response.sendRedirect("/OrderController");
+            response.sendRedirect("cart.jsp"); // Default redirect
         }
     }
 
@@ -61,6 +83,161 @@ public class OrderController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("buySelected".equals(action)) {
+            try {
+                handleBuySelected(request, response);
+            } catch (SQLException ex) {
+                Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if ("createOrder".equals(action)) {
+            try {
+                handleCreateOrder(request, response);
+            } catch (SQLException ex) {
+                Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void handleBuySelected(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
+        String selectedItemsDetails = request.getParameter("selectedItemsDetails");
+        
+        System.out.println(selectedItemsDetails);
+        String voucherIDStr = request.getParameter("voucherID");
+
+        if (selectedItemsDetails == null || selectedItemsDetails.isEmpty()) {
+            request.setAttribute("errorMessage", "No items selected for purchase.");
+            response.sendRedirect("cart.jsp?error=NoItemsSelected");
+            return;
+        }
+
+        int userID = (int) request.getSession().getAttribute("userID");
+        int voucherID = voucherIDStr != null ? Integer.parseInt(voucherIDStr) : 0;
+        Voucher voucher = new VoucherDAO().readVoucher(voucherID);
+        java.sql.Date orderDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+
+        OrderDAO orderDAO = new OrderDAO();
+        OrderItemDAO orderItemDAO = new OrderItemDAO();
+        ProductDAO productDAO = new ProductDAO();
+
+        ArrayList<OrderItem> orderItemsList = new ArrayList<>();
+        float totalAmount = 0;
+
+        Order newOrder = new Order(
+                0,
+                new UserDAO().getUserData(userID),
+                null,
+                voucher,
+                orderDate,
+                0,
+                "Pending"
+        );
+
+        orderDAO.addOrder(newOrder);
+        int newOrderID = orderDAO.getLastInsertedOrderID();
+        String[] selectedCartItemIds = selectedItemsDetails.split(",");
+        CartDAO cartDAO = new CartDAO(); // Initialize cartDAO here
+
+        for (String cartItemIdStr : selectedCartItemIds) {
+
+            try {
+                int cartItemId = Integer.parseInt(cartItemIdStr);
+
+                CartItem cartItem = cartDAO.getCartItemByUserID(userID, cartItemId); // Get CartItem details
+
+                if (cartItem != null) {
+                    Product product = productDAO.getProductByID(cartItem.getProductID()); // Get Product details
+
+                    if (product != null) {  // Check if product exists
+
+                        OrderItem orderItem = new OrderItem(
+                                0, // OrderItemID (auto-incrementing, so set to 0)
+                                newOrderID,
+                                product,
+                                cartItem.getQuantity(),
+                                product.getPrice() // Use product price
+                        );
+                        orderItemDAO.addOrderItem(orderItem); // Add to database
+
+                        totalAmount += product.getPrice() * cartItem.getQuantity(); // Update total amount
+
+                        // Add orderItem to the list (if you need it later)
+                        orderItemsList.add(orderItem);
+
+                    } else {
+                        // Handle the case where the product is not found (e.g., deleted)
+                        System.err.println("Product not found for cartItemId: " + cartItemId);
+                        // Consider adding error handling logic here, like redirecting with an error message
+                    }
+                } else {
+                    System.err.println("Cart item not found for cartItemId: " + cartItemId);
+                }
+
+            } catch (NumberFormatException e) {
+                // Handle parsing error
+                System.err.println("Error parsing cart item ID: " + e.getMessage());
+            }
+        }
+
+        newOrder.setTotalAmount(totalAmount);
+        orderDAO.updateOrderTotal(newOrder);
+
+        // Forward to confirmation page
+        request.setAttribute("orderItemsList", orderItemsList);
+        request.setAttribute("voucherID", voucherID);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("OrderController.jsp");
+        dispatcher.forward(request, response);
+        System.out.println(selectedItemsDetails + "  0000000000000000");
+        HttpSession session = request.getSession();
+        session.setAttribute("selectedItemsDetails", selectedItemsDetails);
+    }
+
+    private void handleCreateOrder(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        HttpSession session = request.getSession();
+    // Lấy "selectedItemsDetails" từ Session
+    String selectedItemsDetails = (String) session.getAttribute("selectedItemsDetails");
+        System.out.println(selectedItemsDetails + "  1111111111111111111");
+        String[] selectedCartItemIds = selectedItemsDetails.split(",");
+        int userID = (int) request.getSession().getAttribute("userID");
+        float totalAmount = Float.parseFloat(request.getParameter("totalAmount"));
+        int voucherID = Integer.parseInt(request.getParameter("voucherID"));
+
+        OrderDAO orderDAO = new OrderDAO();
+        int orderID = orderDAO.getLastInsertedOrderID();
+
+        if (orderID != -1) { // Check if orderID was retrieved successfully
+            Order orderToUpdate = orderDAO.readOrder(orderID); // Fetch the Order object
+
+            if (orderToUpdate != null) {
+                orderToUpdate.setTotalAmount(totalAmount);
+                orderToUpdate.setVoucher(null);
+                if (orderDAO.updateOrderByID(orderToUpdate)) { // Use updateOrderByID
+                    // Remove cart items (if applicable - make sure CartDAO.removeCartItem is correctly implemented)
+                    String[] productIDs = request.getParameterValues("productID[]");
+                    String[] quantities = request.getParameterValues("quantity[]");
+                    CartDAO cartDAO = new CartDAO();
+                    if (productIDs != null && quantities != null && productIDs.length == quantities.length) {
+                            for (String cartItemIdStr : selectedCartItemIds) {
+                                int cartItemId = Integer.parseInt(cartItemIdStr);
+                                cartDAO.removeCartItem(cartItemId); // Correctly remove items
+                            }                      
+                    }
+                    response.sendRedirect("MainPageController");
+                } else {
+                    System.err.println("Failed to update order.");
+                    response.sendRedirect("error.jsp?message=OrderUpdateFailed");
+                }
+
+            } else {
+                System.err.println("Order not found for ID: " + orderID);
+                response.sendRedirect("error.jsp?message=OrderNotFound");
+            }
+        } else {
+            System.err.println("Failed to get last inserted order ID.");
+            response.sendRedirect("error.jsp?message=OrderIDRetrievalFailed");
+        }
     }
 
     /**
@@ -70,7 +247,7 @@ public class OrderController extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "OrderController";
     }// </editor-fold>
 
 }

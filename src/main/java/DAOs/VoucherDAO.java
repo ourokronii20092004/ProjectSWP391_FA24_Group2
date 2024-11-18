@@ -6,6 +6,7 @@ package DAOs;
 
 import DB.DBConnection;
 
+
 import Models.Voucher;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
@@ -412,6 +414,7 @@ public class VoucherDAO {
         }
         return vouchers;
     }
+
 
 
 }

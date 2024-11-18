@@ -16,9 +16,9 @@ public class Order {
     private final int orderID;
     private final User user;
     private final ArrayList<OrderItem> orderItemList;
-    private final Voucher voucher;
+    private Voucher voucher;
     private final Date orderDate;
-    private final float totalAmount;
+    private float totalAmount;
     private String orderStatus;
 
     public Order(int orderId, User user, ArrayList<OrderItem> orderItemList, Voucher voucher, Date orderDate, float totalAmount, String orderStatus) {
@@ -61,6 +61,14 @@ public class Order {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public void setTotalAmount(float totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
     }
 
 }

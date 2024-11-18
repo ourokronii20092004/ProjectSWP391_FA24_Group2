@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class OrderItemDAO {
 
     public ArrayList<OrderItem> getOrderItemByOrderID(int orderID) {
+        ArrayList list = new ArrayList<>();
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
-            ArrayList list = new ArrayList<>();
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM OrderItem WHERE OrderID = " + orderID);
             try {
                 while (rs.next()) {
@@ -33,10 +33,50 @@ public class OrderItemDAO {
                 DBConnection.Disconnect();
                 return list;
             } catch (SQLException ex) {
-                return null;
+                ex.printStackTrace();
             }
 
         }
-        return null;
+        return list;
+    }
+
+    // Add a new OrderItem
+    public boolean addOrderItem(OrderItem orderItem) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            String query = "INSERT INTO OrderItem (OrderID, ProductID, Quantity, PriceAtPurchase) VALUES (" 
+                    + orderItem.getOrderID() + ", " 
+                    + orderItem.getProduct().getProductID() + ", "
+                    + orderItem.getQuantity() + ", " 
+                    + orderItem.getPriceAtPurchase() + ")";
+            int result = DBConnection.ExecuteUpdate(query);
+            DBConnection.Disconnect();
+            return result > 0;
+        }
+        return false;
+    }
+
+    // View all OrderItems (Optional method for viewing purposes)
+    public ArrayList<OrderItem> viewOrderItem() {
+        ArrayList<OrderItem> orderItemList = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM OrderItem");
+            try {
+                while (rs.next()) {
+                    orderItemList.add(new OrderItem(rs.getInt("OrderItemID"), 
+                                                     rs.getInt("OrderID"), 
+                                                     new ProductDAO().getProductByID(rs.getInt("ProductID")), 
+                                                     rs.getInt("Quantity"), 
+                                                     rs.getFloat("PriceAtPurchase")));
+                }
+                rs.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                DBConnection.Disconnect();
+            }
+        }
+        return orderItemList;
     }
 }
