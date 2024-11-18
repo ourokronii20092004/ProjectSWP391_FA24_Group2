@@ -221,24 +221,9 @@
                         </div>
                     </div>
 
-                </header>
-                <h6 class="card-title">Your Shopping Cart</h6>
-                <div class="container">
-
-                    <!-- Cart Actions Row -->
-                    <div class="cart-actions d-flex justify-content-between align-items-center border-bottom mb-3">
-                        <form action="/CartController" method="post" id="deleteSelectedForm" class="d-inline" 
-                              onsubmit="return confirmRemoveSelected()">
-                            <input type="hidden" name="action" value="deleteSelected">
-                            <input type="hidden" id="selectedItemsInput" name="selectedItems">
-                            <button class="btn btn-danger btn-large" type="submit">Remove Selected</button>
-                        </form>
-                        <form action="/OrderController" method="post" id="buySelected" onsubmit="return prepareOrderDetails()">
-                            <input type="hidden" name="action" value="buySelected">
-                            <input type="hidden" id="selectedItemsDetailsInput" name="selectedItemsDetails">
-                            <button class="btn btn-primary btn-large" type="submit">Buy Now</button>
-                        </form>
-                    </div>
+            </header>
+            <h6 class="card-title">Your Shopping Cart</h6>
+            <div class="container">
 
                 <!-- Cart Actions Row -->
                 <div class="cart-actions d-flex justify-content-between align-items-center border-bottom mb-3">
@@ -248,10 +233,13 @@
                         <input type="hidden" id="selectedItemsInput" name="selectedItems">
                         <button class="btn btn-danger btn-large" type="submit">Remove Selected</button>
                     </form>
-                    <form action="/OrderController" method="post">
+                    <form action="/OrderController" method="post" id="buySelected" onsubmit="return prepareOrderDetails()">
+                        <input type="hidden" name="action" value="buySelected">
+                        <input type="hidden" id="selectedItemsDetailsInput" name="selectedItemsDetails">
                         <button class="btn btn-primary btn-large" type="submit">Buy Now</button>
                     </form>
                 </div>
+
 
                 <table class="table table-bordered table-striped ">
                     <thead class="table-light">
@@ -265,10 +253,12 @@
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <c:forEach var="item" items="${cartList}">
                             <tr>
-                                <td><input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}"></td>
+
+                                <td><input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}" data-product-id="${item.productID}" data-price="${item.price}"></td>
                                 <td><img src="D:/image/4a5be7e32326b23d789ec4bd16c0c17a.jpg" class="img-fluid product-image" alt="Product Image" width="50"></td>
                                 <td>${item.productName}</td>
                                 <td>${item.description}</td>
@@ -288,105 +278,79 @@
                                     </form>
                                 </td>
                             </tr>
-
-                        </thead>
-                        <tbody>
-                            <c:forEach var="item" items="${cartList}">
-                                <tr>
-
-                                    <td><input type="checkbox" class="form-check-input product-checkbox" name="selectedItems" value="${item.cartItemID}" data-product-id="${item.productID}" data-price="${item.price}"></td>
-                                    <td><img src="D:/image/4a5be7e32326b23d789ec4bd16c0c17a.jpg" class="img-fluid product-image" alt="Product Image" width="50"></td>
-                                    <td>${item.productName}</td>
-                                    <td>${item.description}</td>
-                                    <td>
-                                        <form action="/CartController" method="post" class="d-inline">
-                                            <input type="hidden" name="action" value="update">
-                                            <input type="hidden" name="cartItemId" value="${item.cartItemID}"> <input type="number" class="form-control quantity-input" name="quantity" value="${item.quantity}" min="1" max="${item.stockQuantity}">
-                                            <button class="btn btn-sm btn-primary update-btn mt-2 ms-4" type="submit" style="display: none;">Update</button>
-                                        </form>
-                                    </td>
-                                    <td>${item.price * item.quantity} VND</td>
-                                    <td>
-                                        <form action="/CartController" method="post" class="d-inline" onsubmit="return confirmRemoveSingle()">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="cartItemId" value="${item.cartItemID}">
-                                            <button class="btn btn-sm btn-danger delete-btn" type="submit">Remove</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
+
         </div>
     </div>
-    <script>
-        function confirmRemoveSelected() {
-            const selectedItems = document.getElementById('selectedItemsInput').value;
-            if (selectedItems === "") {
-                alert("Please select at least one item to remove.");
-                return false;
-            }
-            return confirm("Are you sure you want to remove the selected items?");
+</div>
+<script>
+    function confirmRemoveSelected() {
+        const selectedItems = document.getElementById('selectedItemsInput').value;
+        if (selectedItems === "") {
+            alert("Please select at least one item to remove.");
+            return false;
         }
+        return confirm("Are you sure you want to remove the selected items?");
+    }
 
-        function confirmRemoveSingle() {
-            return confirm("Are you sure you want to remove this item?");
+    function confirmRemoveSingle() {
+        return confirm("Are you sure you want to remove this item?");
+    }
+
+    document.getElementById('select-all').addEventListener('click', function () {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        updateSelectedItems();
+    });
+
+    document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedItems);
+    });
+
+
+    function updateSelectedItems() {
+        const selectedItems = []; // Mảng chứa cartItemID
+        document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
+            selectedItems.push(checkbox.value); // Thêm giá trị cartItemID
+        });
+        // Cập nhật input hidden với danh sách cartItemID
+        document.getElementById('selectedItemsInput').value = selectedItems.join(',');
+        document.getElementById('selectedItemsDetailsInput').value = selectedItems.join(',');
+    }
+
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', function () {
+            const updateButton = this.closest('form').querySelector('.update-btn');
+            updateButton.style.display = 'inline-block';
+        });
+    })
+    document.getElementById('avatarButton').addEventListener('click', function (event) {
+        var dropdownMenu = document.querySelector('.dropdown-menu');
+        dropdownMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function (event) {
+        const dropdown = document.querySelector('.dropdown-menu');
+        const avatarButton = document.querySelector('#avatarButton');
+
+        // Kiểm tra nếu người dùng nhấn ra ngoài dropdown hoặc avatarButton
+        if (!avatarButton.contains(event.target) && !dropdown.contains(event.target)) {
+            const dropdownMenu = new bootstrap.Dropdown(avatarButton);
+            dropdownMenu.hide();
         }
+    });
+    function prepareOrderDetails() {
+        const selectedItemsDetails = document.getElementById('selectedItemsDetailsInput').value;
 
-        document.getElementById('select-all').addEventListener('click', function () {
-            const checkboxes = document.querySelectorAll('.product-checkbox');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-            updateSelectedItems();
-        });
-
-        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectedItems);
-        });
-
-
-            function updateSelectedItems() {
-                const selectedItems = []; // Mảng chứa cartItemID
-                document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
-                    selectedItems.push(checkbox.value); // Thêm giá trị cartItemID
-                });
-                // Cập nhật input hidden với danh sách cartItemID
-                document.getElementById('selectedItemsInput').value = selectedItems.join(',');
-                document.getElementById('selectedItemsDetailsInput').value = selectedItems.join(',');
-            }
-
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('input', function () {
-                    const updateButton = this.closest('form').querySelector('.update-btn');
-                    updateButton.style.display = 'inline-block';
-                });
-            })
-            document.getElementById('avatarButton').addEventListener('click', function (event) {
-                var dropdownMenu = document.querySelector('.dropdown-menu');
-                dropdownMenu.classList.toggle('show');
-            });
-
-            document.addEventListener('click', function (event) {
-                const dropdown = document.querySelector('.dropdown-menu');
-                const avatarButton = document.querySelector('#avatarButton');
-
-                // Kiểm tra nếu người dùng nhấn ra ngoài dropdown hoặc avatarButton
-                if (!avatarButton.contains(event.target) && !dropdown.contains(event.target)) {
-                    const dropdownMenu = new bootstrap.Dropdown(avatarButton);
-                    dropdownMenu.hide();
-                }
-            });
-            function prepareOrderDetails() {
-                const selectedItemsDetails = document.getElementById('selectedItemsDetailsInput').value;
-
-                if (!selectedItemsDetails || selectedItemsDetails.trim() === "") {
-                    alert("Please select at least one item before proceeding.");
-                    return false;
-                }
-            }
-        </script>
+        if (!selectedItemsDetails || selectedItemsDetails.trim() === "") {
+            alert("Please select at least one item before proceeding.");
+            return false;
+        }
+    }
+</script>
 
 
 </body>

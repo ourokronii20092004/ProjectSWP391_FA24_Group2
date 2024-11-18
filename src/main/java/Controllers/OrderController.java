@@ -54,21 +54,15 @@ public class OrderController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
-        OrderItemDAO orderItemDAO = new OrderItemDAO();
-        if (path.contains("/OrderController")) {
-            try {
-                int orderID = Integer.parseInt(request.getParameter("orderID")); // Assuming orderID is passed as a parameter
-                ArrayList<OrderItem> orderItemList = orderItemDAO.getOrderItemByOrderID(orderID);
-                request.setAttribute("orderItemList", orderItemList);
-                RequestDispatcher dispatcher = request.getRequestDispatcher("OrderController.jsp");
-                dispatcher.forward(request, response);
-            } catch (NumberFormatException ex) {
-                Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, null, ex);
-                request.setAttribute("errorMessage", "Invalid Order ID");
-                response.sendRedirect("error.jsp");
-            }
+
+        if (path.equals(contextPath + "/OrderController")) {
+            System.out.println("list");
+            ArrayList<Order> orderList = new DAOs.OrderDAO().viewAllOrders();
+            request.setAttribute("orderList", orderList);
+            RequestDispatcher ds = request.getRequestDispatcher("adminSetting.jsp");
+            ds.forward(request, response);
         } else {
-            response.sendRedirect("cart.jsp"); // Default redirect
+            response.sendRedirect("/OrderController");
         }
     }
 
@@ -114,7 +108,7 @@ public class OrderController extends HttpServlet {
 
         int userID = (int) request.getSession().getAttribute("userID");
         int voucherID = voucherIDStr != null ? Integer.parseInt(voucherIDStr) : 0;
-        Voucher voucher = new VoucherDAO().readVoucher(voucherID);
+        Voucher voucher = new VoucherDAO().getVoucherById(voucherID);
         java.sql.Date orderDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
 
         OrderDAO orderDAO = new OrderDAO();
