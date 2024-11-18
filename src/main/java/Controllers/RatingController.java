@@ -29,7 +29,35 @@ public class RatingController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("productDetails.jsp").forward(request, response);
+        try {
+            String productID = request.getParameter("productID");
+            System.out.println("handleListRatings: " + productID);
+            if (productID != null) {
+                Product pro = new DAOs.ProductDAO().readProduct(Integer.parseInt(productID));
+                ArrayList<Rating> listRating = ratingDAO.viewAllRating(Integer.parseInt(productID));
+                int totalRatings = listRating.size();
+                double averageRating = listRating.stream()
+                        .mapToInt(Rating::getRatingValue)
+                        .average()
+                        .orElse(0.0); // Tính trung bình số sao
+
+                // Đặt các giá trị này vào request
+                request.setAttribute("product", pro);
+                request.setAttribute("ratingList", listRating);
+                request.setAttribute("totalRatings", totalRatings);
+                request.setAttribute("averageRating", averageRating);
+                request.setAttribute("productID", productID);
+
+                // Chuyển hướng đến trang JSP
+                RequestDispatcher dispatcher = request.getRequestDispatcher("productDetails.jsp");
+                dispatcher.forward(request, response);
+            } else {
+                response.sendRedirect("error.jsp");
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error listing ratings", ex);
+            handleError(request, response, "Database error: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -99,8 +127,7 @@ public class RatingController extends HttpServlet {
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("productID", productID);
             // Forward to productDetails.jsp with updated data
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/RatingController");
-            dispatcher.forward(request, response);
+            response.sendRedirect("/RatingController?productID="+request.getParameter("productID")+"&action=list");
         }
     }
 
@@ -118,7 +145,7 @@ public class RatingController extends HttpServlet {
         // Reload rating list for the product
         ArrayList<Rating> listRating = ratingDAO.viewAllRating(rating.getProductID());
         request.setAttribute("ratingList", listRating);
-       
+
         String productIDParam = request.getParameter("productID");
         int productID = Integer.parseInt(productIDParam);
         //update sao tong
@@ -134,8 +161,7 @@ public class RatingController extends HttpServlet {
         // Reload the rating list for the product after update
 
         // Forward to productDetails.jsp with updated ratings
-        RequestDispatcher dispatcher = request.getRequestDispatcher("productDetails.jsp");
-        dispatcher.forward(request, response);
+        response.sendRedirect("/RatingController?productID="+request.getParameter("productID")+"&action=list");
     }
 
 // Handle deleting a rating
@@ -151,7 +177,7 @@ public class RatingController extends HttpServlet {
 
         User user = userDAO.getUserData(userID);
         int role = user.getRoleID();
-        
+
         request.setAttribute("role", role);
 
         String ratingID = request.getParameter("ratingID");
@@ -182,8 +208,7 @@ public class RatingController extends HttpServlet {
             request.setAttribute("productID", productID);
 
             // Forward to productDetails.jsp with updated ratings
-            RequestDispatcher dispatcher = request.getRequestDispatcher("productDetails.jsp");
-            dispatcher.forward(request, response);
+            response.sendRedirect("/RatingController?productID="+request.getParameter("productID")+"&action=list");
 
         } catch (NumberFormatException ex) {
             handleError(request, response, "Invalid productID or ratingID format.");

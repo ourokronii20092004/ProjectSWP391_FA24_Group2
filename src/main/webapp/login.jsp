@@ -77,7 +77,7 @@
                                     <small>Don't have an account? <a href="/RegisterController">Sign Up</a></small>
                                 </div> 
                                 <div class="row">
-                                    <small><a href="#">Forget Password?</a></small>
+                                    <small><a href="/PasswordController?action=forgetPassword">Forget Password?</a></small>
                                 </div>
                             </div>
 

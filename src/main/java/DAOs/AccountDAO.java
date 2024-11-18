@@ -149,4 +149,24 @@ public class AccountDAO {
         }
         return false;
     }
+
+    public boolean updatePassword(int userID, String password, String salt) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+
+            try (
+                     PreparedStatement pre = DBConnection.getPreparedStatement(
+                            "UPDATE [User] SET PasswordHash = ?, Salt=? WHERE userID = ?")) {
+                pre.setString(1, password);
+                pre.setString(2, salt);
+                pre.setInt(3, userID);
+                pre.executeUpdate();
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;   
+    }
 }

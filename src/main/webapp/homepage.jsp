@@ -31,6 +31,13 @@
                 crossorigin="anonymous">
         </script>
         <style>
+            .card-img-top {
+                width: 100%; /* Chiều rộng chiếm toàn bộ khung card */
+                height: 400px; /* Chiều cao cố định */
+                object-fit: cover; /* Giữ tỷ lệ, cắt phần dư */
+                object-position: top; /* Ưu tiên phần trên của ảnh */
+                border-radius: 8px; /* Tùy chọn: Bo góc ảnh */
+            }
             /* Định dạng ảnh avatar */
             .avatar {
                 width: 40px;
@@ -312,7 +319,7 @@ ArrayList<Models.Product> list = productDao.viewProductList();
                                 <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
 
-                                    <form action="/RatingController" method="post" class="d-inline">
+                                    <form action="/RatingController" method="GET" class="d-inline">
                                         <input type="hidden" name="action" value="list">
                                         <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
                                         <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
