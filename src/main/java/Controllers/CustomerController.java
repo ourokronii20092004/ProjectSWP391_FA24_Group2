@@ -5,20 +5,18 @@
 package Controllers;
 
 import DAOs.UserDAO;
-
-
+import Helper.ImageHelper;
 import Models.User;
 import jakarta.servlet.RequestDispatcher;
-
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +24,7 @@ import java.util.ArrayList;
  * @author phanp
  */
 @WebServlet("/CustomerController/*")
+@MultipartConfig
 public class CustomerController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -45,6 +44,9 @@ public class CustomerController extends HttpServlet {
             if (path.contains("deactivate")) {
                 System.out.println("deactivate");
                 doPost(request, response);
+            } else if (path.contains("restore")) {
+                System.out.println("restore");
+                doPost(request, response);
             } else {
                 System.out.println("list");
                 ArrayList<User> cusList = new DAOs.CustomerDAO().viewCustomerList();
@@ -63,6 +65,7 @@ public class CustomerController extends HttpServlet {
                 contextPath = request.getContextPath();
         System.out.println("Requested Path: " + path);
         System.out.println("Context Path: " + contextPath);
+
         String userID = request.getParameter("userID") == null ? "-1" : request.getParameter("userID"),
                 username = request.getParameter("username"),
                 password = request.getParameter("password"),
@@ -79,23 +82,50 @@ public class CustomerController extends HttpServlet {
         System.out.println(lastName);
         System.out.println(phoneNumber);
         System.out.println(email);
-        File pic = null;
-        User cus = new User(Integer.parseInt(userID), username, null, null, email, firstName, lastName, phoneNumber, address, null, 2, true, null, null);
-        String action = (String) request.getSession().getAttribute("action");
-        if (path.startsWith("/customerController")) {
-            DAOs.CustomerDAO DAO = new DAOs.CustomerDAO();
-            if (path.contains("add")) {
-                byte[] salt = Hash.HashFunction.generateSalt();
-                password = Hash.HashFunction.hashPassword(password, salt);
-                cus.setSalt(Hash.HashFunction.getSaltStringType(salt));
-                cus.setPassword(password);
-                DAO.addCustomer(cus);
-            } else if (path.contains("edit")) {
-                DAO.updateCustomer(cus);
 
-            } else if (path.contains("deactivate")) {
-                System.out.println(cus.getId());
-                DAO.removeCustomer(cus.getId());
+        User cus = new User(Integer.parseInt(userID), username, null, null, email, firstName, lastName, phoneNumber, address, null, 2, true, null, null);
+        if (path.startsWith("/CustomerController")) {
+            DAOs.CustomerDAO DAO = new DAOs.CustomerDAO();
+//            if (path.contains("add")) {
+//                byte[] salt = Hash.HashFunction.generateSalt();
+//                password = Hash.HashFunction.hashPassword(password, salt);
+//                emp.setSalt(Hash.HashFunction.getSaltStringType(salt));
+//                emp.setPassword(password);
+//                Part img = request.getPart("pic");
+//                String imageUrl = ImageHelper.saveImage(img, "pro", getServletContext().getRealPath("/"));
+//                emp.setImgURL(imageUrl);
+//                if (DAO.addEmployee(emp)) {
+//                    request.getSession().setAttribute("action", "add");
+//                } else {
+//                    request.getSession().setAttribute("action", "notAdd");
+//                }
+//
+//            } else
+            if (path.contains("edit")) {
+//                Part img = request.getPart("pic") == null ? null : request.getPart("pic");
+//                if (img == null) {
+//                    String imageUrl = ImageHelper.saveImage(img, "pro", getServletContext().getRealPath("/"));
+//                    emp.setImgURL(imageUrl);
+//                }
+                if (DAO.updateCustomer(cus)) {
+                    request.getSession().setAttribute("action", "edit");
+                } else {
+                    request.getSession().setAttribute("action", "notEdit");
+                }
+
+            } else  
+                if (path.contains("deactivate")) {
+                if (DAO.removeCustomer(cus.getId())) {
+                    request.getSession().setAttribute("action", "remove");
+                } else {
+                    request.getSession().setAttribute("action", "notRemove");
+                }
+            } else if (path.contains("restore")) {
+                if (DAO.unbanCustomer(cus.getId())) {
+                    request.getSession().setAttribute("action", "restore");
+                } else {
+                    request.getSession().setAttribute("action", "notRestore");
+                }
             }
         }
         response.sendRedirect("/CustomerController");

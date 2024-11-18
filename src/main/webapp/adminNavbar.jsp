@@ -132,6 +132,8 @@
                                                 onclick="parent.location.href = this.href; return false;">Handler</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/ProductController?action=list&page=Product"
                                                 onclick="parent.location.href = this.href; return false;">Product</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/VoucherController?action=list"
+                                                onclick="parent.location.href = this.href; return false;">Voucher</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/CustomerController"

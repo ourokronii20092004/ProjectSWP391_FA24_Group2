@@ -26,10 +26,11 @@ public class OrderDAO {
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[Orders] ORDER BY OrderDate DESC");
             try {
                 while (rs.next()) {
+                    System.out.println(rs.getString("VoucherID"));
                     orderList.add(new Order(rs.getInt("OrderID"),
                             new UserDAO().getUserData(rs.getInt("UserID")),
                             new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
-                            null, //Voucher
+                            rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherByOrderID(rs.getInt("VoucherID")), //Voucher
                             rs.getDate("OrderDate"),
                             rs.getFloat("TotalAmount"),
                             rs.getString("OrderStatus")));
@@ -55,7 +56,7 @@ public class OrderDAO {
                 orderList.add(new Order(rs.getInt("OrderID"),
                         new CustomerDAO().readCustomer(userID),
                         new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
-                        null, //Voucher
+                        rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherByOrderID(rs.getInt("VoucherID")), //Voucher
                         rs.getDate("OrderDate"),
                         rs.getFloat("TotalAmount"),
                         rs.getString("OrderStatus")));
@@ -70,6 +71,7 @@ public class OrderDAO {
 
     public Order readOrder(int orderID) {
         DBConnection.Connect();
+      
         if (DBConnection.isConnected()) {
             Order or;
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[Orders] WHERE OrderID = " + orderID);
@@ -78,7 +80,7 @@ public class OrderDAO {
                 or = new Order(rs.getInt("OrderID"),
                         new CustomerDAO().readCustomer(rs.getInt("UserID")),
                         new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
-                        null, //Voucher
+                        rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherByOrderID(rs.getInt("VoucherID")), //Voucher
                         rs.getDate("OrderDate"),
                         rs.getFloat("TotalAmount"),
                         rs.getString("OrderStatus"));

@@ -76,52 +76,66 @@
                             </div>
                             <table class="table table-striped" id="cusList">                             
                                 <tr>
-                                    <th class="col-md-1">Picture</th>
-                                    <th class="col-md-1">ID</th>
-                                    <th class="col-md-1">Username</th>
-                                    <th class="col-md-2">Full name</th>                              
-                                    <th class="col-md-3">Email</th>
-                                    <th class="col-md-1">Created date</th>
-                                    <th class="col-md-1">Updated date</th>
-                                    <th class="col-md-2">Actions</th>
+                                    <th class="col-md-1 text-center">Picture</th>
+                                    <th class="col-md-1 text-center">ID</th>
+                                    <th class="col-md-1 text-center">Username</th>
+                                    <th class="col-md-2 text-center">Full name</th>                              
+                                    <th class="col-md-2 text-center">Email</th>
+                                    <th class="col-md-1 text-center">Created date</th>
+                                    <th class="col-md-1 text-center">Updated date</th>
+                                    <th class="col-md-1 text-center">Status</th>
+                                    <th class="col-md-2 text-center">Actions</th>
                                 </tr>                       
                                 <!-- User data will be loaded here -->      
 
-                                <c:forEach items="${cusList}" var="c">  
-                                    <c:if test="${c.isActive == true}">
-                                        <tr>
-                                            <td class="col-md-1">
-                                                <c:choose>
-                                                    <c:when test="${c.imgURL != null}">
-                                                        <img src="${c.imgURL}" alt="${c.userName}" height="50">
-                                                    </c:when> 
-                                                    <c:otherwise>
-                                                        <img src="img/avt1.jpg" alt="${c.userName}" height="50">
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td class="col-md-1">${c.id}</td>
-                                            <td class="col-md-1">${c.userName}</td>
-                                            <td class="col-md-2">${c.firstName} ${c.lastName}</td>
-                                            <td class="col-md-3">${c.email}</td>                                       
-                                            <td class="col-md-1">${c.createdAt}</td>
-                                            <td class="col-md-1">${c.updatedAt}</td>                                   
-                                            <td class="col-md-2">
-                                                <button data-bs-toggle="modal" 
-                                                        data-bs-target="#editCustomer"
-                                                        data-user-id ="${c.id}"
-                                                        data-user-username="${c.userName}"
-                                                        data-user-firstName="${c.firstName}"
-                                                        data-user-lastName="${c.lastName}"
-                                                        data-user-email="${c.email}"
-                                                        data-user-address="${c.address}"
-                                                        data-user-phoneNumber="${c.phoneNumber}"
-                                                        data-user-imgURL="${c.imgURL}"
-                                                        class="btn btn-secondary">Details</button>
-                                                <a onclick="return confirm('Are you sure you want to delete User: ${c.userName} | ID: ${c.id}?')" href="/CustomerController/deactivate?userID=${c.id}" class="btn btn-danger">Remove</a>   
-                                            </td>
-                                        </tr>
-                                    </c:if>
+                               <c:forEach items="${cusList}" var="cus">  
+                                    <tr>
+                                        <td class="col-md-1">
+                                            <c:choose>
+                                                <c:when test="${cus.imgURL != null}">
+                                                    <img src="${cus.imgURL}" alt="${cus.userName}" height="50">
+                                                </c:when> 
+                                                <c:otherwise>
+                                                    <img src="img/avt1.jpg" alt="${cus.userName}" height="50">
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td class="col-md-1 text-center">${cus.id}</td>
+                                        <td class="col-md-1">${cus.userName}</td>
+                                        <td class="col-md-2">${cus.firstName} ${cus.lastName}</td>
+                                        <td class="col-md-2">${cus.email}</td>    
+                                        <td class="col-md-1">${cus.createdAt}</td>
+                                        <td class="col-md-1">${cus.updatedAt}</td>  
+                                        <c:choose>
+                                            <c:when test="${cus.isActive == true}">
+                                                <td class="col-md-1 text-center">Active</td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td class="col-md-1 text-center">Inactive</td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <td class="col-md-3 text-center">
+                                            <c:choose>
+                                                <c:when test="${cus.isActive == true}">
+                                                    <button data-bs-toggle="modal" 
+                                                            data-bs-target="#editCustomer"
+                                                            data-user-id ="${cus.id}"
+                                                            data-user-username="${cus.userName}"
+                                                            data-user-firstName="${cus.firstName}"
+                                                            data-user-lastName="${cus.lastName}"
+                                                            data-user-email="${cus.email}"
+                                                            data-user-address="${cus.address}"
+                                                            data-user-phoneNumber="${cus.phoneNumber}"
+                                                            data-user-imgURL="${cus.imgURL}"
+                                                            class="btn btn-secondary">Details</button>
+                                                    <a onclick="return confirm('Are you sure you want to BAN this User: ${cus.userName} | ID: ${cus.id}?')" href="/CustomerController/deactivate?userID=${cus.id}" class="btn btn-danger">BAN</a>   
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a onclick="return confirm('Are you sure you want to UNBAN this User: ${cus.userName} | ID: ${cus.id}?')" href="/CustomerController/restore?userID=${cus.id}" class="btn btn-success">UNBAN</a>   
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
                                 </c:forEach>
                             </table>
                         </div>                       
@@ -138,7 +152,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="customerForm" action="customerController/edit" method="post">
+                        <form id="customerForm" action="CustomerController/edit" method="post">
                             <div class="row mb-2">
                                 <div class="col-md-3 form-group">
                                     <label for="editId" class="form-label">ID</label>

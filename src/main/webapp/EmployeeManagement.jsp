@@ -59,6 +59,16 @@
                 border: none;
                 width: 100%;
             }
+            .alert {
+                margin-left: 10px; /* Khoảng cách giữa nút Add User và khung */
+                height: 40px; /* Đồng bộ chiều cao */
+                display: flex;
+                align-items: center;
+            }
+
+            .row .form-control {
+                margin-top: 10px; /* Đảm bảo khoảng cách vừa phải so với hàng phía trên */
+            }   
         </style>
     </head>
 
@@ -73,13 +83,14 @@
                         <div>
                             <div class="row">
                                 <!-- Button trigger modal -->                                
-                                <div class="col-md-1 alert">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployee">
+                                <div class="col-md-2 alert">
+                                    <button type="button" class="btn btn-primary w-100" style=" white-space: nowrap; height: 40px;" data-bs-toggle="modal" data-bs-target="#addEmployee">
                                         Add User
                                     </button> 
                                 </div>
+                                <!-- Style dum toi Binh oi -->
                                 <c:if test="${sessionScope.action != null}">
-                                    <div class="col-md-5 alert alert-success">
+                                    <div class="col-md-6 alert alert-success d-flex align-items-center mb-0" style="height: 40px;">
                                         <c:choose>
                                             <c:when test="${sessionScope.action == 'add'}">Added successful!</c:when>
                                             <c:when test="${sessionScope.action == 'notAdd'}">Added unsuccessful!</c:when>
@@ -94,7 +105,12 @@
                                 </c:if>
                                 <%request.getSession().removeAttribute("action");%>
 
-                                <input type="text" id="input" onkeyup="searchFunction()" placeholder="Search for names..">
+                                <div class="col-md-12 d-flex justify-content-start">
+                                    <input type="text" id="input" 
+                                           class="form-control w-50 border-3 mb-3" 
+                                           onkeyup="searchFunction()" 
+                                           placeholder="Search for names..">
+                                </div>
                             </div>
                             <table class="table table-striped" id="empList">                             
                                 <tr>
@@ -117,7 +133,7 @@
                                                     <img src="${e.imgURL}" alt="${e.userName}" height="50">
                                                 </c:when> 
                                                 <c:otherwise>
-                                                    <img src="img/avt1.jpg" alt="${e.userName}" height="50">
+                                                    <img src="img/avt.jpg" alt="${e.userName}" height="50">
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
@@ -135,7 +151,7 @@
                                                 <td class="col-md-1 text-center">Inactive</td>
                                             </c:otherwise>
                                         </c:choose>
-                                        <td class="col-md-3">
+                                        <td class="col-md-3 text-center">
                                             <c:choose>
                                                 <c:when test="${e.isActive == true}">
                                                     <button data-bs-toggle="modal" 
