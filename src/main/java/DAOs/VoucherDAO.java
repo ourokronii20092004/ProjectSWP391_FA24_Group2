@@ -82,12 +82,12 @@ public class VoucherDAO {
                     pre.setString(1, voucher.getVoucherCode());
                     pre.setBoolean(2, voucher.isType());
                     pre.setFloat(3, voucher.getValue());
-                    pre.setDate(4, voucher.getStartDate());
-                    pre.setDate(5, voucher.getEndDate());
+                    pre.setTimestamp(4, Timestamp.valueOf(voucher.getStartDate()));
+                    pre.setTimestamp(5, Timestamp.valueOf(voucher.getEndDate()));
                     pre.setString(6, voucher.getVoucherName());
                     pre.setBoolean(7, voucher.isIsActive());
-                    pre.setDate(8, voucher.getCreateAt());
-                    pre.setDate(9, voucher.getUpdateAt());
+                    pre.setTimestamp(8, Timestamp.valueOf(voucher.getCreateAt()));
+                    pre.setTimestamp(9, Timestamp.valueOf(voucher.getUpdateAt()));
                     upCount = pre.executeUpdate();
                 }
             }
@@ -107,11 +107,11 @@ public class VoucherDAO {
                     pre.setString(1, voucher.getVoucherCode());
                     pre.setBoolean(2, voucher.isType());
                     pre.setFloat(3, voucher.getValue());
-                    pre.setDate(4, voucher.getStartDate());
-                    pre.setDate(5, voucher.getEndDate());
+                    pre.setTimestamp(4, Timestamp.valueOf(voucher.getStartDate()));
+                    pre.setTimestamp(5, Timestamp.valueOf(voucher.getEndDate()));
                     pre.setString(6, voucher.getVoucherName());
                     pre.setBoolean(7, voucher.isIsActive());
-                    pre.setDate(8, voucher.getUpdateAt());
+                    pre.setTimestamp(8, Timestamp.valueOf(voucher.getUpdateAt()));
                     pre.setInt(9, voucher.getVoucherID());
 
                     upCount = pre.executeUpdate();
@@ -253,12 +253,12 @@ public class VoucherDAO {
                 rs.getString("VoucherCode"),
                 rs.getBoolean("DiscountType"),
                 rs.getFloat("DiscountValue"),
-                rs.getDate("StartDate"),
-                rs.getDate("EndDate"),
+                rs.getTimestamp("StartDate").toLocalDateTime(),
+                rs.getTimestamp("EndDate").toLocalDateTime(),
                 rs.getString("VoucherName"),
                 rs.getBoolean("IsActive"),
-                rs.getDate("CreatedAt"),
-                rs.getDate("UpdatedAt")
+                rs.getTimestamp("CreatedAt").toLocalDateTime(),
+                rs.getTimestamp("UpdatedAt").toLocalDateTime()
         );
     }
 
@@ -348,7 +348,7 @@ public class VoucherDAO {
 
     public ArrayList<Voucher> getVouchersNearExpirationOrActivation() {
         ArrayList<Voucher> vouchers = new ArrayList<>();
-        String sql = "SELECT * FROM Vouchers WHERE (EndDate BETWEEN ? AND ?) OR (StartDate BETWEEN ? AND ?) and isActive is not null";
+        String sql = "SELECT * FROM Vouchers WHERE (EndDate BETWEEN ? AND ?) OR (StartDate BETWEEN ? AND ?) and isActive is not null ";
 
         LocalDateTime now = LocalDateTime.now();
         Timestamp oneMinuteFromNow = Timestamp.valueOf(now.plusMinutes(1));

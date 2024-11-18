@@ -4,7 +4,7 @@
  */
 package Models;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -16,17 +16,19 @@ public class Voucher {
     private String voucherCode;
     private boolean type;
     private float value;
-    private Date startDate;
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private String voucherName;
     private boolean isActive;
-    private Date createAt;
-    private Date updateAt;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
     public Voucher() {
     }
-    
-    public Voucher(int voucherID, String voucherCode, boolean type, float value, Date startDate, Date endDate, String voucherName, boolean isActive, Date createAt, Date updateAt) {
+
+    public Voucher(int voucherID, String voucherCode, boolean type, float value,
+            LocalDateTime startDate, LocalDateTime endDate, String voucherName,
+            boolean isActive, LocalDateTime createAt, LocalDateTime updateAt) {
         this.voucherID = voucherID;
         this.voucherCode = voucherCode;
         this.type = type;
@@ -63,19 +65,19 @@ public class Voucher {
         this.value = value;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -95,19 +97,19 @@ public class Voucher {
         this.isActive = isActive;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(Date createAt) {
+    public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
 
-    public Date getUpdateAt() {
+    public LocalDateTime getUpdateAt() {
         return updateAt;
     }
 
-    public void setUpdateAt(Date updateAt) {
+    public void setUpdateAt(LocalDateTime updateAt) {
         this.updateAt = updateAt;
     }
 

@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="vt" uri="/WEB-INF/tlds/voucherTags" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -181,11 +183,9 @@
                         document.getElementById('discountValue').value = '${discountValue}';
                     </script>
                 </c:if>
-                <c:if test="${not empty errorMessage}"> 
-                    <div class="alert alert-danger" role="alert">
-                        ${errorMessage}
-                    </div>
-                    <c:remove var="errorMessage" scope="request"/>
+                <c:if test="${not empty sessionScope.errorMessage}">
+                    <div class="alert alert-danger" role="alert">${sessionScope.errorMessage}</div>
+                    <c:remove var="errorMessage" scope="session"/>
                 </c:if>
                 <form action="VoucherController" method="GET" class="search-and-filter">
                     <div class="search-input-group"><input type="text" name="searchName" placeholder="Search for vouchers..." class="form-control"></div>
@@ -203,71 +203,47 @@
                         <button type="submit" class="search-button"><img src="img/icon/search.svg" alt="Search"></button>
                     </div>
                 </form>
-                <form action="VoucherController" method="POST" id="voucherActionsForm">
-                    <input type="hidden" name="action" value="bulkAction">
-                    <div class="table-responsive">
-                        <table class="table" id="voucherListTable">
-                            <thead>
+                <div class="table-responsive">
+                    <table class="table" id="voucherListTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Discount Type</th>
+                                <th>Value</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${voucherList}" var="voucher">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Discount Type</th>
-                                    <th>Value</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <td>${voucher.voucherID}</td>
+                                    <td>${voucher.voucherName}</td>
+                                    <td><c:choose><c:when test="${voucher.type}">Percentage</c:when><c:otherwise>Flat</c:otherwise></c:choose></td>
+                                    <td>${voucher.value}</td>
+                                    <td><vt:formatLocalDateTime dateTime="${voucher.startDate}" pattern="HH:mm dd MMM yyyy"/></td>
+                                    <td><vt:formatLocalDateTime dateTime="${voucher.endDate}" pattern="HH:mm dd MMM yyyy"/></td>
+                                    <td><c:choose><c:when test="${voucher.isActive}"><span class="active-icon">✓</span></c:when><c:otherwise><span class="inactive-icon">✘</span></c:otherwise></c:choose></td>
+                                            <td>
+                                                    <button type="button" class="btn btn-sm btn-warning editVoucherBtn" data-bs-toggle="modal" data-bs-target="#editVoucherModal" data-voucher-id="${voucher.voucherID}" data-voucher-code="${voucher.voucherCode}" data-voucher-type="${voucher.type}" data-voucher-value="${voucher.value}" data-voucher-startdate="${voucher.startDate}" data-voucher-enddate="${voucher.endDate}" data-voucher-name="${voucher.voucherName}">Edit</button>
+                                        <c:choose>
+                                            <c:when test="${voucher.isActive}"><a href="VoucherController?action=deactivate&voucherId=${voucher.voucherID}" class="btn btn-sm btn-secondary">Deactivate</a></c:when>
+                                            <c:otherwise><a href="VoucherController?action=activate&voucherId=${voucher.voucherID}" class="btn btn-sm btn-success">Activate</a></c:otherwise>
+                                        </c:choose>
+                                        <form action="VoucherController" method="POST" style="display: inline;">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="voucherId" value="${voucher.voucherID}">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${voucherList}" var="voucher">
-                                    <tr>
-                                        <td>${voucher.voucherID}</td>
-                                        <td>${voucher.voucherName}</td>
-                                        <td><c:choose><c:when test="${voucher.type}">Percentage</c:when><c:otherwise>Flat</c:otherwise></c:choose></td>
-                                        <td>${voucher.value}</td>
-                                        <td>${voucher.startDate}</td>
-                                        <td>${voucher.endDate}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${voucher.isActive}">
-                                                    <span class="active-icon">✓</span>
-                                                </c:when><c:otherwise>
-                                                    <span class="inactive-icon">✘</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-warning editVoucherBtn"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#editVoucherModal"
-                                                    data-voucher-id="${voucher.voucherID}"
-                                                    data-voucher-code="${voucher.voucherCode}"
-                                                    data-voucher-type="${voucher.type}"
-                                                    data-voucher-value="${voucher.value}"
-                                                    data-voucher-startdate="${voucher.startDate}"
-                                                    data-voucher-enddate="${voucher.endDate}"
-                                                    data-voucher-name="${voucher.voucherName}">Edit</button>
-                                            <c:choose>
-                                                <c:when test="${voucher.isActive}"><a href="VoucherController?action=deactivate&voucherId=${voucher.voucherID}" class="btn btn-sm btn-secondary">Deactivate</a></c:when>
-                                                <c:otherwise><a href="VoucherController?action=activate&voucherId=${voucher.voucherID}" class="btn btn-sm btn-success">Activate</a></c:otherwise>
-                                            </c:choose>
-
-                                            <form action="VoucherController" method="POST" style="display: inline;">
-                                                <input type="hidden" name="action" value="delete">
-                                                <input type="hidden" name="voucherId" value="${voucher.voucherID}">
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete
-                                                </button>
-                                            </form>
-
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -283,7 +259,7 @@
                             <input type="hidden" name="action" value="add">
                             <div class="mb-3"><label for="voucherCode" class="col-form-label">Voucher Code:</label><input type="text" class="form-control" id="voucherCode" name="voucherCode" required><div class="invalid-feedback voucherCodeError"></div></div>
                             <div class="mb-3"><label for="voucherName" class="col-form-label">Voucher Name:</label><input type="text" class="form-control" id="voucherName" name="voucherName" required><div class="invalid-feedback voucherNameError"></div></div>
-                            <div class="mb-3"><label for="discountType" class="col-form-label">Discount Type:</label><select class="form-select" id="discountType" name="discountType" required><option value="1">Percentage</option><option value="0">Flat</option></select><div class="invalid-feedback discountTypeError"></div></div>
+                            <div class="mb-3"><label for="discountType" class="col-form-label">Discount Type:</label><select class="form-select" id="discountType" name="discountType" onchange="updateDiscountValueFormat()" required><option value="1">Percentage</option><option value="0">Flat</option></select><div class="invalid-feedback discountTypeError"></div></div>
                             <div class="mb-3"><label for="discountValue" class="col-form-label">Discount Value:</label><input type="number" class="form-control" id="discountValue" name="discountValue" step="0.01" required><div class="invalid-feedback discountValueError"></div></div>
                             <div class="mb-3 row">
                                 <div class="col-md-6"><label for="startDate" class="col-form-label">Start Date:</label><input type="datetime-local" class="form-control datetime-local-input" id="startDate" name="startDate" required><div class="invalid-feedback startDateError"></div></div>
@@ -305,7 +281,7 @@
                             <input type="hidden" name="action" value="edit"><input type="hidden" name="voucherId" id="editVoucherId" value="">
                             <div class="mb-3"><label for="voucherCode" class="col-form-label">Voucher Code:</label><input type="text" class="form-control" id="voucherCode" name="voucherCode" required><div class="invalid-feedback voucherCodeError"></div></div>
                             <div class="mb-3"><label for="voucherName" class="col-form-label">Voucher Name:</label><input type="text" class="form-control" id="voucherName" name="voucherName" required><div class="invalid-feedback voucherNameError"></div></div>
-                            <div class="mb-3"><label for="discountType" class="col-form-label">Discount Type:</label><select class="form-select" id="discountType" name="discountType" required><option value="1">Percentage</option><option value="0">Flat</option></select><div class="invalid-feedback discountTypeError"></div></div>
+                            <div class="mb-3"><label for="discountType" class="col-form-label">Discount Type:</label><select class="form-select" id="discountType" name="discountType" onchange="updateDiscountValueFormat()" required><option value="1">Percentage</option><option value="0">Flat</option></select><div class="invalid-feedback discountTypeError"></div></div>
                             <div class="mb-3"><label for="discountValue" class="col-form-label">Discount Value:</label><input type="number" class="form-control" id="discountValue" name="discountValue" step="0.01" required><div class="invalid-feedback discountValueError"></div></div>
                             <div class="mb-3 row">
                                 <div class="col-md-6"><label for="startDate" class="col-form-label">Start Date:</label><input type="datetime-local" class="form-control datetime-local-input" id="startDate" name="startDate" required><div class="invalid-feedback startDateError"></div></div>
