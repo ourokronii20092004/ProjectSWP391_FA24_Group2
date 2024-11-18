@@ -37,7 +37,7 @@
                 height: 40px;
                 border-radius: 50%;
                 cursor: pointer;
-                border: 2px solid #ddd;
+                border: 2px solid black;
                 transition: transform 0.2s ease;
             }
 
@@ -189,7 +189,7 @@
                             </button>
                         </form>
 
-                        <img src="<%= user.getImgURL() %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
+                        <img src="<%= (user.getImgURL() != null && !user.getImgURL().isEmpty()) ? user.getImgURL() : "/img/avt/user.png" %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
 
                         <!-- Menu thả xuống -->
                         <div class="dropdown-menu dropdown-menu-left custom-dropdown" aria-labelledby="avatarButton">
@@ -224,8 +224,8 @@
             </c:if>
             <div class="p-3">
                 <form class="d-flex align-items-center justify-content-center">
-                    <input type="search" class="form-control me-2 w-50 border-3 " placeholder="Search products..." aria-label="Search">
-                    <button class="btn btn-outline-secondary" type="submit">
+                    <input type="text" id="search-input" onkeyup="searchFunction()" class="form-control me-2 w-50 border-3" placeholder="Search products..." aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="button" onclick="searchFunction()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-4">
                         <circle cx="11" cy="11" r="8" />
@@ -307,14 +307,14 @@
 ArrayList<Models.Product> list = productDao.viewProductList();
                             for (Models.Product pro : list) {
                         %>
-                        <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="col-md-4 col-sm-6 mb-4 product-item" data-name="<%= pro.getProductName().toLowerCase() %>">
                             <div class="card h-100">
                                 <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
 
                                     <form action="/RatingController" method="post" class="d-inline">
                                         <input type="hidden" name="action" value="list">
-                                         <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
+                                        <input type="hidden" name="productID" value="<%= pro.getProductID()%>">
                                         <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
                                             <h3 class="h5 card-title"><%= pro.getProductName() %></h3>
                                         </button>
@@ -356,5 +356,19 @@ ArrayList<Models.Product> list = productDao.viewProductList();
                 dropdownMenu.hide();
             }
         });
+
+        function searchFunction() {
+            const input = document.getElementById('search-input').value.toLowerCase();
+            const productItems = document.querySelectorAll('.product-item');
+
+            productItems.forEach(item => {
+                const productName = item.getAttribute('data-name');
+                if (productName.includes(input)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
     </script>
 </html>

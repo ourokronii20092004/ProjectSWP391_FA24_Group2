@@ -76,14 +76,15 @@
                             </div>
                             <table class="table table-striped" id="cusList">                             
                                 <tr>
-                                    <th class="col-md-1">Picture</th>
-                                    <th class="col-md-1">ID</th>
-                                    <th class="col-md-1">Username</th>
-                                    <th class="col-md-2">Full name</th>                              
-                                    <th class="col-md-3">Email</th>
-                                    <th class="col-md-1">Created date</th>
-                                    <th class="col-md-1">Updated date</th>
-                                    <th class="col-md-2">Actions</th>
+                                    <th class="col-md-1 text-center">Picture</th>
+                                    <th class="col-md-1 text-center">ID</th>
+                                    <th class="col-md-1 text-center">Username</th>
+                                    <th class="col-md-2 text-center">Full name</th>                              
+                                    <th class="col-md-2 text-center">Email</th>
+                                    <th class="col-md-1 text-center">Created date</th>
+                                    <th class="col-md-1 text-center">Updated date</th>
+                                    <th class="col-md-1 text-center">Status</th>
+                                    <th class="col-md-2 text-center">Actions</th>
                                 </tr>                       
                                 <!-- User data will be loaded here -->      
 
@@ -113,7 +114,7 @@
                                                 <td class="col-md-1 text-center">Inactive</td>
                                             </c:otherwise>
                                         </c:choose>
-                                        <td class="col-md-3">
+                                        <td class="col-md-3 text-center">
                                             <c:choose>
                                                 <c:when test="${cus.isActive == true}">
                                                     <button data-bs-toggle="modal" 

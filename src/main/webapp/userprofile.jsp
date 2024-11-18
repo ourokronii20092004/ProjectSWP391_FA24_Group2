@@ -41,7 +41,7 @@
                 height: 40px;
                 border-radius: 50%;
                 cursor: pointer;
-                border: 2px solid #ddd;
+                border: 2px solid black;
                 transition: transform 0.2s ease;
             }
 
@@ -201,7 +201,7 @@
                             </button>
                         </form>
 
-                        <img src="<%= user.getImgURL() %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 15px;"> <!-- me-3 tạo margin-right cho avatar -->
+                        <img src="<%= (user.getImgURL() != null && !user.getImgURL().isEmpty()) ? user.getImgURL() : "/img/avt/user.png" %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 15px;"> <!-- me-3 tạo margin-right cho avatar -->
 
                         <!-- Menu thả xuống -->
                         <div class="dropdown-menu dropdown-menu-left custom-dropdown" aria-labelledby="avatarButton">
@@ -329,7 +329,7 @@
                     // Enable editing on clicking "Edit"
                     editButton.addEventListener("click", function () {
                         formFields.forEach(field => {
-                            if (field.id !== "email") { // Keep email readonly
+                            if (field.id !== "editEmail") { // Keep email readonly
                                 field.removeAttribute("readonly");
                             }
                         });
