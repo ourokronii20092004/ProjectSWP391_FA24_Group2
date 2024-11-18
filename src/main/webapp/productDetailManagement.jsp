@@ -293,13 +293,13 @@
                                         <p class="mb-0">${rating.user}: </p>
                                         <p class="mb-0">${rating.comment}</p>
                                         <div class="star-rating mb-1" style="margin-top:20px;">
+                                                                                        <!-- Hiển thị sao rỗng (empty stars) -->
+                                            <c:forEach var="j" begin="${rating.ratingValue + 1}" end="5">
+                                                <i class="bi bi-star"></i>
+                                            </c:forEach>
                                             <!-- Hiển thị sao đầy (filled stars) -->
                                             <c:forEach var="i" begin="1" end="${rating.ratingValue}">
                                                 <i class="bi bi-star-fill"></i>
-                                            </c:forEach>
-                                            <!-- Hiển thị sao rỗng (empty stars) -->
-                                            <c:forEach var="j" begin="${rating.ratingValue + 1}" end="5">
-                                                <i class="bi bi-star"></i>
                                             </c:forEach>
                                         </div>
                                         <small class="text-muted">Posted on: ${rating.createdAt}</small>
