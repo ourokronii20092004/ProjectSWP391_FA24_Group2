@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="DAOs.UserDAO"%>
+<%@page import="Models.User"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -122,24 +124,32 @@
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <%
+ int userID = (int) request.getSession().getAttribute("userID");
+ UserDAO userDAO = new UserDAO();
+                            
+ User user = userDAO.getUserData(userID);
+ String name = user.getUserName();
+                %>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="dashboard.jsp"
-                                                onclick="parent.location.href = this.href; return false;">Home</a></li>
+                    <ul class="navbar-nav">                       
                         <li class="nav-item"><a class="nav-link active" href="adminReport.jsp"
                                                 onclick="parent.location.href = this.href; return false;">Reports</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/OrderController"
                                                 onclick="parent.location.href = this.href; return false;">Handler</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/ProductController?action=list&page=Product"
                                                 onclick="parent.location.href = this.href; return false;">Product</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/CategoryController"
+                                                onclick="parent.location.href = this.href; return false;">Category</a></li>
+                            <%if(user.getRoleID() == 1){%>
                         <li class="nav-item"><a class="nav-link active" href="/VoucherController?action=list"
                                                 onclick="parent.location.href = this.href; return false;">Voucher</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/EmployeeController"
                                                 onclick="parent.location.href = this.href; return false;">Employees</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/CustomerController"
                                                 onclick="parent.location.href = this.href; return false;">Customer</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/CategoryController"
-                                                onclick="parent.location.href = this.href; return false;">Category</a></li>
+                            <%}%>
+
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">

@@ -84,11 +84,11 @@ public class LoginController extends HttpServlet {
 
                 // Redirect based on user role
                 if (user.getRoleID() == 1) {
-                    response.sendRedirect("dashboard.jsp");
+                    response.sendRedirect("/OrderController");
                 } else if (user.getRoleID() == 2) {
                     response.sendRedirect("/MainPageController");
                 } else {
-                    response.sendRedirect("dashboard.jsp");
+                    response.sendRedirect("/OrderController");
                 }
             } else {
                 request.getRequestDispatcher("login.jsp?check=false").forward(request, response);

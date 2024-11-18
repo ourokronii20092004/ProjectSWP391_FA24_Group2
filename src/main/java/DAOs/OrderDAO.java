@@ -30,7 +30,7 @@ public class OrderDAO {
                     orderList.add(new Order(rs.getInt("OrderID"),
                             new UserDAO().getUserData(rs.getInt("UserID")),
                             new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
-                            rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherByOrderID(rs.getInt("VoucherID")), //Voucher
+                            rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherById(rs.getInt("VoucherID")), //Voucher
                             rs.getDate("OrderDate"),
                             rs.getFloat("TotalAmount"),
                             rs.getString("OrderStatus")));
@@ -56,7 +56,7 @@ public class OrderDAO {
                 orderList.add(new Order(rs.getInt("OrderID"),
                         new CustomerDAO().readCustomer(userID),
                         new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
-                        rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherByOrderID(rs.getInt("VoucherID")), //Voucher
+                        rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherById(rs.getInt("VoucherID")), //Voucher
                         rs.getDate("OrderDate"),
                         rs.getFloat("TotalAmount"),
                         rs.getString("OrderStatus")));
@@ -80,7 +80,7 @@ public class OrderDAO {
                 or = new Order(rs.getInt("OrderID"),
                         new CustomerDAO().readCustomer(rs.getInt("UserID")),
                         new OrderItemDAO().getOrderItemByOrderID(rs.getInt("OrderID")),
-                        rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherByOrderID(rs.getInt("VoucherID")), //Voucher
+                        rs.getString("VoucherID") == null ? null : new VoucherDAO().getVoucherById(rs.getInt("VoucherID")), //Voucher
                         rs.getDate("OrderDate"),
                         rs.getFloat("TotalAmount"),
                         rs.getString("OrderStatus"));
