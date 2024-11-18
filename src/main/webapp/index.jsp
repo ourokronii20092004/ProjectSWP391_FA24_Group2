@@ -31,6 +31,13 @@
                 crossorigin="anonymous">
         </script>
         <style>
+            .card-img-top {
+                width: 100%; /* Chiều rộng chiếm toàn bộ khung card */
+                height: 400px; /* Chiều cao cố định */
+                object-fit: cover; /* Giữ tỷ lệ, cắt phần dư */
+                object-position: top; /* Ưu tiên phần trên của ảnh */
+                border-radius: 8px; /* Tùy chọn: Bo góc ảnh */
+            }
             /* Định dạng ảnh avatar */
             .avatar {
                 width: 40px;

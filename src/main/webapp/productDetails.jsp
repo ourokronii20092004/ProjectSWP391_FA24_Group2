@@ -163,6 +163,13 @@
                 float: right;
 
             }
+            .card-img-top {
+                width: 100%; /* Chiều rộng chiếm toàn bộ khung card */
+                height: 600px; /* Chiều cao cố định */
+                object-fit: cover; /* Giữ tỷ lệ, cắt phần dư */
+                object-position: top; /* Ưu tiên phần trên của ảnh */
+                border-radius: 8px; /* Tùy chọn: Bo góc ảnh */
+            }
         </style>
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -244,7 +251,7 @@ User user = request.getSession().getAttribute("userID") == null ? null : userDAO
                 <div class="row justify-content-center">
                     <div class="col-lg-10 d-flex flex-wrap">
                         <div class="col-lg-6">
-                            <img src="<%= pro.getImageURL() %>" alt="ecommerce" class="img-fluid rounded border border-secondary">
+                            <img src="<%= pro.getImageURL() %>" alt="ecommerce" class="card-img-top rounded border border-secondary ">
                         </div>
                         <div class="col-lg-6 pt-4 pt-lg-0">
                             <h2 class="text-secondary text-uppercase"><%= pro.getProductName() %></h2>

@@ -1,4 +1,4 @@
-<%-- 
+    <%-- 
     Document   : userprofile
     Created on : Oct 20, 2024, 11:10:21 AM
     Author     : phanp
@@ -236,7 +236,7 @@
                                 Account
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><a href="#" style="text-decoration: none;" class="text-dark">Change Password</a></li>
+                                <li class="list-group-item"><a href="/PasswordController?action=changePassword" style="text-decoration: none;" class="text-dark">Change Password</a></li>
                                 <li onclick="showBoughtHistory()" class="list-group-item"><a href="#" style="text-decoration: none;" class="text-dark">History Bought</a></li>
                             </ul>
                         </div>
@@ -266,7 +266,7 @@
 
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone Number:</label>
-                                <input type="tel" class="form-control" name="editPhoneNumber" id="editPhoneNumber" placeholder="Your Phone Number" value="<%= user.getPhoneNumber() %>"  required="" readonly>
+                                <input type="tel" maxlength="11" minlength="10" class="form-control" name="editPhoneNumber" id="editPhoneNumber" placeholder="Your Phone Number" value="<%= user.getPhoneNumber() %>"  required="" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address:</label>

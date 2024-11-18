@@ -124,10 +124,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="dashboard.jsp"
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/DashboardController"
                                                 onclick="parent.location.href = this.href; return false;">Home</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="adminReport.jsp"
-                                                onclick="parent.location.href = this.href; return false;">Reports</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/OrderController"
                                                 onclick="parent.location.href = this.href; return false;">Handler</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/ProductController?action=list&page=Product"

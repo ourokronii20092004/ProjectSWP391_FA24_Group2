@@ -90,7 +90,7 @@
                             <div class="input-group mb-3 ms-1 d-flex justify-content-between align-items-center">
 
                                 <div class="form-check flex-row-1">
-                                    <input type="checkbox" class="form-check-input" id="formCheck" />
+                                    <input type="checkbox" class="form-check-input" id="formCheck" required="" />
                                     <label for="formCheck"><small>I Agree to <a href="">Privacy Policy</a></small></label>
                                 </div>
 

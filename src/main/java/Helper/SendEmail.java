@@ -65,4 +65,29 @@ public class SendEmail {
         body += "PAMB.";
         sendEmail(user.getEmail(), "Confirm your email!", body);
     }
+    
+    public void sendPasswordIfUserForget(Models.User user) {
+        String body = "";
+        body += "Dear " + user.getUserName() + "\n";
+        body += "Thank you for trusting and using our website!\n";
+        body += "Please click the link below to recover your password:\n";
+        body += "THIS IS YOUR NEW PASSWORD: " + user.getPassword() +"\n";
+        body += "http://localhost:8080/LoginController";
+        body += "\n";
+        body += "Hope you have a great day!\n";
+        body += "PAMB.";
+        sendEmail(user.getEmail(), "Recovery password", body);
+    }
+    
+     public void sendConfirmChangePassword(Models.User user) {
+        String body = "";
+        body += "Dear " + user.getUserName() + "\n";
+        body += "Thank you for trusting and using our website!\n";
+        body += "Your password has been change. Please login again!\n";
+        body += "http://localhost:8080/LoginController";
+        body += "\n";
+        body += "Hope you have a great day!\n";
+        body += "PAMB.";
+        sendEmail(user.getEmail(), "Recovery password", body);
+    }
 }
