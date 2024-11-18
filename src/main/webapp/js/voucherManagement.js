@@ -1,152 +1,228 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
+    const addVoucherForm = document.getElementById('addVoucherForm');
+    const editVoucherForm = document.getElementById('editVoucherForm');
+    const forms = [addVoucherForm, editVoucherForm];
+    forms.forEach(form => {
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                if (!validateForm(this)) {
+                    event.preventDefault();
+                }
+            });
+        }
+    });
 
-    // Edit Voucher Modal Functionality
     const editVoucherButtons = document.querySelectorAll('.editVoucherBtn');
     editVoucherButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const voucherId = button.dataset.voucherId;
-            const voucherCode = button.dataset.voucherCode;
-            const voucherName = button.dataset.voucherName;
-            const type = button.dataset.voucherType === 'true';
-            const value = button.dataset.voucherValue;
-            const startDate = button.dataset.voucherStartdate;
-            const endDate = button.dataset.voucherEnddate;
-            const isActive = button.dataset.voucherIsactive === 'true';
-
-            populateEditVoucherModal(voucherId, voucherCode, voucherName, type, value, startDate, endDate, isActive);
+            populateEditVoucherModal(button.dataset.voucherId, button.dataset.voucherCode, button.dataset.voucherName, button.dataset.voucherType === 'true', button.dataset.voucherValue, button.dataset.voucherStartdate, button.dataset.voucherEnddate);
         });
     });
-
-
-
-    const addVoucherForm = document.querySelector('#addVoucherModal form');
-    const editVoucherForm = document.querySelector('#editVoucherModal form');
-
-    if (addVoucherForm) {
-        addVoucherForm.addEventListener('submit', (event) => {
-            if (!validateVoucherForm(event.target)) {
-                event.preventDefault();
-            }
-        });
-    }
-
-    if (editVoucherForm) {
-        editVoucherForm.addEventListener('submit', (event) => {
-            if (!validateVoucherForm(event.target)) {
-                event.preventDefault();
-            }
-        });
-    }
 });
 
-
-
-
-function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, value, startDate, endDate, isActive) {
+function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, value, startDate, endDate) {
     const modal = document.getElementById('editVoucherModal');
-    modal.querySelector('[name="voucherID"]').value = voucherId;
-    modal.querySelector('[name="voucherCode"]').value = voucherCode;
-    modal.querySelector('[name="voucherName"]').value = voucherName;
-    modal.querySelector('[name="type"]').value = type;
-    modal.querySelector('[name="value"]').value = value;
-    modal.querySelector('[name="startDate"]').value = startDate;
-    modal.querySelector('[name="endDate"]').value = endDate;
-    modal.querySelector('[name="isActive"]').checked = isActive;
+    modal.querySelector('#editVoucherId').value = voucherId;
+    modal.querySelector('#voucherCode').value = voucherCode;
+    modal.querySelector('#voucherName').value = voucherName;
+
+    const selectElement = modal.querySelector('#discountType');
+    for (let i = 0; i < selectElement.options.length; i++) {
+        if (selectElement.options[i].value === String(type ? '1' : '0')) {
+            selectElement.options[i].selected = true;
+            break;
+        }
+    }
+
+    const discountValueInput = modal.querySelector('#discountValue');
+    discountValueInput.value = value;
+
+    const formatDateTime = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
+    modal.querySelector('#startDate').value = formatDateTime(startDate);
+    modal.querySelector('#endDate').value = formatDateTime(endDate);
+
+    discountTypeSelect.addEventListener('change', function () {
+        discountValueInput.value = "";
+
+        if (this.value === '1') {
+            discountValueInput.setAttribute('max', '1');
+            discountValueInput.step = "0.01";
+        } else {
+            discountValueInput.removeAttribute('max');
+            discountValueInput.step = "any";
+        }
+    });
+
+    if (type) {
+        discountValueInput.setAttribute('max', '1');
+        discountValueInput.step = "0.01";
+    } else {
+        discountValueInput.removeAttribute('max');
+        discountValueInput.step = "any";
+    }
+
+
+    const editForm = document.getElementById('editVoucherForm');
+    const errorDiv = modal.querySelector('.errorMessage');
+
+    editForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(editForm);
+        formData.append('action', 'edit');
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                if (xhr.responseURL && xhr.responseURL !== window.location.href) {
+                    window.location.href = xhr.responseURL;
+                    hideEditVoucherModal();
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                errorDiv.style.display = 'block';
+                try {
+                    const errorData = JSON.parse(xhr.responseText);
+                    const errorMessages = errorData.errorMessages;
+                    let errorMessage = '';
+                    if (errorMessages && typeof errorMessages === 'object') {
+                        for (const field in errorMessages) {
+                            if (errorMessages.hasOwnProperty(field)) {
+                                errorMessage += `${errorMessages[field]}<br>`;
+                            }
+                        }
+                    }
+                    errorDiv.innerHTML = errorMessage;
+                } catch (e) {
+                    errorDiv.textContent = "An error occurred during the edit.";
+                }
+            }
+        };
+
+        xhr.onerror = function () {
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = "An error occurred during the edit.";
+        };
+        xhr.open('POST', 'VoucherController');
+        xhr.send(formData);
+    });
 
     modal.style.display = 'block';
     document.body.classList.add('modal-open');
-
     const closeButton = modal.querySelector('.btn-close');
     closeButton.addEventListener('click', () => {
         hideEditVoucherModal();
     });
-
 }
+
 
 function hideEditVoucherModal() {
-
     const modal = document.getElementById('editVoucherModal');
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
     modal.style.display = 'none';
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+        backdrop.remove();
+    }
     document.body.classList.remove('modal-open');
-
-
 }
 
-function validateVoucherForm(form) {
+function validateForm(form) {
     let isValid = true;
-
     const voucherCodeInput = form.querySelector('[name="voucherCode"]');
-    const voucherCode = voucherCodeInput.value.trim();
-
-    if (!voucherCode) {
-        alert('Voucher code is required.');
-        voucherCodeInput.focus();
-        isValid = false;
-        return isValid;
-    }
-
-    if (!/^[a-zA-Z0-9]+$/.test(voucherCode)) {
-        alert('Voucher code must be alphanumeric.');
-        voucherCodeInput.focus();
-        isValid = false;
-        return isValid;
-    }
-
-
     const voucherNameInput = form.querySelector('[name="voucherName"]');
-    const voucherName = voucherNameInput.value.trim();
-    if (!voucherName) {
-        alert("Voucher Name is required.");
-        voucherNameInput.focus();
-        isValid = false;
-        return isValid;
-    }
-
+    const discountTypeSelect = form.querySelector('#discountType');
     const valueInput = form.querySelector('[name="value"]');
-    const value = parseFloat(valueInput.value);
-    if (isNaN(value) || value <= 0) {
-        alert("Value must be a positive number.");
-        valueInput.focus();
-        isValid = false;
-        return isValid;
-    }
-
-
     const startDateInput = form.querySelector('[name="startDate"]');
     const endDateInput = form.querySelector('[name="endDate"]');
+    const voucherCodeError = form.querySelector('.voucherCodeError');
+    const voucherNameError = form.querySelector('.voucherNameError');
+    const valueError = form.querySelector('.discountValueError');
+    const startDateError = form.querySelector('.startDateError');
+    const endDateError = form.querySelector('.endDateError');
+
+    const voucherCode = voucherCodeInput.value.trim();
+    if (!voucherCode) {
+        displayError(voucherCodeInput, voucherCodeError, 'Voucher code is required.');
+        isValid = false;
+    } else if (!/^[a-zA-Z0-9]+$/.test(voucherCode)) {
+        displayError(voucherCodeInput, voucherCodeError, 'Voucher code must be alphanumeric.');
+        isValid = false;
+    } else {
+        clearError(voucherCodeInput, voucherCodeError);
+    }
+
+    const voucherName = voucherNameInput.value.trim();
+    if (!voucherName) {
+        displayError(voucherNameInput, voucherNameError, 'Voucher name is required.');
+        isValid = false;
+    } else {
+        clearError(voucherNameInput, voucherNameError);
+    }
+
+    const value = parseFloat(valueInput.value);
+    if (discountTypeSelect.value === '1' && value > 1) {
+        displayError(valueInput, valueError, 'Percentage value cannot exceed 1.');
+        isValid = false;
+    } else if (value <= 0) {
+        displayError(valueInput, valueError, 'Discount must be a positive number.');
+        isValid = false;
+    } else {
+        clearError(valueInput, valueError);
+    }
+
 
     const startDate = new Date(startDateInput.value);
     const endDate = new Date(endDateInput.value);
-
-
-
-    if (isNaN(startDate.getTime())) {
-        alert("Invalid Start Date format. Use YYYY-MM-DD.");
-        startDateInput.focus();
+    if (isNaN(startDate)) {
+        displayError(startDateInput, startDateError, 'Invalid start date format.');
         isValid = false;
-        return isValid;
+    } else {
+        clearError(startDateInput, startDateError);
     }
-    if (isNaN(endDate.getTime())) {
-        alert("Invalid End Date format. Use YYYY-MM-DD.");
-        endDateInput.focus();
+    if (isNaN(endDate)) {
+        displayError(endDateInput, endDateError, 'Invalid end date format.');
         isValid = false;
-        return isValid;
+    } else {
+        clearError(endDateInput, endDateError);
     }
-
-
-
-
-
-    if (startDate > endDate) {
-        alert("Start Date cannot be after End Date.");
-        startDateInput.focus();
+    if (!isNaN(startDate) && !isNaN(endDate) && startDate > endDate) {
+        displayError(startDateInput, startDateError, 'Start date cannot be after end date.');
         isValid = false;
-        return isValid;
     }
-
-
 
     return isValid;
+}
+
+function displayError(inputElement, errorElement, message) {
+    inputElement.classList.add('is-invalid');
+    errorElement.textContent = message;
+}
+function clearError(inputElement, errorElement) {
+    inputElement.classList.remove('is-invalid');
+    errorElement.textContent = '';
+}
+
+function updateDiscountValueFormat() {
+    const discountType = document.getElementById("discountType").value;
+    const discountValueInput = document.getElementById("discountValue");
+    discountValueInput.value = "";
+    if (discountType === "1") {
+        discountValueInput.setAttribute("max", 1);
+        discountValueInput.step = "0.01";
+    } else {
+        discountValueInput.removeAttribute("max");
+        discountValueInput.step = "any";
+    }
 }
