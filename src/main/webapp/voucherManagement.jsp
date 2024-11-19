@@ -53,28 +53,36 @@
                 white-space: nowrap;
             }
             #voucherListTable th:nth-child(1), #voucherListTable td:nth-child(1) {
-                width: 5%;
+                width: 4%;
             }
             #voucherListTable th:nth-child(2), #voucherListTable td:nth-child(2) {
-                width: 12%;
-            }
-            #voucherListTable th:nth-child(3), #voucherListTable td:nth-child(3) {
-                width: 13%;
-            }
-            #voucherListTable th:nth-child(4), #voucherListTable td:nth-child(4) {
-                width: 8%;
-            }
-            #voucherListTable th:nth-child(5), #voucherListTable td:nth-child(5) {
-                width: 15%;
-            }
-            #voucherListTable th:nth-child(6), #voucherListTable td:nth-child(6) {
-                width: 15%;
-            }
-            #voucherListTable th:nth-child(7), #voucherListTable td:nth-child(7) {
                 width: 10%;
             }
+            #voucherListTable th:nth-child(3), #voucherListTable td:nth-child(3) {
+                width: 12%;
+            }
+            #voucherListTable th:nth-child(4), #voucherListTable td:nth-child(4) {
+                width: 12%;
+            }
+            #voucherListTable th:nth-child(5), #voucherListTable td:nth-child(5) {
+                width: 10%;
+            }
+            #voucherListTable th:nth-child(6), #voucherListTable td:nth-child(6) {
+                width: 13%;
+            }
+            #voucherListTable th:nth-child(7), #voucherListTable td:nth-child(7) {
+                width: 13%;
+            }
             #voucherListTable th:nth-child(8), #voucherListTable td:nth-child(8) {
-                width: 22%;
+                width: 6%;
+            }
+            #voucherListTable th:nth-child(9), #voucherListTable td:nth-child(9) {
+                width: 20%;
+            }
+            .voucher-code {
+                font-family: monospace;
+                margin-top: 0.5rem;
+                display: block;
             }
             .btn-primary {
                 background-color: #261d6a;
@@ -166,7 +174,7 @@
     </head>
     <body>
         <nav>
-          <iframe src="adminNavbar.jsp" height="60px"></iframe>  
+            <iframe src="adminNavbar.jsp" height="60px"></iframe>  
         </nav>
         <div class="container-fluid">
             <div class="card">
@@ -189,6 +197,7 @@
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
                 <form action="VoucherController" method="GET" class="search-and-filter">
+                    <input type="hidden" name="action" value="search"> 
                     <div class="search-input-group"><input type="text" name="searchName" placeholder="Search for vouchers..." class="form-control"></div>
                     <div class="filter-group">
                         <select name="discountType" class="form-select">
@@ -210,6 +219,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Code</th>
                                 <th>Discount Type</th>
                                 <th>Value</th>
                                 <th>Start Date</th>
@@ -223,6 +233,7 @@
                                 <tr>
                                     <td>${voucher.voucherID}</td>
                                     <td>${voucher.voucherName}</td>
+                                    <td>${voucher.voucherCode}</td>
                                     <td><c:choose><c:when test="${voucher.type}">Percentage</c:when><c:otherwise>Flat</c:otherwise></c:choose></td>
                                     <td>${voucher.value}</td>
                                     <td><vt:formatLocalDateTime dateTime="${voucher.startDate}" pattern="HH:mm dd MMM yyyy"/></td>
@@ -282,7 +293,7 @@
                             <input type="hidden" name="action" value="edit"><input type="hidden" name="voucherId" id="editVoucherId" value="">
                             <div class="mb-3"><label for="voucherCode" class="col-form-label">Voucher Code:</label><input type="text" class="form-control" id="voucherCode" name="voucherCode" required><div class="invalid-feedback voucherCodeError"></div></div>
                             <div class="mb-3"><label for="voucherName" class="col-form-label">Voucher Name:</label><input type="text" class="form-control" id="voucherName" name="voucherName" required><div class="invalid-feedback voucherNameError"></div></div>
-                            <div class="mb-3"><label for="discountType" class="col-form-label">Discount Type:</label><select class="form-select" id="discountType" name="discountType" onchange="updateDiscountValueFormat()" required><option value="1">Percentage</option><option value="0">Flat</option></select><div class="invalid-feedback discountTypeError"></div></div>
+                            <div class="mb-3"><label for="discountType" class="col-form-label">Discount Type:</label><select class="form-select" id="discountType" name="discountType" onchange="updateDiscountValueFormat()" required><option value="TRUE">Percentage</option><option value="FALSE">Flat</option></select><div class="invalid-feedback discountTypeError"></div></div>
                             <div class="mb-3"><label for="discountValue" class="col-form-label">Discount Value:</label><input type="number" class="form-control" id="discountValue" name="discountValue" step="0.01" required><div class="invalid-feedback discountValueError"></div></div>
                             <div class="mb-3 row">
                                 <div class="col-md-6"><label for="startDate" class="col-form-label">Start Date:</label><input type="datetime-local" class="form-control datetime-local-input" id="startDate" name="startDate" required><div class="invalid-feedback startDateError"></div></div>
