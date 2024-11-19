@@ -98,11 +98,11 @@
                     <h2 class="card-title">Order Confirmation</h2>
 
                     <%
+                        double totalPrice = 0; 
                         ArrayList<OrderItem> orderItemsList = (ArrayList<OrderItem>) request.getAttribute("orderItemsList");
-                        int voucherID = (Integer) request.getAttribute("voucherID");
 
                         if (orderItemsList != null && !orderItemsList.isEmpty()) {
-                            double totalPrice = 0; 
+                            totalPrice = 0; 
                     %>
 
                     <table class="table table-bordered table-striped mt-3">
@@ -139,14 +139,27 @@
                     <div class="mt-3">
                         <strong>Voucher:</strong>
                         <select id="voucherSelect" class="form-select" onchange="applyVoucher()">
-                            <option value="0" data-discount-type="0" data-discount-value="0">No Voucher</option> <%-- Added data attributes for consistency --%>                      
-
+                            <option value="0" data-discount-type="0" data-discount-value="0">No Voucher</option> <%-- Added data attributes for consistency --%>     
+                            <%
+                                VoucherDAO voucherDAO = new VoucherDAO();
+                                ArrayList<Voucher> vouchers = voucherDAO.getVoucherList(true);
+                                if (vouchers != null) {
+                                    for (Voucher voucher : vouchers) {
+                            %>
+                            <option value="<%= voucher.getVoucherID() %>" 
+                                    data-discount-type="<%= voucher.isType() ? 1 : 0 %>" 
+                                    data-discount-value="<%= voucher.getValue() %>"> 
+                                <%= voucher.getVoucherName() %></option>
+                                <%
+                                    }  
+                                    }
+                                %>
                         </select>
                     </div>
 
-                    <form action="OrderController" method="post" class="mt-3">  <%-- Corrected form action --%>
-                        <input type="hidden" name="action" value="createOrder"> <%-- Use a more specific action name --%>
-                        <input type="hidden" name="totalAmount" value="<%= totalPrice %>"> <%-- Send total amount --%>
+                    <form action="OrderController" method="post" class="mt-3">  
+                        <input type="hidden" name="action" value="createOrder"> 
+                        <input type="hidden" name="totalAmount" value="<%= totalPrice %>"> 
 
                         <%-- You can also include hidden input fields for selected items if needed: --%>
                         <%
@@ -157,8 +170,8 @@
                         <%
                         }
                         %>
+                        <input type="hidden" id="voucherIDInput" name="voucherID" value="0"> 
 
-                        <input type="hidden" id="voucherIDInput" name="voucherID" value="0"> <%-- Initialize voucherID to 0 --%>
                         <button class="btn btn-primary btn-large" type="submit">Place Order</button>
                     </form>
                     <%
@@ -171,25 +184,28 @@
 
                     <script>
                         function applyVoucher() {
-                            var voucherSelect = document.getElementById("voucherSelect");
-                            var selectedVoucher = voucherSelect.options[voucherSelect.selectedIndex];
-                            var totalPrice;
-                            var finalPrice = totalPrice;
+                            const voucherSelect = document.getElementById("voucherSelect");
+                            const selectedVoucher = voucherSelect.options[voucherSelect.selectedIndex];
+                            let totalPrice = <%= totalPrice %>;
+                            let finalPrice = totalPrice;
+                            let voucherID = 0; // Khởi tạo voucherID
 
-                            if (selectedVoucher.value !== "0") {
-                                var discountType = selectedVoucher.getAttribute("data-discount-type");
-                                var discountValue = parseFloat(selectedVoucher.getAttribute("data-discount-value"));
+                            if (selectedVoucher) { 
+                                voucherID = selectedVoucher.value;
+                                if (voucherID !== "0") {
+                                    const discountType = selectedVoucher.getAttribute("data-discount-type");
+                                    const discountValue = parseFloat(selectedVoucher.getAttribute("data-discount-value"));
 
-                                if (discountType === "0") {  // Fixed amount discount
-                                    finalPrice = totalPrice - discountValue;
-                                } else if (discountType === "1") {  // Percentage discount
-                                    finalPrice = totalPrice * (1 - discountValue / 100);
+                                    if (discountType === "0") {
+                                        finalPrice = totalPrice - discountValue;
+                                    } else if (discountType === "1") {
+                                        finalPrice = totalPrice * (1 - discountValue / 100);
+                                    }
                                 }
                             }
 
                             document.getElementById("totalPrice").innerText = finalPrice.toFixed(2) + " VND";
-                            document.getElementById("finalPriceInput").value = finalPrice.toFixed(2);
-                            document.getElementById("voucherIDInput").value = selectedVoucher.value; // Update voucher ID in hidden input
+                            document.getElementById("voucherIDInput").value = voucherID;
                         }
                     </script>
 
