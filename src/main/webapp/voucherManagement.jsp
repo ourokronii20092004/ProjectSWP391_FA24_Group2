@@ -1,6 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="vt" uri="/WEB-INF/tlds/voucherTags" %>
 <!DOCTYPE html>
 <html>
@@ -166,7 +165,9 @@
         </style>
     </head>
     <body>
-        <iframe src="adminNavbar.jsp" height="60px"></iframe>
+        <nav>
+          <iframe src="adminNavbar.jsp" height="60px"></iframe>  
+        </nav>
         <div class="container-fluid">
             <div class="card">
                 <div class="title-and-buttons">
