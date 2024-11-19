@@ -590,7 +590,7 @@ public class ProductDAO {
                     pre.setInt(2, productID);
                     upCount = pre.executeUpdate();
                     return upCount > 0;
-                    
+
                 }
             }
         } catch (SQLException ex) {
@@ -600,5 +600,56 @@ public class ProductDAO {
             DBConnection.Disconnect();
         }
         return false;
+    }
+
+    public ArrayList<Product> searchProductsByCategories(int[] categoryIds) throws SQLException {
+        ArrayList<Product> products = new ArrayList<>();
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            try { //Use try-with-resources for automatic closing
+                if (categoryIds == null || categoryIds.length == 0) {
+                    // Handle the case where no categories are selected (return all products or handle appropriately)
+                    return viewProductList(); // Or throw an exception, return an empty list, etc.
+                }
+
+                String sql = "SELECT * FROM Product WHERE CategoryID IN (";
+                for (int i = 0; i < categoryIds.length; i++) {
+                    sql += "?";
+                    if (i < categoryIds.length - 1) {
+                        sql += ",";
+                    }
+                }
+                sql += ") AND StockQuantity > -1";
+
+                try ( PreparedStatement statement = DBConnection.getPreparedStatement(sql)) {
+                    for (int i = 0; i < categoryIds.length; i++) {
+                        statement.setInt(i + 1, categoryIds[i]);
+                    }
+
+                    try ( ResultSet rs = statement.executeQuery()) {
+                        while (rs.next()) {
+                            products.add(new Product(
+                                    rs.getInt("ProductID"),
+                                    rs.getString("ProductName"),
+                                    rs.getString("Description"),
+                                    rs.getFloat("Price"),
+                                    rs.getString("ImageURL"),
+                                    rs.getInt("CategoryID"),
+                                    rs.getInt("StockQuantity"),
+                                    rs.getDate("CreatedAt"),
+                                    rs.getDate("UpdatedAt")
+                            ));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error searching products by categories: ", e);
+                //Consider throwing the exception instead of returning an empty list in production
+                return new ArrayList<>();
+            } finally {
+                DBConnection.Disconnect();
+            }
+        }
+        return products;
     }
 }

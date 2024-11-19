@@ -70,10 +70,10 @@ public class CategoryController extends HttpServlet {
                 // System.out.println("list");
                 ArrayList<Category> categoryList = new DAOs.CategoryDAO().getCategoryWithParentName();
                 request.setAttribute("categoryList", categoryList);
+                RequestDispatcher ds = request.getRequestDispatcher("categoryManagement.jsp");
+                ds.forward(request, response);
+                return;
             }
-            RequestDispatcher ds = request.getRequestDispatcher("categoryManagement.jsp");
-            ds.forward(request, response);
-            return;
 
         }
 
