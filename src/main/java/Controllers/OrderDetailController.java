@@ -4,6 +4,10 @@
  */
 package Controllers;
 
+import DAOs.OrderDAO;
+import DAOs.ProductDAO;
+import Models.Order;
+import Models.OrderItem;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -59,6 +63,25 @@ public class OrderDetailController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int orderID = Integer.parseInt(request.getParameter("orderID"));
+        String action = request.getParameter("action");
+        System.out.println("action: " + action);
+        OrderDAO orDAO = new OrderDAO();
+        if (action.equalsIgnoreCase("Waitting")) {
+            System.out.println("Confirm action:" + orDAO.updateOrderStatus(orderID, action));
+        } else if (action.equalsIgnoreCase("Canceled")) {
+            ProductDAO pro = new ProductDAO();
+            System.out.println("Canceled action:" + orDAO.updateOrderStatus(orderID, action));
+            Order or = orDAO.readOrder(orderID);
+            for (OrderItem o : or.getOrderItemList()) {
+                pro.updateProductStockRefuse(o.getProduct().getProductID(), o.getQuantity());
+                System.out.println("Restock: " + o.getProduct().getProductName());
+            }
+
+        } else if (action.equalsIgnoreCase("Confirm")) {
+            System.out.println("Confirm action:" + orDAO.updateOrderStatus(orderID, action));
+        }
+        response.sendRedirect("/OrderDetailController?orderID=" + orderID);
 
     }
 

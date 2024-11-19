@@ -16,6 +16,18 @@
         <title>Order Detail</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+                integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+                integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+                crossorigin="anonymous">
+        </script>
         <style>
             body {
                 background-color: #F5F7FB;
@@ -67,6 +79,121 @@
             .headOrder{
                 font-weight: bold;
                 font-size: 20px
+            }
+            /* Định dạng ảnh avatar */
+            .avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 2px solid black;
+                transition: transform 0.2s ease;
+            }
+
+            .avatar:hover {
+                transform: scale(1.1);
+            }
+
+            .custom-dropdown {
+                position: absolute;
+                top: 60px; /* Khoảng cách từ avatar xuống */
+                right: 0px;
+                z-index: 9999; /* Đảm bảo menu luôn ở trên cùng */
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                display: none; /* Ẩn menu ban đầu */
+            }
+
+            .custom-dropdown a.dropdown-item {
+                padding: 10px 15px;
+                border-radius: 6px;
+                transition: background-color 0.2s ease, color 0.2s ease;
+            }
+
+            .custom-dropdown a.dropdown-item:hover {
+                background-color: #f0f0f5;
+                color: #333;
+            }
+
+            /* Text styling for "Hello, User" */
+            .custom-dropdown a.user-greeting {
+                text-decoration: none;
+                font-weight: bold;
+                color: #6c757d;
+                cursor: default;
+                padding: 8px 15px;
+                display: block;
+                text-transform: capitalize;
+            }
+            .nav-link {
+                color: #261d6a;
+            }
+
+            .navbar-brand {
+                font-weight: bold;
+            }
+
+            .nav-link {
+                position: relative;
+                padding-bottom: 10px;
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                background-color: #43C197;
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            .nav-link.bell-link {
+                padding-bottom: 0;
+            }
+
+            .nav-link.bell-link::after {
+                display: none;
+            }
+
+            .nav-link.bell-link:hover .bell-icon {
+                animation: swing 0.8s ease-in-out;
+            }
+            @keyframes swing {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                25% {
+                    transform: rotate(20deg);
+                }
+
+                50% {
+                    transform: rotate(-20deg);
+                }
+
+                75% {
+                    transform: rotate(5deg);
+                }
+
+                88% {
+                    transform: rotate(-7deg);
+                }
+
+                97% {
+                    transform: rotate(1deg);
+                }
+
+                100% {
+                    transform: rotate(0deg);
+                }
             }
         </style>
     </head>
@@ -229,7 +356,35 @@
                                         </c:otherwise>
                                     </c:choose>                              
                                 </tr>
-                            </table>                      
+                            </table>
+
+                            <% if(user.getRoleID() != 2){%>
+                            <div>
+                                <form action="/OrderDetailController" method="POST" style="display: inline;">
+                                    <input type="hidden" name="orderID" value="${order.orderID}">
+                                    <input type="hidden" name="action" value="Waitting">
+                                    <button type="submit" id="confirmOrdersBtn" class="btn btn-success me-2">Confirm Orders</button>
+                                </form>
+                                <form action="/OrderDetailController" method="POST" style="display: inline;">
+                                    <input type="hidden" name="orderID" value="${order.orderID}">
+                                    <input type="hidden" name="action" value="Canceled">
+                                    <button type="submit" id="refuseOrdersBtn" class="btn btn-danger">Refuse Orders</button>
+                                </form>
+                                <%}else{%>                              
+                                <form action="/OrderDetailController" method="POST" style="display: inline;">
+                                    <input type="hidden" name="orderID" value="${order.orderID}">
+                                    <input type="hidden" name="action" value="Confirm">
+                                    <button type="submit" id="confirmOrdersBtn" class="btn btn-success me-2">Confirm Deliver</button>
+                                </form>
+                                <%}%>
+
+                                <c:if test="${not empty sessionScope.message}">
+                                    <div class="alert alert-info" role="alert">
+                                        ${sessionScope.message}
+                                    </div>
+                                    <% request.getSession().removeAttribute("message"); %>
+                                </c:if>
+                            </div>
                         </div>                       
                     </div>
                 </div>
@@ -239,8 +394,19 @@
                 <iframe class="footerIframe" src="adminFooter.jsp" height="70px"></iframe>
             </footer>
     </body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous">
+    <script>
+        document.getElementById('avatarButton').addEventListener('click', function (event) {
+            var dropdownMenu = document.querySelector('.dropdown-menu');
+            dropdownMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', function (event) {
+            const dropdown = document.querySelector('.dropdown-menu');
+            const avatarButton = document.querySelector('#avatarButton');
+            // Kiểm tra nếu người dùng nhấn ra ngoài dropdown hoặc avatarButton
+            if (!avatarButton.contains(event.target) && !dropdown.contains(event.target)) {
+                const dropdownMenu = new bootstrap.Dropdown(avatarButton);
+                dropdownMenu.hide();
+            }
+        });
     </script>
 </html>
