@@ -199,6 +199,11 @@
                     </div>
                 </c:if>
 
+                <c:if test="${not empty errorMessage}">
+                    <div class="alert alert-danger" role="alert">${errorMessage}</div>
+                    <c:remove var="errorMessage" scope="session"/>
+                </c:if>
+
                 <form action="ProductController" method="GET">
                     <input type="hidden" name="action" value="search">
                     <div class="search-and-filter">
@@ -264,9 +269,11 @@
                                                 data-product-stockquantity="${product.stockQuantity}"
                                                 data-product-imageurl="${product.imageURL}">Edit</button>
 
-                                        <a href="ProductController?action=delete&productId=${product.productID}"
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                                        <form action="ProductController" method="POST" style="display: inline;">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="productId" value="${product.productID}">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+                                        </form>
 
                                     </td>
                                 </tr>
