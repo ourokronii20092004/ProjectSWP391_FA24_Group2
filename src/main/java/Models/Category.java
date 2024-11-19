@@ -12,12 +12,21 @@ public class Category {
     private int categoryId;
     private String categoryName;
     private Integer parentCategoryID;
+     private String parentCategoryName;
 
     public Category(int categoryId, String categoryName, Integer parentCategoryID) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.parentCategoryID = parentCategoryID;
     }
+    
+    public Category(int categoryId, String categoryName, Integer parentCategoryID, String parentCategoryName) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.parentCategoryID = parentCategoryID;
+        this.parentCategoryName = parentCategoryName;
+    }
+    
 
     public Category(String categoryName, Integer parentCategoryID) {
         this.categoryName = categoryName;
@@ -50,7 +59,11 @@ public class Category {
         this.parentCategoryID = parentCategoryID;
     }
 
-   
+    public String getParentCategoryName() {
+        return parentCategoryName;
+    }
 
-
+    public void setParentCategoryName(String parentCategoryName) {
+        this.parentCategoryName = parentCategoryName;
+    }
 }
