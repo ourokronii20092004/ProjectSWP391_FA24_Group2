@@ -206,6 +206,7 @@ System.out.println("total2 : " + orderDAO.readOrder(newOrderID).getTotalAmount()
         float totalAmount = Float.parseFloat(request.getParameter("totalAmount"));
         int voucherID = Integer.parseInt(request.getParameter("voucherID"));
         System.out.println(voucherID + "   Voucher");
+        System.out.println("Total : " + totalAmount);
 
         OrderDAO orderDAO = new OrderDAO();
         ProductDAO productDAO = new ProductDAO();
