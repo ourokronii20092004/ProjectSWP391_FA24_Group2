@@ -159,7 +159,7 @@
 
                     <form action="OrderController" method="post" class="mt-3">  
                         <input type="hidden" name="action" value="createOrder"> 
-                        <input type="hidden" name="totalAmount" value="<%= totalPrice %>"> 
+                        <input type="hidden" name="totalAmount" id="totalAmount" value="<%= totalPrice %>"> 
 
                         <%-- You can also include hidden input fields for selected items if needed: --%>
                         <%
@@ -197,7 +197,7 @@
                                     const discountValue = parseFloat(selectedVoucher.getAttribute("data-discount-value"));
 
                                     if (discountType === "0") {
-                                        finalPrice = totalPrice - discountValue;
+                                        finalPrice = totalPrice - discountValue < 0 ? 0 : totalPrice - discountValue;
                                     } else if (discountType === "1") {
                                         finalPrice = totalPrice * (1 - discountValue / 100);
                                     }
@@ -205,6 +205,7 @@
                             }
 
                             document.getElementById("totalPrice").innerText = finalPrice.toFixed(2) + " VND";
+                            document.getElementById("totalAmount").value = finalPrice;
                             document.getElementById("voucherIDInput").value = voucherID;
                         }
                     </script>
