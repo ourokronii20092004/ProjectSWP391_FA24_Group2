@@ -132,17 +132,12 @@ public class VoucherController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         VoucherDAO voucherDAO = new VoucherDAO();
-
         if (action == null) {
-            action = "list";
+            action = "nothing";
         }
-
         System.out.println("--- Voucher Controller doPost ---");
         System.out.println("doPost: " + action);
-
         try {
-            boolean success = false;
-
             switch (action) {
                 case "add":
                     if (!validateVoucherAdd(request, response, voucherDAO)) {
@@ -160,7 +155,6 @@ public class VoucherController extends HttpServlet {
 
                     Voucher newVoucher = new Voucher(0, voucherCode, discountType, discountValue, startDate, endDate, voucherName, true, createdAt, updatedAt);
                     voucherDAO.addVoucher(newVoucher);
-                    success = true;
                     break;
 
                 case "edit":
@@ -189,7 +183,6 @@ public class VoucherController extends HttpServlet {
                         existingVoucher.setVoucherName(voucherNameEdit);
                         existingVoucher.setUpdateAt(updatedAtEdit);
                         voucherDAO.updateVoucher(existingVoucher);
-                        success = true;
                     } else {
                         request.setAttribute("errorMessage", "Voucher not found.");
                         response.sendRedirect("VoucherController?action=list");
@@ -201,24 +194,18 @@ public class VoucherController extends HttpServlet {
                     int voucherIdToDelete = Integer.parseInt(request.getParameter("voucherId"));
                     if (voucherDAO.deleteVoucher(voucherIdToDelete)) {
                         request.setAttribute("successMessage", "Voucher deleted successfully.");
-                        success = true;
                     } else {
                         request.setAttribute("errorMessage", "Failed to delete voucher.");
                         response.sendRedirect("VoucherController?action=list");
                         return;
                     }
                     break;
-
                 default:
                     request.setAttribute("errorMessage", "Invalid action.");
                     response.sendRedirect("VoucherController?action=list");
                     return;
             }
-
-            if (success) {
-                response.sendRedirect("VoucherController?action=list");
-            }
-
+            response.sendRedirect("VoucherController?action=list");
         } catch (NumberFormatException | DateTimeParseException | ServletException | IOException ex) {
             Logger.getLogger(VoucherController.class.getName()).log(Level.SEVERE, "Error in doPost", ex);
             request.setAttribute("errorMessage", "An unexpected error occurred.");

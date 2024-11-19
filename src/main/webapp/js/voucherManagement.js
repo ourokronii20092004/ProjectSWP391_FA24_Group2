@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (discountTypeSelect) {
         discountTypeSelect.addEventListener('change', updateDiscountValueFormat);
     }
-
 });
 
 function formatDateForDatetimeLocal(date) {
@@ -77,64 +76,11 @@ function populateEditVoucherModal(voucherId, voucherCode, voucherName, type, val
     const editForm = document.getElementById('editVoucherForm');
     const errorDiv = modal.querySelector('.errorMessage');
 
-    editForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        const formData = new FormData(editForm);
-        formData.append('action', 'edit');
 
-        const xhr = new XMLHttpRequest();
 
-        xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                if (xhr.responseURL && xhr.responseURL !== window.location.href) {
-                    window.location.href = xhr.responseURL;
-                    hideEditVoucherModal();
-                } else {
-                    window.location.reload();
-                }
-            } else {
-                errorDiv.style.display = 'block';
-                try {
-                    const errorData = JSON.parse(xhr.responseText);
-                    const errorMessages = errorData.errorMessages;
-                    let errorMessage = '';
-                    if (errorMessages && typeof errorMessages === 'object') {
-                        for (const field in errorMessages) {
-                            if (errorMessages.hasOwnProperty(field)) {
-                                errorMessage += `${errorMessages[field]}<br>`;
-                            }
-                        }
-                    }
-                    errorDiv.innerHTML = errorMessage;
-                } catch (e) {
-                    errorDiv.textContent = "An error occurred during the edit.";
-                }
-            }
-        };
+        const editModal = new bootstrap.Modal(document.getElementById('editVoucherModal'));
+    editModal.show();
 
-        xhr.onerror = function () {
-            errorDiv.style.display = 'block';
-            errorDiv.textContent = "An error occurred during the edit.";
-        };
-        xhr.open('POST', 'VoucherController');
-        xhr.send(formData);
-    });
-
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-    const closeButton = modal.querySelector('.btn-close');
-    closeButton.addEventListener('click', () => {
-        hideEditVoucherModal();
-    });
-}
-
-function hideEditVoucherModal() {
-    const modal = document.getElementById('editVoucherModal');
-    modal.style.display = 'none';
-
-    document.body.classList.remove('modal-open');
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
 }
 
 function validateForm(form) {
@@ -142,7 +88,7 @@ function validateForm(form) {
     const voucherCodeInput = form.querySelector('[name="voucherCode"]');
     const voucherNameInput = form.querySelector('[name="voucherName"]');
     const discountTypeSelect = form.querySelector('#discountType');
-    const valueInput = form.querySelector('[name="value"]');
+    const valueInput = form.querySelector('[name="discountValue"]');
     const startDateInput = form.querySelector('[name="startDate"]');
     const endDateInput = form.querySelector('[name="endDate"]');
     const voucherCodeError = form.querySelector('.voucherCodeError');
