@@ -156,7 +156,6 @@ public class ProductDAO {
                     pre.setInt(5, product.getCategoryID());
                     pre.setInt(6, product.getStockQuantity());
                     upCount = pre.executeUpdate();
-                    System.out.println("Rows affected by addProduct: " + upCount);
                 }
                 if (upCount > 0) {
                     viewProductList();
@@ -213,7 +212,6 @@ public class ProductDAO {
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, id);
                     upCount = pre.executeUpdate();
-                    System.out.println("Rows affected by removeProduct: " + upCount); //TEST
                 }
                 if (upCount > 0) {
                     Product product = readProduct(id);
@@ -239,11 +237,10 @@ public class ProductDAO {
         try {
             DBConnection.Connect();
             if (DBConnection.isConnected()) {
-                String sql = "delete from Product where ProductID = ?"; // hard delete
+                String sql = "update Product set StockQuantity = -2 where ProductID = ?"; // hard delete
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, id);
                     upCount = pre.executeUpdate();
-                    System.out.println("Rows affected by removeProductFinal: " + upCount); //TEST
                 }
                 if (upCount > 0) {
                     Product productToRemove = readProduct(id);
@@ -272,7 +269,6 @@ public class ProductDAO {
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setInt(1, id);
                     upCount = pre.executeUpdate();
-                    System.out.println("Rows affected by restoreProduct: " + upCount); //TEST
                 }
 
                 if (upCount > 0) {
@@ -421,7 +417,6 @@ public class ProductDAO {
         } finally {
             DBConnection.Disconnect();
         }
-        System.out.println("Category: " + categoryId + " | " + isValid);
         return isValid;
     }
 

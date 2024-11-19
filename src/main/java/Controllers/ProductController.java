@@ -21,6 +21,8 @@ import java.util.logging.Logger;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -56,177 +58,114 @@ public class ProductController extends HttpServlet {
             }
             ProductDAO productDAO = new ProductDAO();
             ArrayList<Product> productList = null;
-            System.out.println("--- ProductController doGet --- ");
             CategoryDAO categoryDAO = new CategoryDAO();
             ArrayList<Category> categoryList = categoryDAO.viewCategory();
             request.setAttribute("categoryList", categoryList);
-
             switch (action) {
-                case "list": {
+                case "list":
                     productList = productDAO.viewProductList();
-                    System.out.println("doGet: " + action);
                     break;
-                }
-
-                case "deleted": {
+                case "deleted":
                     productList = productDAO.viewDeletedProductList();
-                    System.out.println("doGet: " + action);
                     break;
-                }
-
-                case "delete": {
+                case "delete":
                     int productID = Integer.parseInt(request.getParameter("productId"));
                     productDAO.removeProduct(productID);
-                    System.out.println("doGet: " + action);
                     response.sendRedirect("ProductController?action=list&page=Product");
                     return;
-                }
-
-                case "restore": {
-                    int productID = Integer.parseInt(request.getParameter("productId"));
-                    boolean restored = productDAO.restoreProduct(productID);
-                    if (restored) {
-                        request.setAttribute("message", "Product restored successfully.");
-                    } else {
-                        request.setAttribute("errorMessage", "Failed to restore product.");
-                    }
-                    System.out.println("doGet: " + action);
+                case "restore":
+                    int productIDRestore = Integer.parseInt(request.getParameter("productId"));
+                    productDAO.restoreProduct(productIDRestore);
                     response.sendRedirect("ProductController?action=deleted&page=Product");
                     return;
-                }
-
-                case "deleteFinal": {
-                    int productID = Integer.parseInt(request.getParameter("productId"));
-                    productDAO.removeProductFinal(productID);
-                    System.out.println("doGet: " + action);
+                case "deleteFinal":
+                    int productIDDeleteFinal = Integer.parseInt(request.getParameter("productId"));
+                    productDAO.removeProductFinal(productIDDeleteFinal);
                     response.sendRedirect("ProductController?action=deleted&page=Product");
                     return;
-                }
-
-                case "listControl": {
+                case "listControl":
                     productList = productDAO.viewProductListControl();
-                    System.out.println("doGet: " + action);
                     break;
-                }
-
-                case "getCategories": {
-                    System.out.println("doGet: " + action);
+                case "getCategories":
                     Gson gson = new Gson();
                     String categoryListJson = gson.toJson(categoryList);
                     response.setContentType("application/json");
                     response.getWriter().write(categoryListJson);
-
-                    return; //return de bo qua khuc sau, dung co sua no lai
-                }
-
-                case "search": {
-                    System.out.println("doGet: " + action);
+                    return;
+                case "search":
                     String searchName = request.getParameter("searchName");
                     String categoryIdStr = request.getParameter("categoryId");
-
                     try {
                         if (categoryIdStr != null && !categoryIdStr.isEmpty() && searchName != null && !searchName.isEmpty()) {
-                            //search by both
                             int categoryId = Integer.parseInt(categoryIdStr);
                             productList = productDAO.searchProductsByNameAndCategory(searchName, categoryId);
                         } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-                            //search by category only
                             int categoryId = Integer.parseInt(categoryIdStr);
                             productList = productDAO.searchProductsByCategory(categoryId);
                         } else if (searchName != null && !searchName.isEmpty()) {
-                            //search by name only
                             productList = productDAO.searchProductsByName(searchName);
                         } else {
-                            //default
                             productList = productDAO.viewProductList();
                         }
-
                         if (productList.isEmpty()) {
                             request.setAttribute("noResultsMessage", "No products found matching your criteria.");
                             productList = productDAO.viewProductList();
                         }
                     } catch (NumberFormatException e) {
                         request.setAttribute("errorMessage", "Invalid category ID.");
-                        productList = productDAO.viewProductList();// error = show all
+                        productList = productDAO.viewProductList();
                     } catch (SQLException e) {
                         Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, "SQL Exception during search", e);
-                        //request.setAttribute("errorMessage", "Database error: " + e.getMessage());
-                        //RequestDispatcher dispatcher = request.getRequestDispatcher("/error.jsp");
-                        //dispatcher.forward(request, response);
-                        //return; //stop
                     }
                     break;
-                }
-
-                case "searchDeleted": {
-                    System.out.println("doGet: " + action);
-                    String searchName = request.getParameter("searchName");
-                    String categoryIdStr = request.getParameter("categoryId");
-
+                case "searchDeleted":
+                    String searchDeletedName = request.getParameter("searchName");
+                    String categoryDeletedIdStr = request.getParameter("categoryId");
                     try {
-
-                        if (categoryIdStr != null && !categoryIdStr.isEmpty() && searchName != null && !searchName.isEmpty()) {
-
-                            int categoryId = Integer.parseInt(categoryIdStr);
-                            productList = productDAO.searchDeletedProductsByNameAndCategory(searchName, categoryId);
-
-                        } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-
-                            int categoryId = Integer.parseInt(categoryIdStr);
+                        if (categoryDeletedIdStr != null && !categoryDeletedIdStr.isEmpty() && searchDeletedName != null && !searchDeletedName.isEmpty()) {
+                            int categoryId = Integer.parseInt(categoryDeletedIdStr);
+                            productList = productDAO.searchDeletedProductsByNameAndCategory(searchDeletedName, categoryId);
+                        } else if (categoryDeletedIdStr != null && !categoryDeletedIdStr.isEmpty()) {
+                            int categoryId = Integer.parseInt(categoryDeletedIdStr);
                             productList = productDAO.searchDeletedProductsByCategory(categoryId);
-                        } else if (searchName != null && !searchName.isEmpty()) {
-
-                            productList = productDAO.searchDeletedProductsByName(searchName);
+                        } else if (searchDeletedName != null && !searchDeletedName.isEmpty()) {
+                            productList = productDAO.searchDeletedProductsByName(searchDeletedName);
                         } else {
-
                             productList = productDAO.viewDeletedProductList();
                         }
-
                         if (productList.isEmpty()) {
                             request.setAttribute("noResultsMessage", "No deleted products found matching your criteria.");
                             productList = productDAO.viewDeletedProductList();
                         }
                     } catch (NumberFormatException e) {
                         request.setAttribute("errorMessage", "Invalid category ID.");
-
                         return;
                     } catch (SQLException e) {
                         Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, "SQL Exception during deleted search", e);
-                        //request.setAttribute("errorMessage", "Database error: " + e.getMessage());
-                        //RequestDispatcher dispatcher = request.getRequestDispatcher("/error.jsp");
-                        //dispatcher.forward(request, response);
-                        //return;
                     }
-
                     request.setAttribute("productList", productList);
                     break;
-                }
 
-                default: {
+                default:
                     productList = productDAO.viewProductList();
-                    System.out.println("doGet: " + action);
                     break;
-                }
             }
             request.setAttribute("productList", productList);
-            System.out.println("Navigation doGet.");
+
             switch (action) {
-                case "listControl": {
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("adminControl.jsp");
-                    dispatcher.forward(request, response);
+                case "listControl":
+                    RequestDispatcher dispatcherControl = request.getRequestDispatcher("adminControl.jsp");
+                    dispatcherControl.forward(request, response);
                     break;
-                }
                 case "deleted":
-                case "searchDeleted": {
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("restoreProduct.jsp");
-                    dispatcher.forward(request, response);
+                case "searchDeleted":
+                    RequestDispatcher dispatcherDeleted = request.getRequestDispatcher("restoreProduct.jsp");
+                    dispatcherDeleted.forward(request, response);
                     break;
-                }
-                default: {
+                default:
                     RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
                     dispatcher.forward(request, response);
                     break;
-                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
@@ -242,72 +181,62 @@ public class ProductController extends HttpServlet {
         String action = request.getParameter("action");
         action = (action == null) ? "listControl" : action;
         ProductDAO productDAO = new ProductDAO();
-        System.out.println("--- ProductController doPost --- ");
-        
-        System.out.println("doPost: " + action);
         switch (action) {
-            case "add": {
+            case "add":
+                if (validateProductAdd(request)) {
+                    String imageUrl = ImageHelper.saveImage(request.getPart("image"), "pro", getServletContext().getRealPath("/"));
+                    if (imageUrl != null) {
+                        String productName = request.getParameter("productName");
+                        String description = request.getParameter("description");
+                        float price = Float.parseFloat(request.getParameter("price"));
+                        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+                        int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
 
-                String imageUrl = ImageHelper.saveImage(request.getPart("image"), "pro", getServletContext().getRealPath("/"));
-                if (imageUrl != null) {
+                        Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
+                        productDAO.addProduct(newProduct);
 
-                    String productName = request.getParameter("productName");
-                    String description = request.getParameter("description");
-                    float price = Float.parseFloat(request.getParameter("price"));
-                    int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-                    int stockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-
-                    Product newProduct = new Product(0, productName, description, price, imageUrl, categoryId, stockQuantity, null, null);
-                    productDAO.addProduct(newProduct);
-
-                    response.sendRedirect("ProductController?action=list&page=Product");
-                } else {
-                    request.setAttribute("errorMessage", "Image upload failed.");
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
-                    dispatcher.forward(request, response);
-                }
-                return;
-            }
-            case "update": {
-
-                int productId = Integer.parseInt(request.getParameter("productId"));
-                String updatedProductName = request.getParameter("productName");
-                String updatedDescription = request.getParameter("description");
-                float updatedPrice = Float.parseFloat(request.getParameter("price"));
-                int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
-                int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
-
-                Part imagePart = request.getPart("image");
-                String updatedImageUrl;
-
-                if (imagePart != null && imagePart.getSize() > 0) {
-                    updatedImageUrl = ImageHelper.saveImage(imagePart, "pro", getServletContext().getRealPath("/"));
-
-                    if (updatedImageUrl == null) {
-                        request.setAttribute("errorMessage", "Image upload failed.");
-                        RequestDispatcher dispatcher = request.getRequestDispatcher("productManagement.jsp");
-                        dispatcher.forward(request, response);
+                        response.sendRedirect("ProductController?action=list&page=Product");
                         return;
+                    } else {
+                        request.getSession().setAttribute("errorMessage", "Image upload failed.");
                     }
-                } else {
-                    String path = "img" + File.separator + "pro" + File.separator + "default.jpg";
-                    Product existingProduct = productDAO.readProduct(productId);
-                    updatedImageUrl = (existingProduct != null) ? existingProduct.getImageURL() : path;
                 }
-
-                Product updatedProduct = new Product(productId, updatedProductName, updatedDescription, updatedPrice, updatedImageUrl, updatedCategoryId, updatedStockQuantity, null, null);
-                productDAO.updateProduct(updatedProduct);
-                response.sendRedirect("ProductController?action=list&page=Product");
+                response.sendRedirect("ProductController");
                 return;
-            }
-            case "bulkAction": {
+            case "update":
+                if (validateProductEdit(request)) {
+                    int productId = Integer.parseInt(request.getParameter("productId"));
+                    String updatedProductName = request.getParameter("productName");
+                    String updatedDescription = request.getParameter("description");
+                    float updatedPrice = Float.parseFloat(request.getParameter("price"));
+                    int updatedCategoryId = Integer.parseInt(request.getParameter("categoryId"));
+                    int updatedStockQuantity = Integer.parseInt(request.getParameter("stockQuantity"));
+                    Part imagePart = request.getPart("image");
+                    String updatedImageUrl;
 
+                    if (imagePart != null && imagePart.getSize() > 0) {
+                        updatedImageUrl = ImageHelper.saveImage(imagePart, "pro", getServletContext().getRealPath("/"));
+                        if (updatedImageUrl == null) {
+                            request.getSession().setAttribute("errorMessage", "Image upload failed.");
+                            response.sendRedirect("ProductController");
+                            return;
+                        }
+                    } else {
+                        String path = "img" + File.separator + "pro" + File.separator + "default.jpg";
+                        Product existingProduct = productDAO.readProduct(productId);
+                        updatedImageUrl = (existingProduct != null) ? existingProduct.getImageURL() : path;
+                    }
+                    Product updatedProduct = new Product(productId, updatedProductName, updatedDescription, updatedPrice, updatedImageUrl, updatedCategoryId, updatedStockQuantity, null, null);
+                    productDAO.updateProduct(updatedProduct);
+                    response.sendRedirect("ProductController?action=list&page=Product");
+                    return;
+                }
+                response.sendRedirect("ProductController");
+                return;
+            case "bulkAction":
                 String[] selectedProducts = request.getParameterValues("selectedProducts");
                 String bulkAction = request.getParameter("bulkRestore") != null ? "restore" : (request.getParameter("bulkDelete") != null ? "deleteFinal" : null);
                 if (selectedProducts != null && bulkAction != null) {
-
-                    System.out.println("doPost: " + bulkAction);
-
                     for (String productIdStr : selectedProducts) {
                         try {
                             int productId = Integer.parseInt(productIdStr);
@@ -315,24 +244,148 @@ public class ProductController extends HttpServlet {
                                 productDAO.restoreProduct(productId);
                             } else {
                                 productDAO.removeProductFinal(productId);
-
                             }
                         } catch (NumberFormatException e) {
                             System.err.println("Error parsing product ID: " + e.getMessage());
-
                         }
                     }
                 }
                 response.sendRedirect("ProductController?action=deleted&page=Product");
                 return;
-            }
-            default: {
-                System.out.println("doPost: " + action);
+            case "delete":
+                int productID = Integer.parseInt(request.getParameter("productId"));
+                productDAO.removeProduct(productID);
                 response.sendRedirect("ProductController?action=list&page=Product");
-            }
+                return;
+            default:
+                response.sendRedirect("ProductController?action=list&page=Product");
+        }
+    }
 
+    private boolean validateProductAdd(HttpServletRequest request) {
+        String productName = request.getParameter("productName");
+        String priceStr = request.getParameter("price");
+        String categoryIdStr = request.getParameter("categoryId");
+        String stockQuantityStr = request.getParameter("stockQuantity");
+        Part imagePart = null;
+        try {
+            imagePart = request.getPart("image");
+        } catch (IOException | ServletException ex) {
+            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (!isValidProductName(productName)) {
+            request.getSession().setAttribute("errorMessage", "Invalid product name. At least 1 letter & 80% valid characters.");
+            return false;
+        }
+        if (!isValidPrice(priceStr)) {
+            request.getSession().setAttribute("errorMessage", "Price must be between 0 and 10,000,000.");
+            return false;
+        }
+        if (!isValidStockQuantity(stockQuantityStr)) {
+            request.getSession().setAttribute("errorMessage", "Stock quantity must be between 0 and 10,000,000.");
+            return false;
+        }
+        if (!isValidCategoryId(categoryIdStr)) {
+            request.getSession().setAttribute("errorMessage", "Please select a category.");
+            return false;
+        }
+        if (imagePart == null || imagePart.getSize() <= 0) {
+            request.getSession().setAttribute("errorMessage", "Please select an image.");
+            return false;
+        } else if (!isValidImageType(imagePart)) {
+            request.getSession().setAttribute("errorMessage", "Invalid image type. Upload JPG, JPEG, or PNG.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateProductEdit(HttpServletRequest request) {
+        String productName = request.getParameter("productName");
+        String priceStr = request.getParameter("price");
+        String categoryIdStr = request.getParameter("categoryId");
+        String stockQuantityStr = request.getParameter("stockQuantity");
+        Part imagePart = null;
+        try {
+            imagePart = request.getPart("image");
+        } catch (IOException | ServletException ex) {
+            Logger.getLogger(ProductController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        if (!isValidProductName(productName)) {
+            request.getSession().setAttribute("errorMessage", "Invalid product name. At least 1 letter & 80% valid characters.");
+            return false;
+        }
+
+        if (!isValidPrice(priceStr)) {
+            request.getSession().setAttribute("errorMessage", "Price must be between 0 and 10,000,000.");
+            return false;
+        }
+
+        if (!isValidStockQuantity(stockQuantityStr)) {
+            request.getSession().setAttribute("errorMessage", "Stock quantity must be between 0 and 10,000,000.");
+            return false;
+        }
+
+        if (!isValidCategoryId(categoryIdStr)) {
+            request.getSession().setAttribute("errorMessage", "Please select a category.");
+            return false;
+        }
+
+        if (imagePart != null && imagePart.getSize() > 0 && !isValidImageType(imagePart)) {
+            request.getSession().setAttribute("errorMessage", "Invalid image type. Upload JPG, JPEG, or PNG.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidProductName(String productName) {
+        if (productName == null) {
+            return false;
+        }
+        if (!productName.matches(".*[a-zA-Z].*")) {
+            return false;
+        }
+
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(productName);
+        int specialCharCount = 0;
+        while (m.find()) {
+            specialCharCount++;
+        }
+        return (double) specialCharCount / productName.length() <= 0.2;
+    }
+
+    private boolean isValidPrice(String priceStr) {
+        try {
+            float price = Float.parseFloat(priceStr);
+            return price >= 0 && price <= 10000000;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidStockQuantity(String stockQuantityStr) {
+        try {
+            int stockQuantity = Integer.parseInt(stockQuantityStr);
+            return stockQuantity >= 0 && stockQuantity <= 10000000;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidImageType(Part imagePart) {
+        String contentType = imagePart.getContentType();
+        return contentType != null && (contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"));
+    }
+
+    private boolean isValidCategoryId(String categoryIdStr) {
+        try {
+            int categoryId = Integer.parseInt(categoryIdStr);
+            ProductDAO productDAO = new ProductDAO();
+            return productDAO.isValidCategoryId(categoryId);
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
