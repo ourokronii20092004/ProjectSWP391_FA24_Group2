@@ -194,11 +194,11 @@
                         <form id="employeeForm" action="EmployeeController/add" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control" placeholder="Username">
+                                <input minlength="8" type="text" name="username" class="form-control" placeholder="Username">
                             </div>
                             <div class="form-group">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" name="password"  placeholder="Password" required>
+                                <input minlength="8" type="password" class="form-control" name="password"  placeholder="Password" required>
                             </div>
                             <div class="form-group">
                                 <label for="address" class="form-label">Address</label>
@@ -218,7 +218,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="number" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Phone Number" required>
+                                <input type="number" minlength="10" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Phone Number" required>
                             </div>
                             <div class="form-group">
                                 <label for="pic" class="form-label">Profile Picture</label>

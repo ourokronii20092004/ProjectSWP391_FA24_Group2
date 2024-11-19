@@ -188,7 +188,14 @@
                                                     <th class="col-md-1">${voucher.value}% off</th>   
                                                     </c:when>
                                                     <c:when test="${voucher.type == false}">
-                                                    <th class="col-md-1">- ${voucher.value} VND</th>   
+                                                        <c:choose>
+                                                            <c:when test="${totalPrice < voucher.value}">
+                                                            <th class="col-md-1">- ${totalPrice} VND</th>   
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                            <th class="col-md-1">- ${voucher.value} VND</th>  
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </c:when>                                              
                                                 </c:choose> 
                                             </c:when>
@@ -208,7 +215,14 @@
                                             <th class="col-md-1">${totalPrice - (voucher.value * totalPrice / 100)} VND</th>   
                                             </c:when>
                                             <c:when test="${voucher.type == false}">
-                                            <th class="col-md-1">${totalPrice - voucher.value} VND</th>   
+                                                <c:choose>
+                                                    <c:when test="${totalPrice < voucher.value}">
+                                                    <th class="col-md-1">0 VND</th>   
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                    <th class="col-md-1">${totalPrice - voucher.value} VND</th>   
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </c:when> 
                                             <c:otherwise>
                                             <td class="col-md-1">${totalPrice} VND</td>  
