@@ -71,7 +71,7 @@ public class OrderDAO {
 
     public Order readOrder(int orderID) {
         DBConnection.Connect();
-      
+
         if (DBConnection.isConnected()) {
             Order or;
             ResultSet rs = DBConnection.ExecuteQuery("SELECT * FROM [dbo].[Orders] WHERE OrderID = " + orderID);
@@ -88,7 +88,8 @@ public class OrderDAO {
                 DBConnection.Disconnect();
                 return or;
             } catch (SQLException ex) {
-                Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex);
+                return null;
             }
         }
         return null;
@@ -130,17 +131,38 @@ public class OrderDAO {
         return false;
     }
 
-    public int getLastInsertedOrderID() throws SQLException {
+    public int getLastInsertedOrderID() {
         DBConnection.Connect();
         if (DBConnection.isConnected()) {
             try ( ResultSet rs = DBConnection.ExecuteQuery("SELECT MAX(OrderID) FROM Orders")) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
+            } catch (SQLException ex) {
+                return -1;
             }
+
         }
         return -1; // Cho biết lỗi (không thể lấy ID)
     }
+
+    public boolean updateOrderStatus(int orderID, String status) {
+        DBConnection.Connect();
+        if (DBConnection.isConnected()) {
+            PreparedStatement pre;
+            try {
+                pre = DBConnection.getPreparedStatement("UPDATE Orders SET OrderStatus = ? WHERE OrderID = ?");
+                pre.setString(1, status);
+                pre.setInt(2, orderID);
+                return pre.executeUpdate() > 0;
+            } catch (SQLException e) {
+                System.out.println(e);
+                return false;
+            }
+        } return false;
+    }
+    
+    
 
     public boolean updateOrderTotal(Order order) throws SQLException {
         DBConnection.Connect();

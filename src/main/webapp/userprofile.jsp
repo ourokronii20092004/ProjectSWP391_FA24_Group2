@@ -1,7 +1,7 @@
-    <%-- 
-    Document   : userprofile
-    Created on : Oct 20, 2024, 11:10:21 AM
-    Author     : phanp
+<%-- 
+Document   : userprofile
+Created on : Oct 20, 2024, 11:10:21 AM
+Author     : phanp
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -17,22 +17,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>User Profile</title>
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
-                integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
-        crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
-                integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
-        crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-                crossorigin="anonymous">
-        </script>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+                      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+                        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+                crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+                        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+                crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+                        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+                        crossorigin="anonymous">
+                </script>
 
-        <!--        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-                <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>-->
+<!--        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>-->
 
         <style>
             /* Định dạng ảnh avatar */
@@ -163,18 +163,19 @@
     </head>
 
     <body>
-        <!-- Navigation Bar -->
         <div class="d-flex flex-column min-vh-100">
             <header class="d-flex justify-content-between align-items-center p-3" style="background-color: #D3FFA3; border-bottom: 2px solid black;">
-                <a href="/MainPageController" class="d-flex align-items-center text-decoration-none">
+                <a href="/MainPageController" class="d-flex align-items-center justify-content-center text-decoration-none">
 
                     <span class="h5 ms-2">PAMB</span>
                 </a>
                 <nav class="d-none d-lg-flex gap-4">
-                    <a href="/MainPageController" class="text-decoration-none nav-link active">Home</a>
-                    <a href="#" class="text-decoration-none nav-link active">About</a>
-                    <a href="#" class="text-decoration-none nav-link active">Contact</a>
-                    <a href="#" class="text-decoration-none nav-link active">Vouchers</a>
+
+                    <a href="/MainPageController" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link active">About</a>
+                    <a href="#" class="nav-link active">Contact</a>
+                    <a href="#" class="nav-link active">Vouchers</a>
+
                 </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");
@@ -184,7 +185,7 @@
     String name = user.getUserName();
                 %>
                 <div class="d-flex align-items-center gap-3">
-                    <div class="avatar-container ms-auto d-flex align-items-center">
+                    <div class="avatar-container ms-auto d-flex align-items-center" >
 
                         <div class="nav-item">
                             <a class="nav-link bell-link position-relative me-2" style="padding-bottom: 5px;" href="#"
@@ -201,16 +202,19 @@
                             </button>
                         </form>
 
-                        <img src="<%= (user.getImgURL() != null && !user.getImgURL().isEmpty()) ? user.getImgURL() : "/img/avt/user.png" %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 15px;"> <!-- me-3 tạo margin-right cho avatar -->
+                        <img src="<%= (user.getImgURL() != null && !user.getImgURL().isEmpty()) ? user.getImgURL() : "/img/avt/user.png" %>" alt="Avatar" class="avatar me-2 ms-2" id="avatarButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <!-- me-3 tạo margin-right cho avatar -->
 
                         <!-- Menu thả xuống -->
                         <div class="dropdown-menu dropdown-menu-left custom-dropdown" aria-labelledby="avatarButton">
                             <a class="user-greeting">Hello, <%= name %></a>
-                            <a class="dropdown-item" href="/CustomerProfileController">Profile</a>
+                            <a class="dropdown-item" href="CustomerProfileController">Profile</a>
                             <a class="dropdown-item" href="LogoutController">Logout</a>
                         </div>
+
+
                     </div>
                 </div>
+
             </header>
 
             <!-- Main Content -->
@@ -296,17 +300,17 @@
                             </tr>
                             <c:forEach items="${boughtHistory}" var="o">  
                                 <c:if test="${o.orderStatus != 'Pending'}">
-                                <tr>
-                                    <td class="col-md-2">
-                                        <c:forEach items="${o.orderItemList}" var="ot">                                            
-                                            ${ot.product.productName} x${ot.quantity}<br>
-                                        </c:forEach>
-                                    </td>
-                                    <td class="col-md-2">${o.totalAmount}</td>
-                                    <td class="col-md-1">${o.orderStatus}</td>
-                                    <td class="col-md-2">${o.orderDate}</td>
-                                    <td class="col-md-2"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
-                                </tr>  
+                                    <tr>
+                                        <td class="col-md-2">
+                                            <c:forEach items="${o.orderItemList}" var="ot">                                            
+                                                ${ot.product.productName} x${ot.quantity}<br>
+                                            </c:forEach>
+                                        </td>
+                                        <td class="col-md-2">${o.totalAmount}</td>
+                                        <td class="col-md-1">${o.orderStatus}</td>
+                                        <td class="col-md-2">${o.orderDate}</td>
+                                        <td class="col-md-2"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
+                                    </tr>  
                                 </c:if>
                             </c:forEach>                               
 
@@ -373,7 +377,7 @@
                     if (document.getElementById("BoughtHistory").hasAttribute("hidden")) {
                         document.getElementById("BoughtHistory").removeAttribute("hidden");
                     } else {
-                        document.getElementById("BoughtHistory").setAttribute("hidden","");
+                        document.getElementById("BoughtHistory").setAttribute("hidden", "");
                     }
                 }
 

@@ -97,7 +97,7 @@ public class OrderController extends HttpServlet {
             throws SQLException, ServletException, IOException {
         String selectedItemsDetails = request.getParameter("selectedItemsDetails");
 
-        System.out.println(selectedItemsDetails);
+        System.out.println("selectedItemsDetails: " + selectedItemsDetails);
 
         if (selectedItemsDetails == null || selectedItemsDetails.isEmpty()) {
             request.setAttribute("errorMessage", "No items selected for purchase.");
@@ -115,10 +115,12 @@ public class OrderController extends HttpServlet {
         ArrayList<OrderItem> orderItemsList = new ArrayList<>();
         float totalAmount = 0;
         int newOrderID = orderDAO.getLastInsertedOrderID();
+        System.out.println("newOrderID" + newOrderID);
         Order existingOrder = null;
 
         Order newOrder;
-        if (orderDAO.readOrder(newOrderID).getTotalAmount() == 0) {
+
+        if ((orderDAO.readOrder(newOrderID) == null ? false : orderDAO.readOrder(newOrderID).getTotalAmount() == 0)) {
             // Sử dụng lại Order cũ nếu TotalAmount = 0
             newOrder = orderDAO.readOrder(newOrderID);
         } else {
@@ -136,7 +138,7 @@ public class OrderController extends HttpServlet {
             System.out.println("newOrderID = " + newOrderID);
             newOrder = orderDAO.readOrder(newOrderID);
         }
-        
+
         System.out.println("total : " + orderDAO.readOrder(newOrderID).getTotalAmount());
         String[] selectedCartItemIds = selectedItemsDetails.split(",");
         CartDAO cartDAO = new CartDAO(); // Initialize cartDAO here
@@ -181,7 +183,7 @@ public class OrderController extends HttpServlet {
                 System.err.println("Error parsing cart item ID: " + e.getMessage());
             }
         }
-System.out.println("total2 : " + orderDAO.readOrder(newOrderID).getTotalAmount());
+        System.out.println("total2 : " + orderDAO.readOrder(newOrderID).getTotalAmount());
         newOrder.setTotalAmount(totalAmount);
         //orderDAO.updateOrderTotal(newOrder);
 
