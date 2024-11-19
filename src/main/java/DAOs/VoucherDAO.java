@@ -265,7 +265,7 @@ public class VoucherDAO {
         );
     }
 
-    public ArrayList<Voucher> searchVouchers(String keyword, int discountType, boolean isActive) {
+    public ArrayList<Voucher> searchVouchers(String keyword, boolean discountType, boolean isActive) {
         ArrayList<Voucher> searchResult = new ArrayList<>();
         String sql = "SELECT * FROM Vouchers WHERE VoucherName LIKE ? AND DiscountType = ? AND IsActive = ?";
 
@@ -274,7 +274,7 @@ public class VoucherDAO {
             if (DBConnection.isConnected()) {
                 try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
                     pre.setString(1, "%" + keyword + "%");
-                    pre.setInt(2, discountType);
+                    pre.setBoolean(2, discountType);
                     pre.setBoolean(3, isActive);
 
                     try ( ResultSet rs = pre.executeQuery()) {
@@ -315,17 +315,47 @@ public class VoucherDAO {
                 }
             } else {
                 Logger.getLogger(VoucherDAO.class.getName()).log(Level.SEVERE, "Not connected to database");
-                return new ArrayList<>(); // Return empty list if not connected
+                return new ArrayList<>();
             }
         } catch (SQLException e) {
             Logger.getLogger(VoucherDAO.class.getName()).log(Level.SEVERE, "Error searching vouchers", e);
-            return new ArrayList<>(); // Return empty list in case of error
+            return new ArrayList<>();
         } finally {
             DBConnection.Disconnect();
         }
         return searchResult;
     }
 
+    public ArrayList<Voucher> searchVouchersAllStatus(String keyword, boolean discountType) {
+        ArrayList<Voucher> searchResult = new ArrayList<>();
+        String sql = "SELECT * FROM Vouchers WHERE VoucherName LIKE ? AND DiscountType = ? and isActive is not null";
+
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                try (PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setString(1, "%" + keyword + "%");
+                    pre.setBoolean(2, discountType);
+
+                    try (ResultSet rs = pre.executeQuery()) {
+                        while (rs.next()) {
+                            searchResult.add(createVoucherFromResultSet(rs));
+                        }
+                    }
+                }
+            } else {
+                Logger.getLogger(VoucherDAO.class.getName()).log(Level.SEVERE, "Not connected to database");
+                return new ArrayList<>();
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDAO.class.getName()).log(Level.SEVERE, "Error searching vouchers", e);
+            return new ArrayList<>();
+        } finally {
+            DBConnection.Disconnect();
+        }
+        return searchResult;
+    }
+    
     public boolean isVoucherNameExists(String voucherName) {
         String sql = "SELECT 1 FROM Vouchers WHERE VoucherName = ? and isActive is not null";
         try {
