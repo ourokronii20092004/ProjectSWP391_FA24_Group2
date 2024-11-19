@@ -96,9 +96,8 @@ public class OrderController extends HttpServlet {
     private void handleBuySelected(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         String selectedItemsDetails = request.getParameter("selectedItemsDetails");
-        
+
         System.out.println(selectedItemsDetails);
-        String voucherIDStr = request.getParameter("voucherID");
 
         if (selectedItemsDetails == null || selectedItemsDetails.isEmpty()) {
             request.setAttribute("errorMessage", "No items selected for purchase.");
@@ -107,8 +106,6 @@ public class OrderController extends HttpServlet {
         }
 
         int userID = (int) request.getSession().getAttribute("userID");
-        int voucherID = voucherIDStr != null ? Integer.parseInt(voucherIDStr) : 0;
-        Voucher voucher = new VoucherDAO().getVoucherById(voucherID);
         java.sql.Date orderDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
 
         OrderDAO orderDAO = new OrderDAO();
@@ -117,19 +114,30 @@ public class OrderController extends HttpServlet {
 
         ArrayList<OrderItem> orderItemsList = new ArrayList<>();
         float totalAmount = 0;
-
-        Order newOrder = new Order(
-                0,
-                new UserDAO().getUserData(userID),
-                null,
-                voucher,
-                orderDate,
-                0,
-                "Pending"
-        );
-
-        orderDAO.addOrder(newOrder);
         int newOrderID = orderDAO.getLastInsertedOrderID();
+        Order existingOrder = null;
+
+        Order newOrder;
+        if (orderDAO.readOrder(newOrderID).getTotalAmount() == 0) {
+            // Sử dụng lại Order cũ nếu TotalAmount = 0
+            newOrder = orderDAO.readOrder(newOrderID);
+        } else {
+            newOrder = new Order(
+                    0,
+                    new UserDAO().getUserData(userID),
+                    new ArrayList<>(),
+                    null,
+                    orderDate,
+                    0,
+                    "Pending"
+            );
+            orderDAO.addOrder(newOrder);
+            newOrderID = orderDAO.getLastInsertedOrderID();
+            System.out.println("newOrderID = " + newOrderID);
+            newOrder = orderDAO.readOrder(newOrderID);
+        }
+        
+        System.out.println("total : " + orderDAO.readOrder(newOrderID).getTotalAmount());
         String[] selectedCartItemIds = selectedItemsDetails.split(",");
         CartDAO cartDAO = new CartDAO(); // Initialize cartDAO here
 
@@ -173,32 +181,34 @@ public class OrderController extends HttpServlet {
                 System.err.println("Error parsing cart item ID: " + e.getMessage());
             }
         }
-
+System.out.println("total2 : " + orderDAO.readOrder(newOrderID).getTotalAmount());
         newOrder.setTotalAmount(totalAmount);
-        orderDAO.updateOrderTotal(newOrder);
+        //orderDAO.updateOrderTotal(newOrder);
 
         // Forward to confirmation page
         request.setAttribute("orderItemsList", orderItemsList);
-        request.setAttribute("voucherID", voucherID);
         RequestDispatcher dispatcher = request.getRequestDispatcher("OrderController.jsp");
         dispatcher.forward(request, response);
-        System.out.println(selectedItemsDetails + "  0000000000000000");
+        System.out.println(selectedItemsDetails + "  orderItemID");
         HttpSession session = request.getSession();
         session.setAttribute("selectedItemsDetails", selectedItemsDetails);
+        System.out.println("total3 : " + orderDAO.readOrder(newOrderID).getTotalAmount());
     }
 
     private void handleCreateOrder(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         HttpSession session = request.getSession();
-    // Lấy "selectedItemsDetails" từ Session
-    String selectedItemsDetails = (String) session.getAttribute("selectedItemsDetails");
-        System.out.println(selectedItemsDetails + "  1111111111111111111");
+        // Lấy "selectedItemsDetails" từ Session
+        String selectedItemsDetails = (String) session.getAttribute("selectedItemsDetails");
+        System.out.println(selectedItemsDetails + "  orderItemID");
         String[] selectedCartItemIds = selectedItemsDetails.split(",");
         int userID = (int) request.getSession().getAttribute("userID");
         float totalAmount = Float.parseFloat(request.getParameter("totalAmount"));
         int voucherID = Integer.parseInt(request.getParameter("voucherID"));
+        System.out.println(voucherID + "   Voucher");
 
         OrderDAO orderDAO = new OrderDAO();
+        ProductDAO productDAO = new ProductDAO();
         int orderID = orderDAO.getLastInsertedOrderID();
 
         if (orderID != -1) { // Check if orderID was retrieved successfully
@@ -206,17 +216,36 @@ public class OrderController extends HttpServlet {
 
             if (orderToUpdate != null) {
                 orderToUpdate.setTotalAmount(totalAmount);
-                orderToUpdate.setVoucher(null);
+                orderToUpdate.setVoucher(new VoucherDAO().getVoucherById(voucherID));
                 if (orderDAO.updateOrderByID(orderToUpdate)) { // Use updateOrderByID
                     // Remove cart items (if applicable - make sure CartDAO.removeCartItem is correctly implemented)
                     String[] productIDs = request.getParameterValues("productID[]");
                     String[] quantities = request.getParameterValues("quantity[]");
+                    if (productIDs != null && quantities != null && productIDs.length == quantities.length) {
+                        for (int i = 0; i < productIDs.length; i++) {
+                            try {
+                                int productID = Integer.parseInt(productIDs[i]);
+                                int quantity = Integer.parseInt(quantities[i]);
+
+                                if (!productDAO.updateProductStock(productID, quantity)) {
+                                    System.err.println("Failed to update stock for product ID: " + productID);
+                                    response.sendRedirect("error.jsp?message=StockUpdateFailed");
+                                    return;
+                                }
+
+                            } catch (NumberFormatException e) {
+                                System.err.println("Error parsing product ID or quantity: " + e.getMessage());
+                                response.sendRedirect("error.jsp?message=ParsingError");
+                                return;
+                            }
+                        }
+                    }
                     CartDAO cartDAO = new CartDAO();
                     if (productIDs != null && quantities != null && productIDs.length == quantities.length) {
-                            for (String cartItemIdStr : selectedCartItemIds) {
-                                int cartItemId = Integer.parseInt(cartItemIdStr);
-                                cartDAO.removeCartItem(cartItemId); // Correctly remove items
-                            }                      
+                        for (String cartItemIdStr : selectedCartItemIds) {
+                            int cartItemId = Integer.parseInt(cartItemIdStr);
+                            cartDAO.removeCartItem(cartItemId); // Correctly remove items
+                        }
                     }
                     response.sendRedirect("MainPageController");
                 } else {

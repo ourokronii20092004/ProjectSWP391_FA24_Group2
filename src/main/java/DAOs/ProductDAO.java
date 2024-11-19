@@ -546,4 +546,42 @@ public class ProductDAO {
         }
         return rs;
     }
+
+    public boolean updateProductStock(int productID, int quantity) {
+        try {
+            DBConnection.Connect();
+            if (DBConnection.isConnected()) {
+                String sql = "UPDATE Product SET StockQuantity = StockQuantity - ? WHERE ProductID = ? AND StockQuantity >= ?";
+                try ( PreparedStatement pre = DBConnection.getPreparedStatement(sql)) {
+                    pre.setInt(1, quantity);
+                    pre.setInt(2, productID);
+                    pre.setInt(3, quantity);
+
+                    upCount = pre.executeUpdate();
+                }
+
+                if (upCount > 0) {
+                    Product updatedProduct = readProduct(productID);
+                    if (updatedProduct != null) {
+                        int index = productList.indexOf(updatedProduct);
+                        if (index != -1) {
+                            productList.set(index, updatedProduct);
+                        }
+                    }
+
+                    upCount = 0;
+                    return true; 
+                } else {
+                    Logger.getLogger(ProductDAO.class.getName()).log(Level.WARNING, "Failed to update product stock: No rows affected.");
+                    return false; 
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, "Error updating product stock: " + ex.getMessage(), ex);
+            return false;
+        } finally {
+            DBConnection.Disconnect();
+        }
+        return true;
+    }
 }
