@@ -334,6 +334,7 @@
         document.getElementById('avatarButton').addEventListener('click', function (event) {
             var dropdownMenu = document.querySelector('.dropdown-menu');
             dropdownMenu.classList.toggle('show');
+        });
 
     function updateSelectedItems() {
         const selectedItems = []; // Mảng chứa cartItemID
