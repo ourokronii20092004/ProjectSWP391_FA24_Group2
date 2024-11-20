@@ -68,11 +68,6 @@ public class ProductController extends HttpServlet {
                 case "deleted":
                     productList = productDAO.viewDeletedProductList();
                     break;
-                case "delete":
-                    int productID = Integer.parseInt(request.getParameter("productId"));
-                    productDAO.removeProduct(productID);
-                    response.sendRedirect("ProductController?action=list&page=Product");
-                    return;
                 case "restore":
                     int productIDRestore = Integer.parseInt(request.getParameter("productId"));
                     productDAO.restoreProduct(productIDRestore);
@@ -96,16 +91,18 @@ public class ProductController extends HttpServlet {
                     String searchName = request.getParameter("searchName");
                     String categoryIdStr = request.getParameter("categoryId");
                     try {
-                        if (categoryIdStr != null && !categoryIdStr.isEmpty() && searchName != null && !searchName.isEmpty()) {
+                        if (((categoryIdStr == null || categoryIdStr.isEmpty()) || searchName == null) || searchName.isEmpty()) {
+                            if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+                                int categoryId = Integer.parseInt(categoryIdStr);
+                                productList = productDAO.searchProductsByCategory(categoryId);
+                            } else if (searchName != null && !searchName.isEmpty()) {
+                                productList = productDAO.searchProductsByName(searchName);
+                            } else {
+                                productList = productDAO.viewProductList();
+                            }
+                        } else {
                             int categoryId = Integer.parseInt(categoryIdStr);
                             productList = productDAO.searchProductsByNameAndCategory(searchName, categoryId);
-                        } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-                            int categoryId = Integer.parseInt(categoryIdStr);
-                            productList = productDAO.searchProductsByCategory(categoryId);
-                        } else if (searchName != null && !searchName.isEmpty()) {
-                            productList = productDAO.searchProductsByName(searchName);
-                        } else {
-                            productList = productDAO.viewProductList();
                         }
                         if (productList.isEmpty()) {
                             request.setAttribute("noResultsMessage", "No products found matching your criteria.");
@@ -254,7 +251,11 @@ public class ProductController extends HttpServlet {
                 return;
             case "delete":
                 int productID = Integer.parseInt(request.getParameter("productId"));
-                productDAO.removeProduct(productID);
+                if (productDAO.removeProduct(productID)) {
+                    request.getSession().setAttribute("errorMessage", "Product delete failed.");
+                    response.sendRedirect("ProductController");
+                    return;
+                }
                 response.sendRedirect("ProductController?action=list&page=Product");
                 return;
             default:
