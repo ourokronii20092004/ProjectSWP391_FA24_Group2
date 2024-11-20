@@ -337,11 +337,8 @@
                 <div>
                     <div class="team-intro">
                         <div class="team-description">
-                            <h2>Meet the YourPlant Team</h2>
-                            <p>We’re a team of University Students from FPT University. Our mission? To make it
-                                easy for anyone to take care of their plants and having fully remote control at the same time.
-                                We’re proud of what we’ve achieved so far, and have big plans for the future. Fancy meeting the
-                                people making it all happen? We invite you to get to know the faces behind our team.</p>
+                            <h2>Meet the PAMB Team</h2>
+                            <p>We’re a team of University Students from FPT University, passionate about flowers and committed to spreading joy through floral arrangements. Our online flower shop is your one-stop destination for exquisite blooms, personalized gifts, and heartfelt expressions. We curate a diverse collection of fresh flowers, from classic roses to exotic orchids, to cater to every occasion, big or small.</p>
                         </div>
                     </div>
                     <div class="team-grid">
