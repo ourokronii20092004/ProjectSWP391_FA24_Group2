@@ -13,15 +13,17 @@
     </head>
 
     <body>
+
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="row border rounded-5 p-3 bg-white shadow box-area" style="border-radius: 12px;">
+
                 <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                      style="background:#103cbe; border-radius: 12px;">
                     <div class="feature-image mb-3">
-                        <img src="../img/auth-background.jpg" class="img-fluid" style="width:250px;" />
+                        <img src="https://i.pinimg.com/736x/aa/cb/ca/aacbca564f3c3af647dd277025ee895f.jpg" class="img-fluid" style="border: solid 2px; border-radius: 5px; width:500px;" />
                     </div>
-                    <p class="text-white fs-2">Some content here</p>
-                    <small class="text-white text-wrap text-center">Description or something here</small>
+                    <p class="text-white fs-2" style=" font-weight: bold; " >PAMB</p>
+                    <small class="text-white text-wrap text-center">WELCOME TO THE FLOWER GALLERY</small>
                 </div>
                 <%
                     String username = "";
@@ -71,26 +73,23 @@
                             <div class="input-group mb-1">
                                 <input minlength="8" type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" value="<%= password%>" required />
                             </div>
-
                             <div class="input-group mb-3 mt-3 d-flex justify-content-between">
                                 <div class="row">
                                     <small>Don't have an account? <a href="/RegisterController">Sign Up</a></small>
                                 </div> 
                                 <div class="row">
-                                    <small><a href="/PasswordController?action=forgetPassword">Forget Password?</a></small>
+                                    <small><a href="/PasswordController?action=forgetPassword">Forgot Password?</a></small>
                                 </div>
                             </div>
-
                             <div class="form-check ms-3 mb-3">
                                 <input type="checkbox" class="form-check-input" id="formCheck" name="remember" <%= !username.isEmpty() ? "checked" : ""%> />
                                 <label for="formCheck"><small>Remember Me</small></label>
                             </div>
-
                             <div class="input-group mb-3" style="border-radius: 12px;">
                                 <button type="submit" class="btn btn-lg btn-custom w-100 fs-6">Login</button>
                             </div>    
                             <div class="input-group mb-3" style="border-radius: 12px;">
-                                <a href="/LoginWithGoogleController" class="btn btn-lg btn-custom w-100 fs-6"><img src="../img/google.png" style="width: 20px;" class="me-2">Sign In With Google</a>
+                                <a href="/LoginWithGoogleController" class="btn btn-lg btn-custom w-100 fs-6"><img src="img/SignInWithGoogleIMG.png" style="width: 200px" class="me-2"></a>
                             </div>
                         </div>
                     </form>
@@ -98,6 +97,4 @@
             </div>
         </div>
     </body>
-
 </html>
-

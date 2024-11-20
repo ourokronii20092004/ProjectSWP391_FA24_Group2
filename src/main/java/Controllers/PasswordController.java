@@ -7,7 +7,6 @@ package Controllers;
 import Hash.HashFunction;
 import Models.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -35,6 +34,9 @@ public class PasswordController extends HttpServlet {
                 request.getRequestDispatcher("forgetPassword.jsp").forward(request, response);
             } else if (request.getParameter("action").equalsIgnoreCase("changePassword")) {
                 request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            } else if (request.getParameter("action").equalsIgnoreCase("noUser")) {
+                request.setAttribute("action", "noUser");
+                request.getRequestDispatcher("forgetPassword.jsp").forward(request, response);
             } else {
                 response.sendRedirect("/MainPageController");
             }
@@ -53,7 +55,7 @@ public class PasswordController extends HttpServlet {
                 // Mật khẩu mới trùng với mật khẩu cũ
                 request.setAttribute("error", "New password must not be the same as the old password.");
                 request.getRequestDispatcher("changePassword.jsp").forward(request, response);
-            } else if (!newPassword.equals(confirmPassword)) {
+} else if (!newPassword.equals(confirmPassword)) {
                 // Mật khẩu mới và xác nhận không khớp
                 request.setAttribute("error", "New password and confirm password do not match.");
                 request.getRequestDispatcher("changePassword.jsp").forward(request, response);
@@ -90,6 +92,8 @@ public class PasswordController extends HttpServlet {
                 return;
             }
             response.sendRedirect("/PasswordController");
+        } else {
+            response.sendRedirect("/PasswordController?action=noUser");
         }
     }
 

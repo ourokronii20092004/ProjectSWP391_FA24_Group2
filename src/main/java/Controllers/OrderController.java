@@ -13,10 +13,8 @@ import DAOs.VoucherDAO;
 import Models.CartItem;
 import Models.Order;
 import Models.OrderItem;
-import Models.Voucher;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,7 +26,6 @@ import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Models.Product; // Import Product
-import Models.User;    // Import User
 import jakarta.servlet.http.HttpSession;
 
 /**
@@ -59,7 +56,7 @@ public class OrderController extends HttpServlet {
             System.out.println("list");
             ArrayList<Order> orderList = new DAOs.OrderDAO().viewAllOrders();
             request.setAttribute("orderList", orderList);
-            RequestDispatcher ds = request.getRequestDispatcher("adminSetting.jsp");
+            RequestDispatcher ds = request.getRequestDispatcher("dashboard.jsp");
             ds.forward(request, response);
         } else {
             response.sendRedirect("/OrderController");
@@ -117,9 +114,7 @@ public class OrderController extends HttpServlet {
         int newOrderID = orderDAO.getLastInsertedOrderID();
         System.out.println("newOrderID" + newOrderID);
         Order existingOrder = null;
-
         Order newOrder;
-
         if ((orderDAO.readOrder(newOrderID) == null ? false : orderDAO.readOrder(newOrderID).getTotalAmount() == 0)) {
             // Sử dụng lại Order cũ nếu TotalAmount = 0
             newOrder = orderDAO.readOrder(newOrderID);

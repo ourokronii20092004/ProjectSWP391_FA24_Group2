@@ -134,11 +134,8 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
 
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="/DashboardController"
-                                                onclick="parent.location.href = this.href; return false;">Home</a></li>
-
                         <li class="nav-item"><a class="nav-link active" href="/OrderController"
-                                                onclick="parent.location.href = this.href; return false;">Handler</a></li>
+                                                onclick="parent.location.href = this.href; return false;">Home</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/ProductController?action=list&page=Product"
                                                 onclick="parent.location.href = this.href; return false;">Product</a></li>
                         <li class="nav-item"><a class="nav-link active" href="/CategoryController"
@@ -161,10 +158,10 @@
                             </a>
                         </li>
                         <li class="nav-item d-flex align-items-center">
-                            <a href="adminProfile.jsp" onclick="parent.location.href = this.href; return false;"> <img
-                                    src="../img/avt/avt3.png" alt="Avatar" class="avatar"> </a>
-                            <a href="adminProfile.jsp" onclick="parent.location.href = this.href; return false;"
-                               class="username">Endmin</a>
+                            <a href="LogoutController" class="btn btn-danger ms-3" style="text-decoration: none; color: white;" 
+                               onclick="parent.location.href = this.href; return false;">
+                                Log Out
+                            </a>
                         </li>
                     </ul>
                 </div>

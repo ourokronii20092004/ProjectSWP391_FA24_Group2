@@ -31,10 +31,10 @@
                 <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                      style="background:#103cbe; border-radius: 12px;">
                     <div class="feature-image mb-3">
-                        <img src="./img/auth-background.jpg" class="img-fluid" style="width:250px;" />
+                        <img src="https://i.pinimg.com/736x/aa/cb/ca/aacbca564f3c3af647dd277025ee895f.jpg" class="img-fluid" style="border: solid 2px; border-radius: 5px; width:500px;" />
                     </div>
-                    <p class="text-white fs-2">Some content here</p>
-                    <small class="text-white text-wrap text-center">Description or something here</small>
+                    <p class="text-white fs-2" style=" font-weight: bold; " >PAMB</p>
+                    <small class="text-white text-wrap text-center">WELCOME TO THE FLOWER GALLERY</small>
                 </div>
 
                 <div class="col-md-6 right-box">
@@ -102,10 +102,6 @@
 
                             <div class="input-group mb-3" style="border-radius: 12px;">
                                 <button class="btn btn-lg btn-primary w-100 fs-6">Sign Up</button>
-                            </div>
-                            <div class="input-group mb-3" style="border-radius: 12px;">
-                                <button class="btn btn-lg btn-secondary w-100 fs-6"><img src="./img/google.png"
-                                                                                         style="width: 20px;" class="me-2">Sign Up With Google</button>
                             </div>
                         </form>
                     </div>
