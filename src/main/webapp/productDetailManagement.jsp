@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+<%@page import="Models.Product"%> 
+<%@page import="DAOs.UserDAO"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -217,6 +219,7 @@
         </style>
     </head>
     <body>
+        <% Product pro = (Product) request.getAttribute("product"); %>
         <iframe src="adminNavbar.jsp" height="60px"></iframe>
         <div class="container-fluid">
             <div class="card">
@@ -226,11 +229,11 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-10 d-flex flex-wrap">
                                 <div class="col-lg-6">
-                                    <img src="https://i.pinimg.com/originals/aa/ed/6e/aaed6e46143374dfa4b1a894c2287957.gif" alt="ecommerce" class="img-fluid rounded border border-secondary">
+                                    <img src="<%= pro.getImageURL() %>" alt="ecommerce" class="card-img-top rounded border border-secondary ">
                                 </div>
                                 <div class="col-lg-6 pt-4 pt-lg-0">
-                                    <h2 class="text-secondary text-uppercase">Brand Name</h2>
-                                    <h1 class="text-dark display-6 mb-3">The Catcher in the Rye</h1>
+                                    <h2 class="text-secondary text-uppercase"><%= pro.getProductName() %></h2>
+
                                     <div class="d-flex align-items-center mb-3">
 
                                         <!-- Display aggregate rating -->
@@ -250,25 +253,19 @@
                                             <a href="#" class="text-muted"><i class="bi bi-chat"></i></a>
                                         </div>
                                     </div>
-                                    <p class="text-muted">
-                                        Fam locavore kickstarter distillery. Mixtape chillwave tumeric sriracha taximy chia microdosing tilde DIY. XOXO fam indxgo juiceramps cornhole raw denim forage brooklyn. Everyday carry +1 seitan poutine tumeric. Gastropub blue bottle austin listicle pour-over, neutra jean shorts keytar banjo tattooed umami cardigan.
+                                    <p class="text-muted" >
+                                        <%= pro.getDescription() %>
                                     </p>
-                                    <div class="d-flex align-items-center mt-4 pb-3 border-bottom mb-4">
-                                        <div class="me-4">
-                                            <span class="me-2">Color</span>
-                                            <button class="btn btn-secondary rounded-circle p-2"></button>
-                                            <button class="btn bg-dark rounded-circle p-2 ms-1"></button>
-                                            <button class="btn bg-danger rounded-circle p-2 ms-1"></button>
-                                        </div>
-                                        <div class="ms-lg-5">
-                                            <span class="me-2">Size</span>
-                                            <select class="form-select d-inline w-auto">
-                                                <option>SM</option>
-                                                <option>M</option>
-                                                <option>L</option>
-                                                <option>XL</option>
-                                            </select>
-                                        </div>
+
+                                    <div class="d-flex align-items-center">
+                                        <span class="h3 text-dark"><%= pro.getPrice() %></span>
+                                        <form action="/CartController" method="post">
+                                            <input type="hidden" name="action" value="add">
+                                            <input type="hidden" name="productID" value="${param.productID}">
+                                            <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 60px;
+                                                   margin: 0 auto;">
+                                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -293,7 +290,7 @@
                                         <p class="mb-0">${rating.user}: </p>
                                         <p class="mb-0">${rating.comment}</p>
                                         <div class="star-rating mb-1" style="margin-top:20px;">
-                                                                                        <!-- Hiển thị sao rỗng (empty stars) -->
+                                            <!-- Hiển thị sao rỗng (empty stars) -->
                                             <c:forEach var="j" begin="${rating.ratingValue + 1}" end="5">
                                                 <i class="bi bi-star"></i>
                                             </c:forEach>
@@ -385,5 +382,5 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
             <script src="js/ProductManagement.js"></script>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    </body>
-</html>
+            </body>
+            </html>
