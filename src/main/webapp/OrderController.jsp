@@ -277,7 +277,7 @@
                                     if (discountType === "0") {
                                         finalPrice = totalPrice - discountValue < 0 ? 0 : totalPrice - discountValue;
                                     } else if (discountType === "1") {
-                                        finalPrice = totalPrice * (1 - discountValue / 100);
+                                        finalPrice = totalPrice - (totalPrice * discountValue);
                                     }
                                 }
                             }
