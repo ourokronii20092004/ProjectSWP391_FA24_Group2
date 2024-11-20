@@ -251,7 +251,7 @@ public class ProductController extends HttpServlet {
                 return;
             case "delete":
                 int productID = Integer.parseInt(request.getParameter("productId"));
-                if (productDAO.removeProduct(productID)) {
+                if (!productDAO.removeProduct(productID)) {
                     request.getSession().setAttribute("errorMessage", "Product delete failed.");
                     response.sendRedirect("ProductController");
                     return;
