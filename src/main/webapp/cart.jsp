@@ -254,8 +254,8 @@
                 </a>
                 <nav class="d-none d-lg-flex gap-4">
                     <a href="/MainPageController" class="text-decoration-none nav-link active">Home</a>
-                    <a href="#" class="text-decoration-none nav-link active">About</a>
-                    <a href="#" class="text-decoration-none nav-link active">Contact</a>
+                    <a href="/AboutController" class="text-decoration-none nav-link active">About</a>
+                    <a href="/AboutController" class="text-decoration-none nav-link active">Contact</a>
 
                 </nav>
                 <%

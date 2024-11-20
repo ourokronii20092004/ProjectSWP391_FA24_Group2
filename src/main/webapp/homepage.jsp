@@ -165,8 +165,8 @@
                 <nav class="d-none d-lg-flex gap-4">
 
                     <a href="/MainPageController" class="nav-link active">Home</a>
-                    <a href="#" class="nav-link active">About</a>
-                    <a href="#" class="nav-link active">Contact</a>
+                    <a href="/AboutController" class="nav-link active">About</a>
+                    <a href="/AboutController" class="nav-link active">Contact</a>
                 </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");

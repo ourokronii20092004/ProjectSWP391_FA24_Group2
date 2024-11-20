@@ -162,8 +162,8 @@ Author     : phanp
                 </a>
                 <nav class="d-none d-lg-flex gap-4">
                     <a href="/MainPageController" class="nav-link active">Home</a>
-                    <a href="#" class="nav-link active">About</a>
-                    <a href="#" class="nav-link active">Contact</a>
+                    <a href="/AboutController" class="nav-link active">About</a>
+                    <a href="/AboutController" class="nav-link active">Contact</a>
                 </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");
@@ -278,19 +278,19 @@ Author     : phanp
                                 <th class="col-md-2">Action</th>
                             </tr>
                             <c:forEach items="${boughtHistory}" var="o">  
-                          
-                                    <tr>
-                                        <td class="col-md-2">
-                                            <c:forEach items="${o.orderItemList}" var="ot">                                            
-                                                ${ot.product.productName} x${ot.quantity}<br>
-                                            </c:forEach>
-                                        </td>
-                                        <td class="col-md-2">${o.totalAmount}</td>
-                                        <td class="col-md-1">${o.orderStatus}</td>
-                                        <td class="col-md-2">${o.orderDate}</td>
-                                        <td class="col-md-2"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
-                                    </tr>  
-                                
+
+                                <tr>
+                                    <td class="col-md-2">
+                                        <c:forEach items="${o.orderItemList}" var="ot">                                            
+                                            ${ot.product.productName} x${ot.quantity}<br>
+                                        </c:forEach>
+                                    </td>
+                                    <td class="col-md-2">${o.totalAmount}</td>
+                                    <td class="col-md-1">${o.orderStatus}</td>
+                                    <td class="col-md-2">${o.orderDate}</td>
+                                    <td class="col-md-2"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
+                                </tr>  
+
                             </c:forEach>                               
                         </table>
                     </div>
