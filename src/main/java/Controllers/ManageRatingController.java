@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package Controllers;
 
 import DAOs.RatingDAO;
@@ -26,10 +25,11 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Nguyen Nhat Dang - CE180010 
+ * @author Nguyen Nhat Dang - CE180010
  */
-@WebServlet(name="ManageRatingController", urlPatterns={"/ManageRatingController"})
+@WebServlet(name = "ManageRatingController", urlPatterns = {"/ManageRatingController"})
 public class ManageRatingController extends HttpServlet {
+
     private final RatingDAO ratingDAO = new RatingDAO();
     private static final Logger LOGGER = Logger.getLogger(RatingController.class.getName());
 
@@ -105,7 +105,7 @@ public class ManageRatingController extends HttpServlet {
             request.setAttribute("totalRatings", totalRatings);
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("productID", productID);
-            
+
             RequestDispatcher dispatcher = request.getRequestDispatcher("productDetailManagement.jsp");
             dispatcher.forward(request, response);
         }
@@ -125,7 +125,7 @@ public class ManageRatingController extends HttpServlet {
         // Reload rating list for the product
         ArrayList<Rating> listRating = ratingDAO.viewAllRating(rating.getProductID());
         request.setAttribute("ratingList", listRating);
-       
+
         String productIDParam = request.getParameter("productID");
         int productID = Integer.parseInt(productIDParam);
         //update sao tong
@@ -145,47 +145,46 @@ public class ManageRatingController extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-private void handleDeleteRating(HttpServletRequest request, HttpServletResponse response)
-        throws SQLException, IOException, ServletException {
+    private void handleDeleteRating(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
 
-    String ratingIDParam = request.getParameter("ratingID");
-    String productIDParam = request.getParameter("productID");
+        String ratingIDParam = request.getParameter("ratingID");
+        String productIDParam = request.getParameter("productID");
 
-    if (ratingIDParam == null || productIDParam == null) {
-        handleError(request, response, "Missing required parameters: ratingID or productID");
-        return;
+        if (ratingIDParam == null || productIDParam == null) {
+            handleError(request, response, "Missing required parameters: ratingID or productID");
+            return;
+        }
+
+        try {
+            int ratingID = Integer.parseInt(ratingIDParam);
+            int productID = Integer.parseInt(productIDParam);
+            Product pro = new DAOs.ProductDAO().readProduct(productID);
+            ratingDAO.deleteRatingAsEmp(ratingID);
+
+            // Reload the rating list for the product after deletion
+            ArrayList<Rating> listRating = ratingDAO.viewAllRating(productID);
+            request.setAttribute("ratingList", listRating);
+
+            // Update the total ratings and average rating
+            int totalRatings = listRating.size();
+            double averageRating = listRating.stream()
+                    .mapToInt(Rating::getRatingValue)
+                    .average()
+                    .orElse(0.0);
+            request.setAttribute("product", pro);
+            request.setAttribute("totalRatings", totalRatings);
+            request.setAttribute("averageRating", averageRating);
+            request.setAttribute("productID", productID);
+
+            // Forward to productDetails.jsp with updated ratings
+            RequestDispatcher dispatcher = request.getRequestDispatcher("productDetailManagement.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (NumberFormatException ex) {
+            handleError(request, response, "Invalid productID or ratingID format.");
+        }
     }
-
-    try {
-        int ratingID = Integer.parseInt(ratingIDParam);
-        int productID = Integer.parseInt(productIDParam);
-
-        ratingDAO.deleteRatingAsEmp(ratingID);
-
-        // Reload the rating list for the product after deletion
-        ArrayList<Rating> listRating = ratingDAO.viewAllRating(productID);
-        request.setAttribute("ratingList", listRating);
-
-        // Update the total ratings and average rating
-        int totalRatings = listRating.size();
-        double averageRating = listRating.stream()
-                .mapToInt(Rating::getRatingValue)
-                .average()
-                .orElse(0.0);
-
-        request.setAttribute("totalRatings", totalRatings);
-        request.setAttribute("averageRating", averageRating);
-        request.setAttribute("productID", productID);
-
-        // Forward to productDetails.jsp with updated ratings
-        RequestDispatcher dispatcher = request.getRequestDispatcher("productDetailManagement.jsp");
-        dispatcher.forward(request, response);
-
-    } catch (NumberFormatException ex) {
-        handleError(request, response, "Invalid productID or ratingID format.");
-    }
-}
-
 
     private void handleListRatings(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
