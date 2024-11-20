@@ -340,24 +340,7 @@
                                     <th class="col-md-1"></th> 
                                     <th class="col-md-1"></th>  
                                     <th class="col-md-1">Actual price</th>   
-                                        <c:choose> 
-                                            <c:when test="${voucher.type == true}">
-                                            <th class="col-md-1">${totalPrice - (voucher.value * totalPrice / 100)} VND</th>   
-                                            </c:when>
-                                            <c:when test="${voucher.type == false}">
-                                                <c:choose>
-                                                    <c:when test="${totalPrice < voucher.value}">
-                                                    <th class="col-md-1">0 VND</th>   
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                    <th class="col-md-1">${totalPrice - voucher.value} VND</th>   
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </c:when> 
-                                            <c:otherwise>
-                                            <td class="col-md-1">${totalPrice} VND</td>  
-                                        </c:otherwise>
-                                    </c:choose>                              
+                                    <td class="col-md-1">${order.totalAmount} VND</td>  
                                 </tr>
                             </table>
 
