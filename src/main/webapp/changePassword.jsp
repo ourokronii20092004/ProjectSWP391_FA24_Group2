@@ -11,19 +11,17 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     </head>
-
     <body>
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="row border rounded-5 p-3 bg-white shadow box-area" style="border-radius: 12px;">
                 <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                      style="background:#103cbe; border-radius: 12px;">
                     <div class="feature-image mb-3">
-                        <img src="https://i.pinimg.com/originals/bd/56/5d/bd565dcc0a556add0b0a0ed6b26d686e.gif" class="img-fluid" style="width:250px;" />
+                        <img src="https://i.pinimg.com/736x/aa/cb/ca/aacbca564f3c3af647dd277025ee895f.jpg" class="img-fluid" style="border: solid 2px; border-radius: 5px; width:500px;" />
                     </div>
-                    <p class="text-white fs-2">Some content here</p>
-                    <small class="text-white text-wrap text-center">Description or something here</small>
+                    <p class="text-white fs-2" style=" font-weight: bold; " >PAMB</p>
+                    <small class="text-white text-wrap text-center">WELCOME TO THE FLOWER GALLERY</small>
                 </div>
-
                 <div class="col-md-6 right-box">
                     <form action="PasswordController" method="get"> 
                         <div class="row align-items-center">
@@ -49,8 +47,6 @@
                                 <input minlength="8" type="password" class="form-control form-control-lg bg-light fs-6"
                                        name="confirmPassword"  placeholder="Confirm New Password" required />
                             </div>
-
-
                             <div class="input-group mb-3 mt-3 d-flex justify-content-between">
                                 <div class="row">
                                     <small>Already have an account? <a href="/LoginController">Sign In</a></small>
@@ -58,9 +54,7 @@
                                 <div class="row">
                                     <small>Don't have an account? <a href="/RegisterController">Sign Up</a></small>
                                 </div> 
-
                             </div>
-
                             <div class="input-group mb-3" style="border-radius: 12px;">
                                 <button type="submit" class="btn btn-lg btn-custom w-100 fs-6">Confirm</button>
                             </div>    
@@ -71,6 +65,4 @@
             </div>
         </div>
     </body>
-
 </html>
-

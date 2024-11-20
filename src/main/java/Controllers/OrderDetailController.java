@@ -10,7 +10,6 @@ import Models.Order;
 import Models.OrderItem;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -71,14 +70,14 @@ public class OrderDetailController extends HttpServlet {
             System.out.println("Confirm action:" + orDAO.updateOrderStatus(orderID, action));
         } else if (action.equalsIgnoreCase("Canceled")) {
             ProductDAO pro = new ProductDAO();
-            System.out.println("Canceled action:" + orDAO.updateOrderStatus(orderID, action));
+System.out.println("Canceled action:" + orDAO.updateOrderStatus(orderID, action));
             Order or = orDAO.readOrder(orderID);
             for (OrderItem o : or.getOrderItemList()) {
                 pro.updateProductStockRefuse(o.getProduct().getProductID(), o.getQuantity());
                 System.out.println("Restock: " + o.getProduct().getProductName());
             }
 
-        } else if (action.equalsIgnoreCase("Confirm")) {
+        } else if (action.equalsIgnoreCase("Done")) {
             System.out.println("Confirm action:" + orDAO.updateOrderStatus(orderID, action));
         }
         response.sendRedirect("/OrderDetailController?orderID=" + orderID);

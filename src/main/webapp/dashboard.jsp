@@ -1,10 +1,11 @@
 <%-- 
     Document   : dashboard
-    Created on : Oct 20, 2024, 2:51:29 PM
+    Created on : Oct 20, 2024, 2:51:52 PM
     Author     : CE181515 - Phan Viet Phat
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,7 +14,6 @@
         <title>DashBoard | PAMP</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <style>
             body {
                 background-color: #F5F7FB;
@@ -56,44 +56,64 @@
                 width: 100%;
             }
 
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+            .error-text {
+                color: red;
+            }
+
+            .product-image {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
             }
         </style>
     </head>
 
     <body>
-
         <iframe src="adminNavbar.jsp" height="60px"></iframe>
-
         <div class="container-fluid fullpagecontent">
             <div class="row">
-
-                <div class="card-container">
-                    <h6 class="card-title">Sales Data</h6>
+                <!-- Order Management Section -->
+                <div class="col-md-12 card-container">
+                    <h6 class="card-title">Order Management</h6>
                     <div class="card">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Day</th>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Revenue</th>
-                                </tr>
-                            </thead>
-                            <tbody id="salesDataTable">
-                                <!-- Data will be loaded here -->
-                            </tbody>
-                        </table>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-striped">                            
+                                    <tr>
+                                        <th class="col-md-1">ID</th>
+                                        <th class="col-md-1">Username</th>
+                                        <th class="col-md-1">Full name</th>
+                                        <th class="col-md-1">Price</th>
+                                        <th class="col-md-1">Status</th>
+                                        <th class="col-md-1">Order date</th>
+                                        <th class="col-md-1">Action</th>
+                                    </tr>
+                                    <c:forEach items="${orderList}" var="o">                               
+                                        <tr>
+                                            <td class="col-md-1">${o.orderID}</td>
+                                            <td class="col-md-1">${o.user.userName}</th>
+                                            <td class="col-md-1">${o.user.firstName} ${o.user.lastName}</td>
+                                            <td class="col-md-1">${o.totalAmount}</td>
+                                            <td class="col-md-1">${o.orderStatus}</td>
+                                            <td class="col-md-1">${o.orderDate}</td>
+                                            <td class="col-md-1"><a href="/OrderDetailController?orderID=${o.orderID}" class="btn btn-secondary">Detail</a></td>
+                                        </tr>  
+                                    </c:forEach>                               
+                                </table>
+                            </div>                        
+                        </div>
                     </div>
-                </div>
+                </div>          
             </div>
         </div>
-
         <footer>
             <iframe src="adminFooter.jsp" height="50px"></iframe>
         </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
     </body>
+</body>
 </html>

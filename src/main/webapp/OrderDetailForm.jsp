@@ -217,7 +217,7 @@
                     <a href="/MainPageController" class="text-decoration-none nav-link active">Home</a>
                     <a href="#" class="text-decoration-none nav-link active">About</a>
                     <a href="#" class="text-decoration-none nav-link active">Contact</a>
-                    <a href="#" class="text-decoration-none nav-link active">Vouchers</a>
+
                 </nav>
                 <div class="d-flex align-items-center gap-3">
                     <div class="avatar-container ms-auto d-flex align-items-center">
@@ -273,7 +273,10 @@
                                     Customer: ${order.user.userName}
                                 </div>
                                 <div class="col-md-3 align-items-center">
-                                    Customer: ${order.orderDate}
+                                    Order date: ${order.orderDate}
+                                </div>
+                                <div class="col-md-3 align-items-center">
+                                    Order status: ${order.orderStatus}
                                 </div>
                             </div>
                             <br><br>
@@ -360,30 +363,33 @@
 
                             <% if(user.getRoleID() != 2){%>
                             <div>
-                                <form action="/OrderDetailController" method="POST" style="display: inline;">
-                                    <input type="hidden" name="orderID" value="${order.orderID}">
-                                    <input type="hidden" name="action" value="Waitting">
-                                    <button type="submit" id="confirmOrdersBtn" class="btn btn-success me-2">Confirm Orders</button>
-                                </form>
-                                <form action="/OrderDetailController" method="POST" style="display: inline;">
-                                    <input type="hidden" name="orderID" value="${order.orderID}">
-                                    <input type="hidden" name="action" value="Canceled">
-                                    <button type="submit" id="refuseOrdersBtn" class="btn btn-danger">Refuse Orders</button>
-                                </form>
-                                <%}else{%>                              
-                                <form action="/OrderDetailController" method="POST" style="display: inline;">
-                                    <input type="hidden" name="orderID" value="${order.orderID}">
-                                    <input type="hidden" name="action" value="Confirm">
-                                    <button type="submit" id="confirmOrdersBtn" class="btn btn-success me-2">Confirm Deliver</button>
-                                </form>
+                                <c:if test="${order.orderStatus == 'Pending'}">
+                                    <form action="/OrderDetailController" method="POST" style="display: inline;">
+                                        <input type="hidden" name="orderID" value="${order.orderID}">
+                                        <input type="hidden" name="action" value="Waitting">
+                                        <button type="submit" id="confirmOrdersBtn" class="btn btn-success me-2">Confirm Orders</button>
+                                    </form>
+                                    <form action="/OrderDetailController" method="POST" style="display: inline;">
+                                        <input type="hidden" name="orderID" value="${order.orderID}">
+                                        <input type="hidden" name="action" value="Canceled">
+                                        <button type="submit" id="refuseOrdersBtn" class="btn btn-danger">Refuse Orders</button>
+                                    </form>
+                                </c:if>
+                                <%}else{%>    
+                                <c:if test="${order.orderStatus == 'Waitting'}">
+                                    <form action="/OrderDetailController" method="POST" style="display: inline;">
+                                        <input type="hidden" name="orderID" value="${order.orderID}">
+                                        <input type="hidden" name="action" value="Done">
+                                        <button type="submit" id="confirmOrdersBtn" class="btn btn-success me-2">Confirm Deliver</button>
+                                    </form>
+                                </c:if>
                                 <%}%>
 
-                                <c:if test="${not empty sessionScope.message}">
-                                    <div class="alert alert-info" role="alert">
-                                        ${sessionScope.message}
-                                    </div>
-                                    <% request.getSession().removeAttribute("message"); %>
-                                </c:if>
+                                <% if (request.getAttribute("success") != null) { %>
+                                <div class="alert alert-danger text-center p-2 ms-3 small" style="width: 50%; font-size: 14px;" role="alert">
+                                    <%= request.getAttribute("success") %>
+                                </div>
+                                <% } %>
                             </div>
                         </div>                       
                     </div>

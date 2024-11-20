@@ -172,7 +172,6 @@
                     <a href="/MainPageController"class="nav-link active">Home</a>
                     <a href="#" class="nav-link active">About</a>
                     <a href="#" class="nav-link active">Contact</a>
-                    <a href="#" class="nav-link active">Vouchers</a>
                 </nav>
 
                 <div class="d-flex align-items-center gap-3">
@@ -314,4 +313,3 @@
         }
     </script>
 </html>
-

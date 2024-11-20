@@ -71,7 +71,7 @@ public class LoginController extends HttpServlet {
                     usernameCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
                     passwordCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
                     response.addCookie(usernameCookie);
-                    response.addCookie(passwordCookie);
+response.addCookie(passwordCookie);
                 } else {
                     // If "Remember Me" is not selected, clear the cookies
                     Cookie usernameCookie = new Cookie("username", "");
@@ -84,12 +84,11 @@ public class LoginController extends HttpServlet {
 
                 // Redirect based on user role
                 if (user.getRoleID() == 1) {
-
-                    response.sendRedirect("/DashboardController");
+                    response.sendRedirect("/OrderController");
                 } else if (user.getRoleID() == 2) {
                     response.sendRedirect("/MainPageController");
                 } else {
-                    response.sendRedirect("/DashboardController");
+                    response.sendRedirect("/OrderController");
                 }
             } else {
                 request.getRequestDispatcher("login.jsp?check=false").forward(request, response);

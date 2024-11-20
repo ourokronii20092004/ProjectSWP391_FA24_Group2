@@ -1,5 +1,5 @@
 <%-- 
-    Document   : index
+    Document   : homepage
     Created on : Oct 15, 2024, 2:09:05 PM
     Author     : phanp
 --%>
@@ -69,7 +69,6 @@
                 border-radius: 6px;
                 transition: background-color 0.2s ease, color 0.2s ease;
             }
-
             .custom-dropdown a.dropdown-item:hover {
                 background-color: #f0f0f5;
                 color: #333;
@@ -168,25 +167,15 @@
                     <a href="/MainPageController" class="nav-link active">Home</a>
                     <a href="#" class="nav-link active">About</a>
                     <a href="#" class="nav-link active">Contact</a>
-                    <a href="#" class="nav-link active">Vouchers</a>
-
                 </nav>
                 <%
     int userID = (int) request.getSession().getAttribute("userID");
     UserDAO userDAO = new UserDAO();
-                            
-    User user = userDAO.getUserData(userID);
+User user = userDAO.getUserData(userID);
     String name = user.getUserName();
                 %>
                 <div class="d-flex align-items-center gap-3">
                     <div class="avatar-container ms-auto d-flex align-items-center" >
-
-                        <div class="nav-item">
-                            <a class="nav-link bell-link position-relative me-2" style="padding-bottom: 5px;" href="#"
-                               onclick="parent.location.href = this.href; return false;">
-                                <img src="img/icon/bell.svg" alt="Notification" class="bell-icon">
-                            </a>
-                        </div>
 
                         <form action="/CartController" method="POST" style="display: inline;">
                             <button type="submit" style="border: none;
@@ -252,24 +241,58 @@
                     <div class="mb-4">
                         <h3 class="h6">Categories</h3>
                         <div class="form-check">
-                            <input class="form-check-input category-checkbox" type="checkbox" name="category" value="1" id="category1"> <%-- Changed to checkbox --%>
-                            <label class="form-check-label" for="Stem">Stem</label>
+                            <input class="form-check-input" type="checkbox" id="clothing">
+                            <label class="form-check-label" for="clothing">Clothing</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input category-checkbox" type="checkbox" name="category" value="2" id="category2"> <%-- Changed to checkbox --%>
-                            <label class="form-check-label" for="Bouquet">Bouquet</label>
+                            <input class="form-check-input" type="checkbox" id="electronics">
+                            <label class="form-check-label" for="electronics">Electronics</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input category-checkbox" type="checkbox" name="category" value="3" id="category3"> <%-- Changed to checkbox --%>
-                            <label class="form-check-label" for="Basket">Basket</label>
+                            <input class="form-check-input" type="checkbox" id="home">
+                            <label class="form-check-label" for="home">Home</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input category-checkbox" type="checkbox" name="category" value="4" id="category4"> <%-- Changed to checkbox --%>
-                            <label class="form-check-label" for="Pot">Pot</label>
+                            <input class="form-check-input" type="checkbox" id="beauty">
+                            <label class="form-check-label" for="beauty">Beauty</label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="h6">Price Range</h3>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="under-25">
+                            <label class="form-check-label" for="under-25">$25 and under</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input category-checkbox" type="checkbox" name="category" value="5" id="category5"> <%-- Changed to checkbox --%>
-                            <label class="form-check-label" for="Combo">Combo</label>
+                            <input class="form-check-input" type="checkbox" id="25-50">
+                            <label class="form-check-label" for="25-50">$25 - $50</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="50-100">
+                            <label class="form-check-label" for="50-100">$50 - $100</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="100-200">
+                            <label class="form-check-label" for="100-200">$100 - $200</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="200-plus">
+                            <label class="form-check-label" for="200-plus">$200 and above</label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h3 class="h6">Sort By</h3>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sort" id="featured" value="featured">
+                            <label class="form-check-label" for="featured">Featured</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sort" id="low-to-high" value="low-to-high">
+                            <label class="form-check-label" for="low-to-high">Price: Low to High</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sort" id="high-to-low" value="high-to-low">
+                            <label class="form-check-label" for="high-to-low">Price: High to Low</label>
                         </div>
                     </div>
                 </aside>
@@ -280,7 +303,7 @@
 ArrayList<Models.Product> list = productDao.viewProductList();
                             for (Models.Product pro : list) {
                         %>
-                        <div class="col-md-4 col-sm-6 mb-4 product-item" data-name="<%= pro.getProductName().toLowerCase() %>" data-category="<%= pro.getCategoryID() %>">
+                        <div class="col-md-4 col-sm-6 mb-4 product-item" data-name="<%= pro.getProductName().toLowerCase() %>">
                             <div class="card h-100">
                                 <img src="<%= pro.getImageURL()%>" alt="Product Image" class="card-img-top">
                                 <div class="card-body text-center">
@@ -343,23 +366,5 @@ ArrayList<Models.Product> list = productDao.viewProductList();
                 }
             });
         }
-        function filterProductsByCategory() {
-            const checkedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(checkbox => checkbox.value);
-            const productItems = document.querySelectorAll('.product-item');
-
-            productItems.forEach(item => {
-                const productCategory = item.getAttribute('data-category');
-                if (checkedCategories.length === 0 || checkedCategories.includes(productCategory)) { // Hiển thị tất cả nếu không có checkbox nào được chọn
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        const categoryCheckboxes = document.querySelectorAll('input[name="category"]');
-        categoryCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', filterProductsByCategory);
-        });
     </script>
 </html>
